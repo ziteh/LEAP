@@ -2,10 +2,13 @@
 /**
   ******************************************************************************
   * @file   	NVIC_Functions.c
-  * @author  	ZiTe-H
+  * @author  	Huang Tzu-Fu
+  * 			National Formosa University
+  * 			Department of Electronic Engineering
+  * 			Intelligent Robot System Laboratory
   * @version 	V1.0.0
-  * @date    	7-September-2019
-  * @brief   	NVIC Functions
+  * @date    	08-October-2019
+  * @brief   	NVIC functions program
   ******************************************************************************
   * @attention
   *

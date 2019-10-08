@@ -2,10 +2,13 @@
 /**
   ******************************************************************************
   * @file   	RCC_Functions.h
-  * @author  	ZiTe-H
+  * @author  	Huang Tzu-Fu
+  * 			National Formosa University
+  * 			Department of Electronic Engineering
+  * 			Intelligent Robot System Laboratory
   * @version 	V1.0.0
-  * @date  	  	3-September-2019
-  * @brief  	Header for RCC_Configuration.c module
+  * @date    	08-October-2019
+  * @brief  	Header for RCC_Functions.c module
   ******************************************************************************
   * @attention
   *

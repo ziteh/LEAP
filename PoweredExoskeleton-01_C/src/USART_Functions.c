@@ -2,10 +2,13 @@
 /**
   ******************************************************************************
   * @file   	USART_Functions.c
-  * @author  	ZiTe-H
+  * @author  	Huang Tzu-Fu
+  * 			National Formosa University
+  * 			Department of Electronic Engineering
+  * 			Intelligent Robot System Laboratory
   * @version 	V1.0.0
-  * @date    	7-September-2019
-  * @brief   	USART Functions
+  * @date    	08-October-2019
+  * @brief   	USART functions program
   ******************************************************************************
   * @attention
   *
@@ -56,11 +59,14 @@ void USART_Initialization(void)
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART1, &USART_InitStructure);
 
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);	// Enable "Receive Data register not empty" interrupt
+	/* Enable "Receive Data register not empty" interrupt */
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 
-	USART_Cmd(USART1, ENABLE);	// Enable USART2
+	/*Enable USART*/
+	USART_Cmd(USART1, ENABLE);
 
-	USART_ClearFlag(USART1, USART_FLAG_TC);	// Clear "Transmission Complete" flag, 否則第1位數據會丟失
+	/* Clear "Transmission Complete" flag, 否則第1位數據會丟失 */
+	USART_ClearFlag(USART1, USART_FLAG_TC);
 }
 
 /**
@@ -80,7 +86,7 @@ void USART_Send(USART_TypeDef* USARTx, uint8_t* Data)
 
 		/* Wait until transmission Complete, use TC or TXE flag */
 		while(USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET)
-		{}
+		{/* Null */}
 	}
 }
 

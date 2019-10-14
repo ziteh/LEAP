@@ -1,21 +1,21 @@
 
 /**
-  ******************************************************************************
-  * @file   	RCC_Functions.c
-  *	@author  	Huang Tzu-Fu
-  * 			National Formosa University
-  * 			Department of Electronic Engineering
-  * 			Intelligent Robot System Laboratory
-  * @version 	V1.0.0
-  * @date    	08-October-2019
-  * @brief   	RCC functions program
-  ******************************************************************************
-  * @attention
-  *
-  * None
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file   		RCC_Functions.c
+ *	@author  	Huang Tzu-Fu
+ * 				National Formosa University
+ * 				Department of Electronic Engineering
+ * 				Intelligent Robot System Laboratory
+ * @version 	V1.0.0
+ * @date    	08-October-2019
+ * @brief   	RCC functions program
+ ******************************************************************************
+ * @attention
+ *
+ * None
+ *
+ ******************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"

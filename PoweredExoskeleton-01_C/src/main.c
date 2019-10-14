@@ -1,21 +1,21 @@
 
 /**
-  ******************************************************************************
-  * @file		main.c
-  * @author		Huang Tzu-Fu
-  * 			National Formosa University
-  * 			Department of Electronic Engineering
-  * 			Intelligent Robot System Laboratory
-  * @version 	V0.1.0
-  * @date		08-October-2019
-  * @brief   	Powered exoskeleton main program body
-  ******************************************************************************
-  * @attention
-  *
-  * None
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file		main.c
+ * @author		Huang Tzu-Fu
+ * 			National Formosa University
+ * 			Department of Electronic Engineering
+ * 			Intelligent Robot System Laboratory
+ * @version 	V0.1.0
+ * @date		08-October-2019
+ * @brief   	Powered exoskeleton main program body
+ ******************************************************************************
+ * @attention
+ *
+ * None
+ *
+ ******************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"

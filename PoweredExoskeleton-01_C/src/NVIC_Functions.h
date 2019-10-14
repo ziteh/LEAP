@@ -1,13 +1,34 @@
-/*
- * NVIC_Functions.h
+
+/**
+ ******************************************************************************
+ * @file   		NVIC_Functions.h
+ * @author  	Huang Tzu-Fu
+ * 				National Formosa University
+ * 				Department of Electronic Engineering
+ * 				Intelligent Robot System Laboratory
+ * @version 	V1.0.0
+ * @date    	14-October-2019
+ * @brief  		Header for NVIC_Functions.c module
+ ******************************************************************************
+ * @attention
  *
- *  Created on: Sep 5, 2019
- *      Author: ZiTe
+ * None
+ *
+ ******************************************************************************
  */
 
-#ifndef NVIC_FUNCTIONS_H_
-#define NVIC_FUNCTIONS_H_
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __NVIC_FUNCTIONS_H
+#define __NVIC_FUNCTIONS_H
 
+/* Includes ------------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
 void NVIC_Initialization(void);
 
-#endif /* NVIC_FUNCTIONS_H_ */
+#endif /* __NVIC_FUNCTIONS_H */
+
+/********************************END OF FILE***********************************/
+

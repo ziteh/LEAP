@@ -57,16 +57,16 @@ void USART_Initialization(void)
 	USART_InitStructure.USART_Parity = USART_Parity_No;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-	USART_Init(USART1, &USART_InitStructure);
+	USART_Init(USART2, &USART_InitStructure);
 
-	/* Enable "Receive Data register not empty" interrupt */
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	/* Enable "Receive data register not empty" interrupt */
+	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 
 	/*Enable USART*/
-	USART_Cmd(USART1, ENABLE);
+	USART_Cmd(USART2, ENABLE);
 
 	/* Clear "Transmission Complete" flag, 否則第1位數據會丟失 */
-	USART_ClearFlag(USART1, USART_FLAG_TC);
+	USART_ClearFlag(USART2, USART_FLAG_TC);
 }
 
 /**
@@ -84,10 +84,31 @@ void USART_Send(USART_TypeDef* USARTx, uint8_t* Data)
 		/* Transmits single data through the USARTx peripheral */
 		USART_SendData(USARTx, (uint16_t)Data[i]);
 
-		/* Wait until transmission Complete, use TC or TXE flag */
+		/* Wait until transmission complete, use TC or TXE flag */
 		while(USART_GetFlagStatus(USARTx, USART_FLAG_TC) == RESET)
 		{/* Null */}
 	}
 }
+
+/* stm32f1xx_it.c */
+///**
+//  * @brief  This function handles USART2_IRQHandler Handler.
+//  * @param  None
+//  * @retval None
+//  */
+//void USART2_IRQHandler(void)
+//{
+//	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
+//	{
+//		USART_SendData(USART2, USART_ReceiveData(USART2));
+//
+//		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
+//		{/* Null */}	// Wait until transmission Complete
+//
+//		/* NO need to Clears the USARTx's interrupt pending bits */
+//		/* USART_ClearITPendingBit(USART2,USART_IT_RXNE); */
+//	}
+//}
+
 
 /********************************END OF FILE***********************************/

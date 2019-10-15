@@ -3,9 +3,9 @@
  ******************************************************************************
  * @file		main.c
  * @author		Huang Tzu-Fu
- * 			National Formosa University
- * 			Department of Electronic Engineering
- * 			Intelligent Robot System Laboratory
+ * 				National Formosa University
+ * 				Department of Electronic Engineering
+ * 				Intelligent Robot System Laboratory
  * @version 	V0.1.0
  * @date		08-October-2019
  * @brief   	Powered exoskeleton main program body
@@ -64,19 +64,7 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-    /* Test on blink speed */
-    if(BlinkSpeed == 0)
-    {
-      /*LED2 Toggle each 50ms*/
-      STM_EVAL_LEDToggle(LED2);
-      Delay(50);      
-    }      
-    else if(BlinkSpeed == 1)
-    {
-      STM_EVAL_LEDToggle(LED2);
-      /*LED2 Toggle each 200ms */
-      Delay(200); 
-    }
+
   }
 }
 

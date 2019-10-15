@@ -27,7 +27,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 
-// -----Pin Mode and Speed----- //
+/* -----Pin Mode and Speed----- */
 //#define In		(0)
 //#define Out		(1)
 //
@@ -45,7 +45,7 @@
 //#define s10M	(1)
 //#define s50M	(2)
 
-// -----Port----- //
+/* -----Port----- */
 // Port-A
 #define PA0		(0)
 #define PA1		(1)

@@ -186,7 +186,7 @@ void USART2_IRQHandler(void)
 		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
 		{/* Null */}	// Wait until transmission Complete
 
-		/* NO need to Clears the USARTx's interrupt pending bits */
+		/* NO need to clears the USARTx's interrupt pending bits */
 		/* USART_ClearITPendingBit(USART2,USART_IT_RXNE); */
 	}
 }

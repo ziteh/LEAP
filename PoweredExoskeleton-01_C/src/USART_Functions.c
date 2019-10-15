@@ -36,7 +36,8 @@
   */
 void USART_Initialization(void)
 {
-	USART_InitTypeDef USART_InitStructure;	// Structure Declarations
+	/* Structure Declarations */
+	USART_InitTypeDef USART_InitStructure;
 
 //	USART_DeInit(USART2);
 	USART_StructInit(&USART_InitStructure);	// Fills each USART_InitStruct member with its default value
@@ -102,7 +103,7 @@ void USART_Send(USART_TypeDef* USARTx, uint8_t* Data)
 //	{
 //		/* Interrupt function */
 //
-//		/* NO need to Clears the USARTx's interrupt pending bits */
+//		/* NO need to clears the USARTx's interrupt pending bits */
 //		/* USART_ClearITPendingBit(USARTx,USART_IT_RXNE); */
 //	}
 //}

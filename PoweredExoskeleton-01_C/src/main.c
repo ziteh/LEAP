@@ -26,14 +26,25 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define Enable 	(1)
+#define Disable (0)
+#define CW		(0)
+#define CCW		(1)
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
 uint16_t USART_ReceivData;
 
+// Motor control
+uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
+uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
+uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
+
 /* Private function prototypes -----------------------------------------------*/
 RCC_ClocksTypeDef RCC_Clocks;
+
 /* Private functions ---------------------------------------------------------*/
 
 /**

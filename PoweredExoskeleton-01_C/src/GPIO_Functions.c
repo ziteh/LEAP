@@ -37,7 +37,8 @@
   */
 void GPIO_Initialization(void)
 {
-	GPIO_InitTypeDef GPIO_InitStructure;	// Structure Declarations
+	/* Structure Declarations */
+	GPIO_InitTypeDef GPIO_InitStructure;
 
 	GPIO_StructInit(&GPIO_InitStructure);	// Fills each GPIO_InitStruct member with its default value
 

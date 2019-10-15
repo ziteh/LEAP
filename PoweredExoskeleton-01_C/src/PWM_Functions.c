@@ -42,7 +42,7 @@ void PWM_Initialization(void)
 	TIM_OCInitTypeDef 		TIM_OCInitStructure;
 	GPIO_InitTypeDef 		GPIO_InitStructure;
 
-	/* Enable RCC */
+	/* Enable RCC_APB */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 

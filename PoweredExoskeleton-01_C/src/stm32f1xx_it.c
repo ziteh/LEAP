@@ -181,8 +181,12 @@ void USART2_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
 	{
-		USART_SendData(USART2, USART_ReceiveData(USART2));
+		extern uint16_t USART_ReceivData;	// main.c
 
+		USART_ReceivData = USART_ReceiveData(USART2);
+
+
+		USART_SendData(USART2, USART_ReceiveData(USART2));
 		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
 		{/* Null */}	// Wait until transmission Complete
 

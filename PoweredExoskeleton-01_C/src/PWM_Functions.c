@@ -61,7 +61,7 @@ void PWM_Initialization(void)
 	/* PWM1 Mode configuration: Channel1 */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_Pulse = 333;
+	TIM_OCInitStructure.TIM_Pulse = 333;	// TIM_Pulse=CCR1
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 	TIM_OC1Init(TIM3, &TIM_OCInitStructure);
 
@@ -71,10 +71,12 @@ void PWM_Initialization(void)
 	TIM_Cmd(TIM3, ENABLE);								// The specified TIM peripheral
 }
 
+/*
 void PWMSet(uint8_t DutyCycle)
 {
 	TIM_SetCompare1(TIM3,pwmdc);	// Set TIM_Pulse(CCR1)
 }
+*/
 
 /********************************END OF FILE***********************************/
 

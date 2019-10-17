@@ -7,7 +7,7 @@
  * 				Department of Electronic Engineering
  * 				Intelligent Robot System Laboratory
  * @version 	V0.1.0
- * @date		08-October-2019
+ * @date		17-October-2019
  * @brief   	Powered exoskeleton main program body
  ******************************************************************************
  * @attention
@@ -31,6 +31,8 @@
   */ 
 
 /* Private typedef -----------------------------------------------------------*/
+RCC_ClocksTypeDef RCC_Clocks;
+
 /* Private define ------------------------------------------------------------*/
 #define Enable 	(1)
 #define Disable (0)
@@ -39,8 +41,8 @@
 
 /* Pin define */
 // Nucleo-64 board
-#define PinUser_Button	(PC13)	// B1. When push the button, the I/O is LOW value.
-#define PinUser_LED		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
+#define PinButton_User	(PC13)	// B1. When push the button, the I/O is LOW value.
+#define PinLED_User		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
 
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
@@ -64,8 +66,6 @@ uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
 uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
 
 /* Private function prototypes -----------------------------------------------*/
-RCC_ClocksTypeDef RCC_Clocks;
-
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -86,6 +86,7 @@ int main(void)
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
   
+  /* Initialize */
   /* Initialize LED2 */
 //  STM_EVAL_LEDInit(LED2);
   
@@ -103,18 +104,6 @@ int main(void)
 }
 
 /**
-* @brief  Inserts a delay time.
-* @param  nTime: specifies the delay time length, in 1 ms.
-* @retval None
-*/
-void Delay(__IO uint32_t nTime)
-{
-  TimingDelay = nTime;
-  
-  while(TimingDelay != 0);
-}
-
-/**
 * @brief  	Control the motor.
 * @param	Motor: the number of motor. This parameter should be: 0~1.
 * @param	Status: the status of motor.
@@ -126,15 +115,19 @@ void Delay(__IO uint32_t nTime)
 */
 void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 {
-	// Motor-0
-	const u8 Motor0_Pin_Enbale;
-	const u8 Motor0_Pin_Direction;
-	const u8 Motor0_Pin_Speed = PB4;	// TIM3_CH1; Arduino:D5
 
-	// Motor-1
-	const u8 Motor1_Pin_Enbale;
-	const u8 Motor1_Pin_Direction;
-	const u8 Motor1_Pin_Speed = PB10;	// TIM2_CH3; Arduino:D6
+}
+
+/**
+* @brief  Inserts a delay time.
+* @param  nTime: specifies the delay time length, in 1 ms.
+* @retval None
+*/
+void Delay(__IO uint32_t nTime)
+{
+  TimingDelay = nTime;
+
+  while(TimingDelay != 0);
 }
 
 /**

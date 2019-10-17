@@ -8,11 +8,11 @@
  * 				Intelligent Robot System Laboratory
  * @version 	V1.0.0
  * @date    	08-October-2019
- * @brief   	Header for GPIO_Function.c module for STM32F103RB(Nucleo-64 board)
+ * @brief   	Header for GPIO_Function.c module for STM32F103RB
  ******************************************************************************
  * @attention
  *
- * None
+ * This file is used ONLY for STM32F103RB(STM32 Nucleo-64 board).
  *
  ******************************************************************************
  */
@@ -24,9 +24,6 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-
 /* -----Pin Mode and Speed----- */
 //#define In		(0)
 //#define Out		(1)
@@ -45,7 +42,7 @@
 //#define s10M	(1)
 //#define s50M	(2)
 
-/* -----Port----- */
+/* STM32 Pin(Morpho) */
 // Port-A
 #define PA0		(0)	// WKUP/USART2_CTS/ADC12_IN0/TIM2_CH1_ETR;Arduino:A0
 #define PA1		(1)	// USART2_RTS/ADC12_IN1/TIM2_CH2;Arduino:A1
@@ -135,6 +132,16 @@
 #define PE13	(77)//
 #define PE14	(78)//
 #define PE15	(79)//
+
+/* Arduino Pin */
+// Analog(CN8)
+// Digital(CN5)
+// Digital(CN9)
+
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
+
+
 
 #endif /* __GPIO_MAPPING_H */
 

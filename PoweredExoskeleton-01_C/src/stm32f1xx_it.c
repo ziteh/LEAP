@@ -188,13 +188,17 @@ void USART2_IRQHandler(void)
 		extern uint8_t USART_ReceivData[];	// main.c
 		USART_ReceivData = USART_ReceiveData(USART2);
 
-		USART_Send(USART2, "OK");
+		USART_Send(USART2, "STM32:OK.\n");
 
 		if(nInst == 0)
 			if(USART_ReceivData == 0xE0)				// System stop
-				;
+			{
+				USART_Send(USART2, "[System stop] Done.\n");
+			}
 			else if(USART_ReceivData == 0xE1)			// System reset
-				;
+			{
+				USART_Send(USART2, "[System reset] Done.\n");
+			}
 			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start
 			{
 				selMotor = ((USART_ReceivData & 0x18) >> 3);	// Select motor
@@ -206,19 +210,35 @@ void USART2_IRQHandler(void)
 				;
 		else	// nInst != 0
 		{
-			nIst -= 1;
+			nInst -= 1;
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01)	// Set motor speed
-				;
+			{
+				USART_Send(USART2, "[Set motor speed] Done.\n");
+			}
 			else
 			{
 				if(((USART_ReceivData & 0x40) >> 6) == 0x01) 	// Motor enable
-					;
+				{
+					USART_Send(USART2, "[Motor enable] Done.\n");
+				}
 				else											// Motor disable
-					;
+				{
+					USART_Send(USART2, "[Motor disable] Done.\n");
+				}
+
 				if(((USART_ReceivData & 0x20) >> 5) == 0x01) 	// Motor direction:CCW
-					;
+				{
+					USART_Send(USART2, "[Motor direction:CCW] Done.\n");
+				}
 				else											// Motor direction:CW
-					;
+				{
+					USART_Send(USART2, "[Motor direction:CW] Done.\n");
+				}
+			}
+			if(nInst == 0)
+			{
+				selMotor = 0xF;	// Deselect motor
+				USART_Send(USART2, "[Motor control] Done.\n");
 			}
 		}
 		/* NO need to clears the USARTx's interrupt pending bits */

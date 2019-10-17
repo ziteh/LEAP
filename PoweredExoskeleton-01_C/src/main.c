@@ -47,12 +47,12 @@ RCC_ClocksTypeDef RCC_Clocks;
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
 #define PinMotor0_Direction	(PB4)	// Arduino:D5
-#define PinMotor0_Speed		(PB10)	// Arduino:D6; TIM2_CH3
+#define PinMotor0_Speed		(PB10)	// Arduino:D6(PWM); TIM2_CH3
 
 // Motor-1
 #define PinMotor1_Enbale	(PA8)	// Arduino:D7
 #define PinMotor1_Direction	(PA9)	// Arduino:D8
-#define PinMotor1_Speed		(PC7)	// Arduino:D9; TIM3_CH2
+#define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/

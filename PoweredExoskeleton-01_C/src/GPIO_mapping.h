@@ -43,10 +43,16 @@
 //#define s50M	(2)
 
 /* STM32 Pin(Morpho) */
+/*
+ * Default=Alternate functions Default
+ * MA=Main function(after reset)
+ * Remap=Alternate functions Remap
+ */
+
 // Port-A
-#define PA0		(0)	// WKUP/USART2_CTS/ADC12_IN0/TIM2_CH1_ETR;Arduino:A0
-#define PA1		(1)	// USART2_RTS/ADC12_IN1/TIM2_CH2;Arduino:A1
-#define PA2		(2)	// USART2_TX/ADC12_IN2/TIM2_CH3;Arduino:D1
+#define PA0		(0)	// WKUP/USART2_CTS/ADC12_IN0/TIM2_CH1_ETR
+#define PA1		(1)	// USART2_RTS/ADC12_IN1/TIM2_CH2
+#define PA2		(2)	// USART2_TX/ADC12_IN2/TIM2_CH3
 #define PA3		(3)	// USART2_RX/ADC12_IN3/TIM2_CH4
 #define PA4		(4)	// SPI1_NSS/USART2_CK/ADC12_IN4
 #define PA5		(5)	// SPI1_SCK/ADC12_IN5
@@ -62,22 +68,22 @@
 #define PA15	(15)// MA:JTDI;Remap:TIM2_CH1_ETR/ PA15/SPI1_NSS
 
 // Port-B
-#define PB0		(16)//
-#define PB1		(17)//
-#define PB2		(18)//
-#define PB3		(19)//
-#define PB4		(20)//
-#define PB5		(21)//
-#define PB6		(22)//
-#define PB7		(23)//
-#define PB8		(24)//
-#define PB9		(25)//
-#define PB10	(26)//
-#define PB11	(27)//
-#define PB12	(28)//
-#define PB13	(29)//
-#define PB14	(30)//
-#define PB15	(31)//
+#define PB0		(16)// ADC12_IN8/TIM3_CH3;Remap:TIM1_CH2N
+#define PB1		(17)// ADC12_IN9/TIM3_CH4;Remap:TIM1_CH3N
+#define PB2		(18)// MA:PB2/BOOT1
+#define PB3		(19)// MA:JTDO;Remap:TIM2_CH2/PB3/TRACESWO/SPI1_SCK
+#define PB4		(20)// MA:JNTRST;Remap:TIM3_CH1/PB4/SPI1_MISO
+#define PB5		(21)// I2C1_SMBAl;Remap:TIM3_CH2/SPI1_MOSI
+#define PB6		(22)// I2C1_SCL/TIM4_CH1;Remap:USART1_TX
+#define PB7		(23)// I2C1_SDA/TIM4_CH2;Remap:USART1_RX
+#define PB8		(24)// TIM4_CH3;Remap:I2C1_SCL/CANRX
+#define PB9		(25)// TIM4_CH4;Remap:I2C1_SDA/CANTX
+#define PB10	(26)// I2C2_SCL/USART3_TX;Remap:TIM2_CH3
+#define PB11	(27)// I2C2_SDA/USART3_RX;Remap:TIM2_CH4
+#define PB12	(28)// SPI2_NSS/I2C2_SMBAl/USART3_CK/TIM1_BKIN
+#define PB13	(29)// SPI2_SCK/USART3_CTS/TIM1_CH1N
+#define PB14	(30)// SPI2_MISO/USART3_RTS/TIM1_CH2N
+#define PB15	(31)// SPI2_MOSI/TIM1_CH3N
 
 // Port-C
 #define PC0		(32)//
@@ -135,8 +141,36 @@
 
 /* Arduino Pin */
 // Analog(CN8)
-// Digital(CN5)
+#define A0		(0)		// PA0
+#define A1		(1)		// PA1
+#define A2		(4)		// PA4
+#define A3		(16)	// PB0
+#define A4		(33)	// PC1(or PB9,change by solder bridges)
+#define A5		(32)	// PC0(or PB8,change by solder bridges)
+
 // Digital(CN9)
+#define D0		(3)		// PA3(USART2_RX)
+#define D1		(2)		// PA2(USART2_TX)
+#define D2		(10)	// PA10
+#define D3		(19)	// PB3(PWM)
+#define D4		(21)	// PB5
+#define D5		(20)	// PB4(PWM)
+#define D6		(26)	// PB10(PWM)
+#define D7		(8)		// PA8
+
+// Digital(CN5)
+#define D8		(9)		// PA9
+#define D9		(39)	// PC7(PWM)
+#define D10		(22)	// PB6(PWM/CS)
+#define D11		(7)		// PA7(PWM/MOSI)
+#define D12		(6)		// PA6(MISO)
+#define D13		(5)		// PA5(SCK)
+#define D14		(25)	// PB9(SDA)
+#define D15		(24)	// PB8(SCL)
+
+/* STM32 Nucleo-64 board */
+#define Button_User	(45)// PC13. B1. When push the button, the I/O is LOW value.
+#define LED_User	(5)	// PA5. LD2. When the I/O is HIGH value, the LED is on.
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

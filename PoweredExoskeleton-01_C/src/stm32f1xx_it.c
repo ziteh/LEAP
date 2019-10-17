@@ -196,16 +196,21 @@ void USART2_IRQHandler(void)
 			else if(USART_ReceivData == 0xE1)			// System reset
 				;
 			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start
+			{
 				selMotor = ((USART_ReceivData & 0x18) >> 3);	// Select motor
 				nInst = (USART_ReceivData & 0x07);		// Set instruction number
 				while(nInst != (USART_ReceivData & 0x07))
 				{/* Null */}
+			}
 			else
 				;
 		else	// nInst != 0
+		{
+			nIst -= 1;
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01)	// Set motor speed
 				;
 			else
+			{
 				if(((USART_ReceivData & 0x40) >> 6) == 0x01) 	// Motor enable
 					;
 				else											// Motor disable
@@ -214,7 +219,8 @@ void USART2_IRQHandler(void)
 					;
 				else											// Motor direction:CW
 					;
-
+			}
+		}
 		/* NO need to clears the USARTx's interrupt pending bits */
 		/* USART_ClearITPendingBit(USART2,USART_IT_RXNE); */
 	}

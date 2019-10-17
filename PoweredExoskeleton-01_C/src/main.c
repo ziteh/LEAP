@@ -20,6 +20,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
 #include "main.h"
+#include "GPIO_Functions.h"
+#include "RCC_Functions.h"
+#include "NVIC_Functions.h"
+#include "USART_Functions.h"
+#include "PWM_Functions.h"
 
 /** @addtogroup IO_Toggle
   * @{
@@ -31,6 +36,21 @@
 #define Disable (0)
 #define CW		(0)
 #define CCW		(1)
+
+/* Pin define */
+// Nucleo-64 board
+#define PinUser_Button	(PC13)	// B1. When push the button, the I/O is LOW value.
+#define PinUser_LED		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
+
+// Motor-0
+#define PinMotor0_Enbale	(PB5)	// Arduino:D4
+#define PinMotor0_Direction	(PB4)	// Arduino:D5
+#define PinMotor0_Speed		(PB10)	// Arduino:D6; TIM2_CH3
+
+// Motor-1
+#define PinMotor1_Enbale	(PA8)	// Arduino:D7
+#define PinMotor1_Direction	(PA9)	// Arduino:D8
+#define PinMotor1_Speed		(PC7)	// Arduino:D9; TIM3_CH2
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -92,6 +112,29 @@ void Delay(__IO uint32_t nTime)
   TimingDelay = nTime;
   
   while(TimingDelay != 0);
+}
+
+/**
+* @brief  	Control the motor.
+* @param	Motor: the number of motor. This parameter should be: 0~1.
+* @param	Status: the status of motor.
+* 			This parameter should be 0~2. 0: Disable; 1: Enable; 2: maintain.
+* @param	Direction: the direction of motor.
+* 			This parameter should be 0~2. 0: CW; 1: CCW; 2: maintain.
+* @param	Speed: the speed of motor in %. This parameter should be: 0~100.
+* @retval 	None
+*/
+void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
+{
+	// Motor-0
+	const u8 Motor0_Pin_Enbale;
+	const u8 Motor0_Pin_Direction;
+	const u8 Motor0_Pin_Speed = PB4;	// TIM3_CH1; Arduino:D5
+
+	// Motor-1
+	const u8 Motor1_Pin_Enbale;
+	const u8 Motor1_Pin_Direction;
+	const u8 Motor1_Pin_Speed = PB10;	// TIM2_CH3; Arduino:D6
 }
 
 /**

@@ -39,6 +39,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 extern __IO uint8_t BlinkSpeed;    
+uint8_t nInst = 0;	// The number of instruction
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -181,14 +183,37 @@ void USART2_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
 	{
-		extern uint16_t USART_ReceivData;	// main.c
+		uint8_t selMotor;	// The motor which be selected
 
+		extern uint8_t USART_ReceivData[];	// main.c
 		USART_ReceivData = USART_ReceiveData(USART2);
 
+		USART_Send(USART2, "OK");
 
-		USART_SendData(USART2, USART_ReceiveData(USART2));
-		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
-		{/* Null */}	// Wait until transmission Complete
+		if(nInst == 0)
+			if(USART_ReceivData == 0xE0)				// System stop
+				;
+			else if(USART_ReceivData == 0xE1)			// System reset
+				;
+			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start
+				selMotor = ((USART_ReceivData & 0x18) >> 3);	// Select motor
+				nInst = (USART_ReceivData & 0x07);		// Set instruction number
+				while(nInst != (USART_ReceivData & 0x07))
+				{/* Null */}
+			else
+				;
+		else	// nInst != 0
+			if(((USART_ReceivData & 0x80) >> 7) == 0x01)	// Set motor speed
+				;
+			else
+				if(((USART_ReceivData & 0x40) >> 6) == 0x01) 	// Motor enable
+					;
+				else											// Motor disable
+					;
+				if(((USART_ReceivData & 0x20) >> 5) == 0x01) 	// Motor direction:CCW
+					;
+				else											// Motor direction:CW
+					;
 
 		/* NO need to clears the USARTx's interrupt pending bits */
 		/* USART_ClearITPendingBit(USART2,USART_IT_RXNE); */

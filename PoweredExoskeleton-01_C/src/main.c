@@ -18,6 +18,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>
 #include "main.h"
 
 /** @addtogroup IO_Toggle
@@ -35,7 +36,7 @@
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
-uint16_t USART_ReceivData;
+uint8_t USART_ReceivData[];
 
 // Motor control
 uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
@@ -48,7 +49,7 @@ RCC_ClocksTypeDef RCC_Clocks;
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief   Main program
+  * @brief	Main program
   * @param  None
   * @retval None
   */
@@ -66,16 +67,16 @@ int main(void)
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
   
   /* Initialize LED2 */
-  STM_EVAL_LEDInit(LED2);
+//  STM_EVAL_LEDInit(LED2);
   
   /* Initialize User_Button on STM32NUCLEO */
-  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);   
+//  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
   
   /* Initiate Blink Speed variable */ 
-  BlinkSpeed = 0;
+//  BlinkSpeed = 0;
   
   /* Infinite loop */
-  while (1)
+  while(1)
   {
 
   }

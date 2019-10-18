@@ -183,7 +183,7 @@ void USART2_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
 	{
-		uint8_t selMotor;	// The motor which be selected
+		uint8_t selMotor = 0xFF;	// The motor which be selected
 
 		extern uint8_t USART_ReceivData[];	// main.c
 		USART_ReceivData = USART_ReceiveData(USART2);
@@ -202,15 +202,14 @@ void USART2_IRQHandler(void)
 			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start
 			{
 				selMotor = ((USART_ReceivData & 0x18) >> 3);	// Select motor
-				nInst = (USART_ReceivData & 0x07);		// Set instruction number
 				while(nInst != (USART_ReceivData & 0x07))
-				{/* Null */}
+					nInst = (USART_ReceivData & 0x07);	// Set instruction number
 			}
 			else
 				;
 		else	// nInst != 0
 		{
-			nInst -= 1;
+			--nInst;
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01)	// Set motor speed
 			{
 				USART_Send(USART2, "[Set motor speed] Done.\n");
@@ -237,7 +236,7 @@ void USART2_IRQHandler(void)
 			}
 			if(nInst == 0)
 			{
-				selMotor = 0xF;	// Deselect motor
+				selMotor = 0xFF;	// Deselect motor
 				USART_Send(USART2, "[Motor control] Done.\n");
 			}
 		}

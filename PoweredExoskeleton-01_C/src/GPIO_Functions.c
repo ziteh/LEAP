@@ -229,14 +229,12 @@ void PinToggle(u8 PortPin)
   */
 void PinWrite(u8 PortPin, u8 Value)
 {
-	if(Value)
-	{
+	if(Value == 1)
 		PinSet(PortPin);
-	}
 	else if(Value == 0)
-	{
 		PinClr(PortPin);
-	}
+	else
+		/* Null */;
 }
 
 /**
@@ -249,7 +247,7 @@ void PinWrite(u8 PortPin, u8 Value)
   */
 u8 PinRead(u8 PortPin)
 {
-	int PinInputValue;
+	u8 PinInputValue;
 
 	if(PortPin <= 15)									// Port-A:  0~15
 		PinInputValue = (GPIOA->IDR & (0x0001 << PortPin));

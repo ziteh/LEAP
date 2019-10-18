@@ -19,6 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
+//#include "stm32f10x.h"
 #include "main.h"
 #include "GPIO_Functions.h"
 #include "RCC_Functions.h"

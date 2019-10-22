@@ -18,7 +18,8 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include <string.h>
+//#include <string.h>
+//#include <stdint.h>
 #include "stm32f10x.h"
 #include "main.h"
 #include "GPIO_Functions.h"
@@ -59,7 +60,7 @@ RCC_ClocksTypeDef RCC_Clocks;
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
-uint8_t USART_ReceivData[];
+//uint8_t USART_ReceivData[];
 
 // Motor control
 uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
@@ -106,7 +107,17 @@ int main(void)
   /* Infinite loop */
   while(1)
   {
+	  //USART_Send(USART2, "Hi");
+	  uint8_t Data[] = "Hi";
+	  for (int i = 0; Data[i] != '\0'; i++)
+	  	{
+	  		/* Transmits single data through the USARTx peripheral */
+	  		USART_SendData(USART2, (uint16_t)Data[i]);
 
+	  		/* Wait until transmission complete, use TC or TXE flag */
+	  		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
+	  		{/* Null */}
+	  	}
   }
 }
 

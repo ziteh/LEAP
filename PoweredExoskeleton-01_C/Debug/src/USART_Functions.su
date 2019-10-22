@@ -1,0 +1,2 @@
+USART_Functions.c:37:6:USART_Initialization	24	static
+USART_Functions.c:81:6:USART_Send	24	static

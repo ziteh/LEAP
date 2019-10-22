@@ -71,7 +71,7 @@ void GPIO_Initialization(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 
-	/* Motor-0 */
+	/* Motor0 */
 	// PB5: Motor0_Enbale
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -91,7 +91,7 @@ void GPIO_Initialization(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 
-	/* Motor-1 */
+	/* Motor1 */
 	// PA8: Motor1_Enbale
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;

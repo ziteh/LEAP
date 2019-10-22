@@ -40,15 +40,17 @@ void RCC_Initialization(void)
 	RCC_DeInit();
 
 	/* RCC APB1 */
-//	RCC_APB1PeriphClockCmd(	RCC_APB1Periph_USART2, ENABLE);
+	RCC_APB1PeriphClockCmd(	RCC_APB1Periph_USART2	|
+							RCC_APB1Periph_TIM2		|	// PWM:Motor0-Speed
+							RCC_APB1Periph_TIM3		,	// PWM:Motor1-Speed
+							ENABLE);
 
 	/* RCC APB2 */
 	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOA |
 							RCC_APB2Periph_GPIOB |
 							RCC_APB2Periph_GPIOC |
 							RCC_APB2Periph_GPIOD |
-							RCC_APB2Periph_GPIOE |
-							RCC_APB2Periph_USART1,
+							RCC_APB2Periph_GPIOE ,
 							ENABLE);
 }
 

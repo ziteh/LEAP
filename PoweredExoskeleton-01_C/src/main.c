@@ -19,7 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <string.h>
-//#include "stm32f10x.h"
+#include "stm32f10x.h"
 #include "main.h"
 #include "GPIO_Functions.h"
 #include "RCC_Functions.h"
@@ -88,6 +88,12 @@ int main(void)
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
   
   /* Initialize */
+  RCC_Initialization();
+  GPIO_Initialization();
+  PWM_Initialization();
+  USART_Initialization();
+  NVIC_Initialization();
+
   /* Initialize LED2 */
 //  STM_EVAL_LEDInit(LED2);
   

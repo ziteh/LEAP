@@ -43,36 +43,71 @@ void GPIO_Initialization(void)
 	GPIO_StructInit(&GPIO_InitStructure);	// Fills each GPIO_InitStruct member with its default value
 
 	/* Configure the GPIO pin */
-	/* Port-A */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;				//LED1控制--PA5
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;		//推輓輸出
+	/* user */
+	// PA5: LED-user
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;				//USART2 TX
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;			//複用推輓輸出
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);					//A埠
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;				//USART2 RX
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;	//複用開漏輸入
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);					//A埠
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;				//USART1 TX
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;			//複用推輓輸出
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);					//A埠
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;				//USART1 RX
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;	//複用開漏輸入
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);					//A埠
-
-	/* Port-C */
+	// PC13: Button-user
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+
+	/* USART */
+	// PA2: USART2_TX
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	// PA3: USART2_RX
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+
+	/* Motor-0 */
+	// PB5: Motor0_Enbale
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	// PB4: Motor0-Direction
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	// PB10: Motor0-Speed(PWM, TIM2_CH3)
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+
+	/* Motor-1 */
+	// PA8: Motor1_Enbale
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	// PA9: Motor1-Direction
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	// PC7: Motor1-Speed(PWM, TIM3_CH2)
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 

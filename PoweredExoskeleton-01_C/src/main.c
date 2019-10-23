@@ -40,6 +40,26 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define Enable 	(1)
+#define Disable (0)
+#define CW		(0)
+#define CCW		(1)
+
+/* Pin define */
+// Nucleo-64 board
+#define PinButton_User	(PC13)	// B1. When push the button, the I/O is LOW value.
+#define PinLED_User		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
+
+// Motor-0
+#define PinMotor0_Enbale	(PB5)	// Arduino:D4
+#define PinMotor0_Direction	(PB4)	// Arduino:D5
+#define PinMotor0_Speed		(PB10)	// Arduino:D6(PWM); TIM2_CH3
+
+// Motor-1
+#define PinMotor1_Enbale	(PA8)	// Arduino:D7
+#define PinMotor1_Direction	(PA9)	// Arduino:D8
+#define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
@@ -47,6 +67,11 @@ uint8_t BlinkSpeed = 0;
 
 uint8_t TxBuf1[] = "Hello, World!\n";
 uint8_t RxBuf1[] = "";
+
+// Motor control
+uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
+uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
+uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,11 +128,16 @@ int main(void)
 }
 
 /**
-* @brief  Control motor.
-* @param
-* @retval None
+* @brief  	Control the motor.
+* @param	Motor: the number of motor. This parameter should be: 0~1.
+* @param	Status: the status of motor.
+* 			This parameter should be 0~2. 0: Disable; 1: Enable; 2: maintain.
+* @param	Direction: the direction of motor.
+* 			This parameter should be 0~2. 0: CW; 1: CCW; 2: maintain.
+* @param	Speed: the speed of motor in %. This parameter should be: 0~100.
+* @retval 	None
 */
-void MotorCtrl(u8 Number, u8 Enable, u8 Direction, u8 Speed)
+void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 {
 
 }

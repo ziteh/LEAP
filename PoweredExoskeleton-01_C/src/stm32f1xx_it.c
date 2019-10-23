@@ -39,7 +39,8 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern __IO uint8_t BlinkSpeed;    
+extern __IO uint8_t BlinkSpeed;
+uint16_t nInst = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -182,13 +183,72 @@ void USART2_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
 	{
-		USART_SendData(USART2, USART_ReceiveData(USART2));
+//		USART_SendData(USART2, USART_ReceiveData(USART2));
+//
+//		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
+//		{}	// Wait until transmission Complete
 
-		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
-		{}	// Wait until transmission Complete
+		uint8_t selMotor = 0xFF;	// The motor which be selected
+//		extern uint8_t USART_ReceivData[];	// main.c
+		uint16_t USART_ReceivData = 0xF0;
 
-		/* NO need to Clears the USART1's interrupt pending bits */
-//		USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+		USART_ReceivData = USART_ReceiveData(USART2);
+
+//		USART_Send(USART2, USART_ReceivData);
+		USART_Send(USART2, "STM32:OK.\n");
+
+		if(nInst == 0)
+			if(USART_ReceivData == 0xE0)				// System stop
+			{
+				USART_Send(USART2, "[System stop] Done.\n");
+			}
+			else if(USART_ReceivData == 0xE1)			// System reset
+			{
+				USART_Send(USART2, "[System reset] Done.\n");
+			}
+			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start
+			{
+				selMotor = ((USART_ReceivData & 0x18) >> 3);	// Select motor
+				while(nInst != (USART_ReceivData & 0x07))
+					nInst = (USART_ReceivData & 0x07);	// Set instruction number
+			}
+			else
+				;
+		else	// nInst != 0
+		{
+			--nInst;
+			if(((USART_ReceivData & 0x80) >> 7) == 0x01)	// Set motor speed
+			{
+				USART_Send(USART2, "[Set motor speed] Done.\n");
+			}
+			else
+			{
+				if(((USART_ReceivData & 0x40) >> 6) == 0x01) 	// Motor enable
+				{
+					USART_Send(USART2, "[Motor enable] Done.\n");
+				}
+				else											// Motor disable
+				{
+					USART_Send(USART2, "[Motor disable] Done.\n");
+				}
+
+				if(((USART_ReceivData & 0x20) >> 5) == 0x01) 	// Motor direction:CCW
+				{
+					USART_Send(USART2, "[Motor direction:CCW] Done.\n");
+				}
+				else											// Motor direction:CW
+				{
+					USART_Send(USART2, "[Motor direction:CW] Done.\n");
+				}
+			}
+			if(nInst == 0)
+			{
+				selMotor = 0xFF;	// Deselect motor
+				USART_Send(USART2, "[Motor control] Done.\n");
+			}
+		}
+		/* NO need to clears the USARTx's interrupt pending bits */
+		/* USART_ClearITPendingBit(USART2,USART_IT_RXNE); */
 	}
 }
 

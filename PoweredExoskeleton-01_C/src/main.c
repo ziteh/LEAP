@@ -108,7 +108,7 @@ int main(void)
   while(1)
   {
 	  //USART_Send(USART2, "Hi");
-	  uint8_t Data[] = "Hi";
+	  uint8_t Data[] = "Hi\n";
 	  for (int i = 0; Data[i] != '\0'; i++)
 	  	{
 	  		/* Transmits single data through the USARTx peripheral */
@@ -118,6 +118,7 @@ int main(void)
 	  		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
 	  		{/* Null */}
 	  	}
+	  Delay(1000);
   }
 }
 

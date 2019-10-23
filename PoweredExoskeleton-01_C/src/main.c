@@ -103,6 +103,16 @@ int main(void)
 }
 
 /**
+* @brief  Control motor.
+* @param
+* @retval None
+*/
+void MotorCtrl(u8 Number, u8 Enable, u8 Direction, u8 Speed)
+{
+
+}
+
+/**
 * @brief  Inserts a delay time.
 * @param  nTime: specifies the delay time length, in 1 ms.
 * @retval None

@@ -1,77 +1,60 @@
-
 /**
- ******************************************************************************
- * @file		main.c
- * @author		Huang Tzu-Fu
- * 				National Formosa University
- * 				Department of Electronic Engineering
- * 				Intelligent Robot System Laboratory
- * @version 	V0.1.0
- * @date		17-October-2019
- * @brief   	Powered exoskeleton main program body
- ******************************************************************************
- * @attention
- *
- * None
- *
- ******************************************************************************
- */
+  ******************************************************************************
+  * @file    main.c
+  * @author  MCD Application Team
+  * @version V1.0.0
+  * @date    7-September-2014
+  * @brief   Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
+  *
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
-//#include <string.h>
-//#include <stdint.h>
-#include "stm32f10x.h"
 #include "main.h"
+#include "stm32f10x.h"
 #include "GPIO_Functions.h"
+#include "GPIO_mapping.h"
 #include "RCC_Functions.h"
 #include "NVIC_Functions.h"
 #include "USART_Functions.h"
-#include "PWM_Functions.h"
 
 /** @addtogroup IO_Toggle
   * @{
   */ 
 
 /* Private typedef -----------------------------------------------------------*/
-RCC_ClocksTypeDef RCC_Clocks;
-
 /* Private define ------------------------------------------------------------*/
-#define Enable 	(1)
-#define Disable (0)
-#define CW		(0)
-#define CCW		(1)
-
-/* Pin define */
-// Nucleo-64 board
-#define PinButton_User	(PC13)	// B1. When push the button, the I/O is LOW value.
-#define PinLED_User		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
-
-// Motor-0
-#define PinMotor0_Enbale	(PB5)	// Arduino:D4
-#define PinMotor0_Direction	(PB4)	// Arduino:D5
-#define PinMotor0_Speed		(PB10)	// Arduino:D6(PWM); TIM2_CH3
-
-// Motor-1
-#define PinMotor1_Enbale	(PA8)	// Arduino:D7
-#define PinMotor1_Direction	(PA9)	// Arduino:D8
-#define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
-//uint8_t USART_ReceivData[];
 
-// Motor control
-uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
-uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
-uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
+uint8_t TxBuf1[] = "Hello, World!\n";
+uint8_t RxBuf1[] = "";
+
 
 /* Private function prototypes -----------------------------------------------*/
+RCC_ClocksTypeDef RCC_Clocks;
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief	Main program
+  * @brief   Main program
   * @param  None
   * @retval None
   */
@@ -88,13 +71,6 @@ int main(void)
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
   
-  /* Initialize */
-  RCC_Initialization();
-  GPIO_Initialization();
-  PWM_Initialization();
-  USART_Initialization();
-  NVIC_Initialization();
-
   /* Initialize LED2 */
 //  STM_EVAL_LEDInit(LED2);
   
@@ -103,38 +79,27 @@ int main(void)
   
   /* Initiate Blink Speed variable */ 
 //  BlinkSpeed = 0;
-  
+
+  /* Initialization */
+  RCC_Initialization();
+  USART_Initialization();	// USART不能在RCC前初始化
+  GPIO_Initialization();	// GPIO不能在RCC前初始化
+  NVIC_Initialization();
+
+  GPIO_ResetBits(GPIOA,GPIO_Pin_5);
+
   /* Infinite loop */
-  while(1)
+  while (1)
   {
-	  //USART_Send(USART2, "Hi");
-	  uint8_t Data[] = "Hi\n";
-	  for (int i = 0; Data[i] != '\0'; i++)
-	  	{
-	  		/* Transmits single data through the USARTx peripheral */
-	  		USART_SendData(USART2, (uint16_t)Data[i]);
+	for (int i = 0; TxBuf1[i] != '\0'; i++)
+	{
+		USART_SendData(USART2, (uint16_t)TxBuf1[i]);
 
-	  		/* Wait until transmission complete, use TC or TXE flag */
-	  		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
-	  		{/* Null */}
-	  	}
-	  Delay(1000);
+		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
+		{}	// Wait until transmission Complete
+	}
+	Delay(100);
   }
-}
-
-/**
-* @brief  	Control the motor.
-* @param	Motor: the number of motor. This parameter should be: 0~1.
-* @param	Status: the status of motor.
-* 			This parameter should be 0~2. 0: Disable; 1: Enable; 2: maintain.
-* @param	Direction: the direction of motor.
-* 			This parameter should be 0~2. 0: CW; 1: CCW; 2: maintain.
-* @param	Speed: the speed of motor in %. This parameter should be: 0~100.
-* @retval 	None
-*/
-void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
-{
-
 }
 
 /**
@@ -189,4 +154,4 @@ void assert_failed(uint8_t* file, uint32_t line)
 */
 
 
-/********************************END OF FILE***********************************/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

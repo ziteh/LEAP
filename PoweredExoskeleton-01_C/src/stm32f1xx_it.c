@@ -195,7 +195,7 @@ void USART2_IRQHandler(void)
 		USART_ReceivData = USART_ReceiveData(USART2);
 
 //		USART_Send(USART2, USART_ReceivData);
-		USART_Send(USART2, "STM32:OK.\n");
+		USART_Send(USART2, "STM32:OK. ");
 
 		if(nInst == 0)
 			if(USART_ReceivData == 0xE0)				// System stop
@@ -212,8 +212,12 @@ void USART2_IRQHandler(void)
 				while(nInst != (USART_ReceivData & 0x07))
 					nInst = (USART_ReceivData & 0x07);	// Set instruction number
 			}
-			else
-				;
+			else if(USART_ReceivData == 0xF0)
+				/* Null */;
+			else	// Unknown instruction
+			{
+				USART_Send(USART2, "Unknown instruction\n");
+			}
 		else	// nInst != 0
 		{
 			--nInst;

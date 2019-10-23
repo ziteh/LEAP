@@ -82,8 +82,8 @@ int main(void)
 
   /* Initialization */
   RCC_Initialization();
-  USART_Initialization();	// USART不能在RCC前初始化
-  GPIO_Initialization();	// GPIO不能在RCC前初始化
+  USART_Initialization();
+  GPIO_Initialization();
   NVIC_Initialization();
 
   GPIO_ResetBits(GPIOA,GPIO_Pin_5);
@@ -91,14 +91,14 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
-	for (int i = 0; TxBuf1[i] != '\0'; i++)
-	{
-		USART_SendData(USART2, (uint16_t)TxBuf1[i]);
-
-		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
-		{}	// Wait until transmission Complete
-	}
-	Delay(100);
+//	for (int i = 0; TxBuf1[i] != '\0'; i++)
+//	{
+//		USART_SendData(USART2, (uint16_t)TxBuf1[i]);
+//
+//		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
+//		{}	// Wait until transmission Complete
+//	}
+//	Delay(100);
   }
 }
 

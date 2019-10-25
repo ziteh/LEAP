@@ -68,12 +68,12 @@ void PWM_Initialization(void)
 	TIM_OC3Init(TIM2, &TIM_OCInitStructure);	// TIM2_CH3
 
 	/* Enable */
-	// TIM3
+	// TIM3_CH2 (Motor1)
 	TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);	// TIMx peripheral Preload register on CCR1
 	TIM_ARRPreloadConfig(TIM3, ENABLE);					// TIMx peripheral Preload register on ARR
 	TIM_Cmd(TIM3, ENABLE);								// The specified TIM peripheral
 
-	// TIM2
+	// TIM2_CH3 (Motor0)
 	TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Enable);	// TIMx peripheral Preload register on CCR1
 	TIM_ARRPreloadConfig(TIM2, ENABLE);					// TIMx peripheral Preload register on ARR
 	TIM_Cmd(TIM2, ENABLE);								// The specified TIM peripheral

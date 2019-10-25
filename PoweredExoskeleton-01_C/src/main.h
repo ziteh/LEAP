@@ -39,6 +39,9 @@
 /* Exported functions ------------------------------------------------------- */
 void TimingDelay_Decrement(void);
 void Delay(__IO uint32_t nTime);
+void SendStatus(uint8_t Motor);
+void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed);
+
 #endif /* __MAIN_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

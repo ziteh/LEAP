@@ -1,29 +1,21 @@
+
 /**
-  ******************************************************************************
-  * @file    main.c
-  * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    7-September-2014
-  * @brief   Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT 2014 STMicroelectronics</center></h2>
-  *
-  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
-  * You may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at:
-  *
-  *        http://www.st.com/software_license_agreement_liberty_v2
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file   		main.c
+ *	@author  	Huang Tzu-Fu
+ * 				National Formosa University
+ * 				Department of Electronic Engineering
+ * 				Intelligent Robot System Laboratory
+ * @version 	V1.0.0
+ * @date    	25-October-2019
+ * @brief   	Main program body of Powered Exoskeleton
+ ******************************************************************************
+ * @attention
+ *
+ * None
+ *
+ ******************************************************************************
+ */
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -34,11 +26,13 @@
 #include "NVIC_Functions.h"
 #include "USART_Functions.h"
 
-/** @addtogroup IO_Toggle
+/** @addtogroup Powered Exoskeleton
   * @{
   */ 
 
 /* Private typedef -----------------------------------------------------------*/
+RCC_ClocksTypeDef RCC_Clocks;
+
 /* Private define ------------------------------------------------------------*/
 #define Enable 	(1)
 #define Disable (0)
@@ -54,28 +48,41 @@
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
 #define PinMotor0_Direction	(PB4)	// Arduino:D5
 #define PinMotor0_Speed		(PB10)	// Arduino:D6(PWM); TIM2_CH3
+#define PinMotor0_Ready		(PB3)	// Arduino:D3
 
 // Motor-1
 #define PinMotor1_Enbale	(PA8)	// Arduino:D7
 #define PinMotor1_Direction	(PA9)	// Arduino:D8
 #define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2
+#define PinMotor1_Ready		(PB6)	// Arduino:D10
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
 
+// USART
 uint8_t TxBuf1[] = "Hello, World!\n";
-uint8_t RxBuf1[] = "";
+//uint8_t RxBuf1[] = "";
+
+// Motor
+	// Row: Motor number; Column: The pin of Enable,Direction,Ready
+uint8_t MotorPin[2][3] =
+{ 		// | Enable | Direction | Ready |
+		{PB5, PB4, PB3},	// Motor0
+		{PA8, PA9, PB6}		// Motor1
+};
+
+	// The PWM timer of Motor0, Motor1
+uint32_t MotorTimer[2] = {TIM2, TIM3};
 
 // Motor control
-uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
-uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
-uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
+//uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
+//uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
+//uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
 
 
 /* Private function prototypes -----------------------------------------------*/
-RCC_ClocksTypeDef RCC_Clocks;
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -110,21 +117,45 @@ int main(void)
   USART_Initialization();
   GPIO_Initialization();
   NVIC_Initialization();
+  PWM_Initialization();
 
   GPIO_ResetBits(GPIOA,GPIO_Pin_5);
 
   /* Infinite loop */
   while (1)
   {
-//	for (int i = 0; TxBuf1[i] != '\0'; i++)
-//	{
-//		USART_SendData(USART2, (uint16_t)TxBuf1[i]);
-//
-//		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
-//		{}	// Wait until transmission Complete
-//	}
-//	Delay(100);
+	for (int i = 0; TxBuf1[i] != '\0'; i++)
+	{
+		USART_SendData(USART2, (uint16_t)TxBuf1[i]);
+
+		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
+		{}	// Wait until transmission Complete
+	}
+	Delay(100);
   }
+}
+
+/**
+* @brief  	Send status.
+* @param	Motor: the number of motor. This parameter should be: 0~1.
+* @retval 	None
+*/
+void SendStatus(uint8_t Motor)
+{
+	uint8_t TxData;
+//	uint8_t Status[] = "";
+
+	// 0b010nnrXX
+	TxData = ((0x40 | (Motor << 3)) | (PinRead(MotorPin[Motor][2]) << 2));
+	USART_Send(USART2, TxData);
+//	USART_Send(USART2, "[Status]Motor%d "+Status+"\n", Motor);
+
+	if(PinRead(MotorPin[Motor][2]) == 1)
+		USART_Send(USART2, "[Status]Motor%d Ready\n", Motor);
+//		Status = "Ready";
+	else
+		USART_Send(USART2, "[Status]Motor%d FAULT!\n", Motor);
+//		Status = "FAULT!";
 }
 
 /**
@@ -139,7 +170,109 @@ int main(void)
 */
 void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 {
+//	u16 DutyCycleValue;
 
+	// Status
+	if(Status == 1)
+	{
+		PinWrite((MotorPin[Motor][0]), Enable);
+	}
+	else if(Status == 0)
+	{
+		PinWrite((MotorPin[Motor][0]), Disable);
+	}
+	else
+		/*Null*/;
+
+	// Direction
+	if(Direction == 1)
+	{
+		PinWrite((MotorPin[Motor][1]), CCW);
+	}
+	else if(Direction == 0)
+	{
+		PinWrite((MotorPin[Motor][1]), CW);
+	}
+	else
+		/*Null*/;
+
+	// Speed
+	if(Speed == 0)	// OFF
+	{
+		PinWrite((MotorPin[Motor][0]), Disable);
+	}
+	else if(Speed == 100)
+	{
+		TIM_SetCompare1((MotorTimer[Motor]), 999);	// Set PWM duty cycle=100%
+	}
+	else if((Speed > 0) && (Speed < 100))
+	{
+		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
+	}
+	else if(Speed == 127)	// Keep
+	{
+		/* Null */;
+	}
+	else
+		/* Null */;
+
+//	switch(Motor)
+//	{
+//		/* Motor0 */
+//		case 0:
+//			// Status
+//			if(Status == 1)
+//			{
+//				PinWrite(PinMotor0_Enbale, Enable);
+//			}
+//			else if(Status == 0)
+//			{
+//				PinWrite(PinMotor0_Enbale, Disable);
+//			}
+//			else
+//				/*Null*/;
+//
+//			// Direction
+//			if(Direction == 1)		// 1=CCW
+//			{
+//				PinWrite(PinMotor0_Direction, CCW);
+//			}
+//			else if(Status == 0)	// 0=CW
+//			{
+//				PinWrite(PinMotor0_Direction, CW);
+//			}
+//			else
+//				/*Null*/;
+//
+//			// Speed
+//			if(Speed == 0)	// OFF
+//			{
+//				PinWrite(PinMotor0_Enbale, Disable);
+//			}
+//			else if(Speed == 100)
+//			{
+//				TIM_SetCompare1(TIM2, 999);	// Set PWM duty cycle=100%
+//			}
+//			else if((Speed > 0) && (Speed < 100))
+//			{
+//				TIM_SetCompare1(TIM2, ((Speed-1)*10)); // Set PWM duty cycle
+//			}
+//			else if(Speed == 127)	// Keep
+//			{
+//				/* Null */;
+//			}
+//			else
+//				/* Null */;
+//
+//			break;
+//
+//		/* Motor1 */
+//		case 1:
+//
+//			break;
+//		default:
+//			break;
+//	}
 }
 
 /**

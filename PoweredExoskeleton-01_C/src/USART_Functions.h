@@ -27,6 +27,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void USART_Initialization(void);
+void USART_Send(USART_TypeDef* USARTx, uint8_t* Data);
 
 #endif /* __USART_FUNCTIONS_H */
 

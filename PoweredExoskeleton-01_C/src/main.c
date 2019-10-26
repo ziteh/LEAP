@@ -21,10 +21,10 @@
 #include "main.h"
 #include "stm32f10x.h"
 #include "GPIO_Functions.h"
-#include "GPIO_mapping.h"
 #include "RCC_Functions.h"
 #include "NVIC_Functions.h"
 #include "USART_Functions.h"
+#include "PWM_Functions.h"
 
 /** @addtogroup Powered Exoskeleton
   * @{
@@ -117,7 +117,7 @@ int main(void)
   USART_Initialization();
   GPIO_Initialization();
   NVIC_Initialization();
-  PWM_Initialization();
+//  PWM_Initialization();
 
   GPIO_ResetBits(GPIOA,GPIO_Pin_5);
 
@@ -151,10 +151,10 @@ void SendStatus(uint8_t Motor)
 //	USART_Send(USART2, "[Status]Motor%d "+Status+"\n", Motor);
 
 	if(PinRead(MotorPin[Motor][2]) == 1)
-		USART_Send(USART2, "[Status]Motor%d Ready\n", Motor);
+		USART_Send(USART2, "[Status]Motor Ready\n");
 //		Status = "Ready";
 	else
-		USART_Send(USART2, "[Status]Motor%d FAULT!\n", Motor);
+		USART_Send(USART2, "[Status]Motor FAULT!\n");
 //		Status = "FAULT!";
 }
 

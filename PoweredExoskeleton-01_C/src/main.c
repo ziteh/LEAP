@@ -2,7 +2,7 @@
 /**
  ******************************************************************************
  * @file   		main.c
- *	@author  	Huang Tzu-Fu
+ *	@author  	Huang, Tzu-Fu
  * 				National Formosa University
  * 				Department of Electronic Engineering
  * 				Intelligent Robot System Laboratory

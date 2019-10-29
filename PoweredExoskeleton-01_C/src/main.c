@@ -122,7 +122,7 @@ int main(void)
 	/* Infinite loop */
 	while (1)
 	{
-		USART_Send(USART2, TxBuf1);
+//		USART_Send(USART2, TxBuf1);
 		for(int i=0; i<2; i++)	// Send status of motor0&1
 		{
 			SendStatus(i);

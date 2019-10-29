@@ -190,9 +190,12 @@ void USART2_IRQHandler(void)
 		USART_ReceivData = USART_ReceiveData(USART2);
 
 //		USART_Send(USART2, USART_ReceivData);
-		USART_Send(USART2, "STM32:");
+//		USART_Send(USART2, "STM32:");
 
 		if(nInst == 0)
+		{
+			USART_Send(USART2, "STM32:\n");
+
 			if(USART_ReceivData == 0xE0)				// System stop
 			{
 				USART_Send(USART2, "[System]Stop.\n");
@@ -213,33 +216,55 @@ void USART2_IRQHandler(void)
 			{
 				USART_Send(USART2, "[Error]Unknown instruction.\n");
 			}
+		}
 		else	// nInst != 0
 		{
 			--nInst;
-			if(((USART_ReceivData & 0x80) >> 7) == 0x01)	// Set motor speed
+
+			// Set motor speed
+			if(((USART_ReceivData & 0x80) >> 7) == 0x01) 		// 1xxx xxxx(b)
 			{
+//				MotorCtrl(selMotor, 2, 2, 127);
 				USART_Send(USART2, "[Motor]Set speed.\n");
 			}
-			else
+			else												// 0xxx xxxx(b)
 			{
-				if(((USART_ReceivData & 0x40) >> 6) == 0x01) 	// Motor enable
+				/* Motor status */
+				// Motor status:Enable
+				if(((USART_ReceivData & 0x60) >> 5) == 0x01)	// x01x xxxx(b)
 				{
+					MotorCtrl(selMotor, 1, 2, 127);
 					USART_Send(USART2, "[Motor]Enable.\n");
 				}
-				else											// Motor disable
+				// Motor status:Disable
+				else if(((USART_ReceivData & 0x60) >> 5) == 0x00)// x00x xxxx(b)
 				{
+					MotorCtrl(selMotor, 0, 2, 127);
 					USART_Send(USART2, "[Motor]Disable.\n");
 				}
+				// Motor status:Keep
+				else
+					/* Null */;
 
-				if(((USART_ReceivData & 0x20) >> 5) == 0x01) 	// Motor direction:CCW
+				/* Motor direction */
+				// Motor direction:CCW
+				if(((USART_ReceivData & 0x18) >> 3) == 0x01)	// xxx0 1xxx(b)
 				{
+					MotorCtrl(selMotor, 2, 1, 127);
 					USART_Send(USART2, "[Motor]Direction:CCW.\n");
 				}
-				else											// Motor direction:CW
+				// Motor direction:CW
+				else if(((USART_ReceivData & 0x18) >> 3) == 0x00)// xxx0 0xxx(b)
 				{
+					MotorCtrl(selMotor, 2, 0, 127);
 					USART_Send(USART2, "[Motor]Direction:CW.\n");
 				}
+				// Motor direction:Keep
+				else
+					/* Null */;
 			}
+
+			// End of instruction
 			if(nInst == 0)
 			{
 				selMotor = 0xFF;	// Deselect motor

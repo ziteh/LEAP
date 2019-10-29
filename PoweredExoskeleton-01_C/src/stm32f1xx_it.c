@@ -41,6 +41,7 @@
 /* Private variables ---------------------------------------------------------*/
 extern __IO uint8_t BlinkSpeed;
 uint16_t nInst = 0;
+uint8_t selMotor = 0xFF;	// The motor which be selected
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -184,8 +185,8 @@ void USART2_IRQHandler(void)
 {
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
 	{
-		uint8_t selMotor = 0xFF;	// The motor which be selected
 		uint16_t USART_ReceivData = 0xF0;
+//		uint8_t InstTex[] = "";
 
 		USART_ReceivData = USART_ReceiveData(USART2);
 
@@ -206,7 +207,9 @@ void USART2_IRQHandler(void)
 			}
 			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start
 			{
-				selMotor = ((USART_ReceivData & 0x18) >> 3);	// Select motor
+				while(selMotor != ((USART_ReceivData & 0x18) >> 3))
+					selMotor = ((USART_ReceivData & 0x18) >> 3);// Select motor
+
 				while(nInst != (USART_ReceivData & 0x07))
 					nInst = (USART_ReceivData & 0x07);	// Set instruction number
 			}
@@ -221,6 +224,16 @@ void USART2_IRQHandler(void)
 		{
 			--nInst;
 
+			if(selMotor == 0x00)
+				USART_Send(USART2, "Motor-0\n");
+			else if(selMotor == 0x01)
+				USART_Send(USART2, "Motor-1\n");
+			else
+				USART_Send(USART2, "[Error]No motors selected");
+
+//			InstTex = "Motor" + (selMotor) + "\n";
+//			USART_Send(USART2, InstTex);
+
 			// Set motor speed
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01) 		// 1xxx xxxx(b)
 			{
@@ -230,38 +243,36 @@ void USART2_IRQHandler(void)
 			else												// 0xxx xxxx(b)
 			{
 				/* Motor status */
-				// Motor status:Enable
+				// Enable
 				if(((USART_ReceivData & 0x60) >> 5) == 0x01)	// x01x xxxx(b)
 				{
 					MotorCtrl(selMotor, 1, 2, 127);
 					USART_Send(USART2, "[Motor]Enable.\n");
 				}
-				// Motor status:Disable
+				// Disable
 				else if(((USART_ReceivData & 0x60) >> 5) == 0x00)// x00x xxxx(b)
 				{
 					MotorCtrl(selMotor, 0, 2, 127);
 					USART_Send(USART2, "[Motor]Disable.\n");
 				}
-				// Motor status:Keep
-				else
-					/* Null */;
+				// Keep
+				else /* Null */;
 
 				/* Motor direction */
-				// Motor direction:CCW
+				// CCW
 				if(((USART_ReceivData & 0x18) >> 3) == 0x01)	// xxx0 1xxx(b)
 				{
 					MotorCtrl(selMotor, 2, 1, 127);
 					USART_Send(USART2, "[Motor]Direction:CCW.\n");
 				}
-				// Motor direction:CW
+				// CW
 				else if(((USART_ReceivData & 0x18) >> 3) == 0x00)// xxx0 0xxx(b)
 				{
 					MotorCtrl(selMotor, 2, 0, 127);
 					USART_Send(USART2, "[Motor]Direction:CW.\n");
 				}
-				// Motor direction:Keep
-				else
-					/* Null */;
+				// Keep
+				else /* Null */;
 			}
 
 			// End of instruction

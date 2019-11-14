@@ -24,24 +24,6 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
-/* -----Pin Mode and Speed----- */
-//#define In		(0)
-//#define Out		(1)
-//
-//#define GPPP	(0)
-//#define GPOD	(1)
-//#define AFPP	(2)
-//#define AFOD	(3)
-//
-//#define An		(0)
-//#define Fl		(1)
-//#define PD		(2)
-//#define PU		(3)
-//
-//#define s2M		(0)
-//#define s10M	(1)
-//#define s50M	(2)
-
 /* STM32 Pin(Morpho) */
 /*
  * Default=Alternate functions Default
@@ -49,7 +31,7 @@
  * Remap=Alternate functions Remap
  */
 
-// Port-A
+// Port-As
 #define PA0		(0)	// WKUP/USART2_CTS/ADC12_IN0/TIM2_CH1_ETR
 #define PA1		(1)	// USART2_RTS/ADC12_IN1/TIM2_CH2
 #define PA2		(2)	// USART2_TX/ADC12_IN2/TIM2_CH3

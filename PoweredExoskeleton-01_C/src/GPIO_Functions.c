@@ -24,6 +24,24 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+/* -----Pin Mode and Speed----- */
+#define OUT		(0)
+#define IN		(1)
+
+#define GPPP	(0)
+#define GPOD	(1)
+#define AFPP	(2)
+#define AFOD	(3)
+
+#define FL		(0)
+#define AN		(1)
+#define PD		(2)
+#define PU		(3)
+
+#define S2M		(0)
+#define S10M	(1)
+#define S50M	(2)
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -40,7 +58,8 @@ void GPIO_Initialization(void)
 	/* Structure Declarations */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	GPIO_StructInit(&GPIO_InitStructure);	// Fills each GPIO_InitStruct member with its default value
+	/* Fills each GPIO_InitStruct member with its default value */
+	GPIO_StructInit(&GPIO_InitStructure);
 
 	/* Configure the GPIO pin */
 	/* user */
@@ -122,74 +141,125 @@ void GPIO_Initialization(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
-//**
-//  * @brief  Config a pin Mode and Speed.
-//  * @param	PortPin: select a pin to set.
-//  * 		This parameter should be: 0 ~ 79
-//  * 		 0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
-//  * 		48~63:PD0~PD15; 64~79:PE0~PE15
-//  * @retval None
-//  */
-//void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
-//{
-//	u8 PinConfig = 0;
-//	u8 PxODR = 0;
-//
-//	if(INout == 1)
-//	{
-//		switch(Speed)
-//		{
-//			case 1:
-//				PinConfig = 0x0001;
-//				break;
-//			case 0:
-//				PinConfig = 0x0010;
-//				break;
-//			case 2:
-//				PinConfig = 0x0011;
-//				break;
-//			default:
-//				break;
-//		}
-//
-//		switch(Mode)
-//		{
-//			case 0:
-//				PinConfig |= 0x0000;
-//				break;
-//			case 1:
-//				PinConfig |= 0x0100;
-//				break;
-//			case 2:
-//				PinConfig |= 0x1000;
-//				break;
-//			case 3:
-//				PinConfig |= 0x1100;
-//				break;
-//		}
-//	}
-//	else if(INout == 0)
-//	{
-//		PinConfig = 0x0000;
-//		switch(Mode)
-//		{
-//			case 0:
-//				PinConfig |= 0x0000;
-//				break;
-//			case 1:
-//				PinConfig |= 0x0100;
-//				break;
-//			case 2:
-//				PinConfig |= 0x1000;
-//				PxODR = 0;
-//				break;
-//			case 3:
-//				PinConfig |= 0x1000;
-//				PxODR = 1;
-//				break;
-//		}
-//	}
-//}
+/**
+  * @brief  Config a pin Mode and Speed.
+  * @param	PortPin: select a pin to set.
+  * 		This parameter should be: 0 ~ 79
+  * 		 0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
+  * 		48~63:PD0~PD15; 64~79:PE0~PE15
+  * @param	INout: Input or Output.
+  * @param	Mode: Pin mode.
+  * @param	Speed: Pin speed.
+  * @retval None
+  */
+void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
+{
+	/* Structure Declarations */
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	// GPIO_Speed
+	switch(Speed)
+	{
+		case S2M:	// S2M:0
+			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+			break;
+		case S10M:	// S10M:1
+			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+			break;
+		case S50M:	// S50M:2
+			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+			break;
+		default:
+			break;
+	}
+
+	// GPIO_Mode
+	if(INout == OUT)	// OUT:0
+	{
+		switch(Mode)
+		{
+			case GPPP:	// GPPP:0
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+				break;
+			case GPOD:	// GPOD:1
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+				break;
+			case AFPP:	// AFPP:2
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+				break;
+			case AFOD:	// AFOD:3
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+				break;
+			default:
+				break;
+		}
+	}
+	else if(INout == IN) 	// IN:1
+	{
+		switch(Mode)
+		{
+			case FL:	// FL:0
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+				break;
+			case AN:	// AN:1
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
+				break;
+			case PD:	// PD:2
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+				break;
+			case PU:	// PU:3
+				GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+				break;
+			default:
+				break;
+		}
+	}
+
+	// GPIO_Pin & GPIO_Init() function.
+	if(PortPin <= 15)		// Port-A:  0~15
+	{
+		GPIO_InitStructure.GPIO_Pin = ((uint16_t)(0x0001 << PortPin));
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+	}
+	else if(PortPin <= 31)	// Port-B: 16~31
+	{
+		GPIO_InitStructure.GPIO_Pin = ((uint16_t)(0x0001 << (PortPin - 16)));
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+	}
+	else if(PortPin <= 47)	// Port-C: 32~47
+	{
+		GPIO_InitStructure.GPIO_Pin = ((uint16_t)(0x0001 << (PortPin - 32)));
+		GPIO_Init(GPIOC, &GPIO_InitStructure);
+	}
+	else if(PortPin <= 63)	// Port-D: 48~63
+	{
+		GPIO_InitStructure.GPIO_Pin = ((uint16_t)(0x0001 << (PortPin - 48)));
+		GPIO_Init(GPIOD, &GPIO_InitStructure);
+	}
+	else if(PortPin <= 79)	// Port-E: 64~79
+	{
+		GPIO_InitStructure.GPIO_Pin = ((uint16_t)(0x0001 << (PortPin - 64)));
+		GPIO_Init(GPIOE, &GPIO_InitStructure);
+	}
+	else /* Null */;		// Out of range(0~79)
+}
+
+#undef OUT
+#undef IN
+
+#undef GPPP
+#undef GPOD
+#undef AFPP
+#undef AFOD
+
+#undef FL
+#undef AN
+#undef PD
+#undef PU
+
+#undef S2M
+#undef S10M
+#undef S50M
 
 /**
   * @brief  Set a pin to High(1).

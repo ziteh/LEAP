@@ -61,26 +61,20 @@ RCC_ClocksTypeDef RCC_Clocks;
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
 
-// USART
+/* USART */
 uint8_t TxBuf1[] = "Hi, I'm STM32\n";
 //uint8_t RxBuf1[] = "";
 
-// Motor
-	// Row: Motor number; Column: The pin of Enable,Direction,Ready
+/* Motor */
+// Row: Motor number; Column: The pin of Enable,Direction,Ready
 uint8_t MotorPin[2][3] =
 {	// | Enable | Direction | Ready |
 	{PinMotor0_Enbale, PinMotor0_Direction, PinMotor0_Ready},	// Motor0
 	{PinMotor1_Enbale, PinMotor1_Direction, PinMotor1_Ready}	// Motor1
 };
 
-	// The PWM timer of Motor0, Motor1
+// The PWM timer of Motor0, Motor1
 uint32_t MotorTimer[2] = {TIM2, TIM3};
-
-// Motor control
-//uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
-//uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
-//uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
-
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -144,6 +138,7 @@ void SendStatus(uint8_t Motor)
 	// Binary:010nnrXX
 	TxData = ((0x40 | (Motor << 3)) | (PinRead(MotorPin[Motor][2]) << 2));
 	USART_Send(USART2, TxData);
+
 //	USART_Send(USART2, "[Status]Motor%d "+Status+"\n", Motor);
 
 	if(PinRead(MotorPin[Motor][2]) == 1)	// Motor_Ready pin=High
@@ -154,6 +149,7 @@ void SendStatus(uint8_t Motor)
 //		Status = "FAULT!";
 }
 
+
 /**
 * @brief  	Control the motor.
 * @param	Motor: the number of motor. This parameter should be: 0~1.
@@ -161,7 +157,7 @@ void SendStatus(uint8_t Motor)
 * 			This parameter should be 0~2. 0: Disable; 1: Enable; 2: maintain.
 * @param	Direction: the direction of motor.
 * 			This parameter should be 0~2. 0: CW; 1: CCW; 2: maintain.
-* @param	Speed: the speed of motor in %. This parameter should be: 0~100.
+* @param	Speed: the speed of motor in %. This parameter should be: 0~100,127.
 * @retval 	None
 */
 void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
@@ -169,28 +165,34 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 //	u16 DutyCycleValue;
 
 	// Status
-	if(Status == 1)
-	{
-		PinWrite((MotorPin[Motor][0]), Enable);
-	}
-	else if(Status == 0)
-	{
-		PinWrite((MotorPin[Motor][0]), Disable);
-	}
-	else
-		/*Null*/;
+	if(Status <= 1)
+		PinWrite((MotorPin[Motor][0]), Status);
+	else /* Null */;
+
+//	if(Status == 1)
+//	{
+//		PinWrite((MotorPin[Motor][0]), Enable);
+//	}
+//	else if(Status == 0)
+//	{
+//		PinWrite((MotorPin[Motor][0]), Disable);
+//	}
+//	else /*Null*/;
 
 	// Direction
-	if(Direction == 1)
-	{
-		PinWrite((MotorPin[Motor][1]), CCW);
-	}
-	else if(Direction == 0)
-	{
-		PinWrite((MotorPin[Motor][1]), CW);
-	}
-	else
-		/*Null*/;
+	if(Direction <= 1)
+		PinWrite((MotorPin[Motor][1]), Direction);
+	else /* Null */;
+
+//	if(Direction == 1)
+//	{
+//		PinWrite((MotorPin[Motor][1]), CCW);
+//	}
+//	else if(Direction == 0)
+//	{
+//		PinWrite((MotorPin[Motor][1]), CW);
+//	}
+//	else /*Null*/;
 
 	// Speed
 	if(Speed == 0)	// OFF
@@ -209,66 +211,7 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 	{
 		/* Null */;
 	}
-	else
-		/* Null */;
-
-//	switch(Motor)
-//	{
-//		/* Motor0 */
-//		case 0:
-//			// Status
-//			if(Status == 1)
-//			{
-//				PinWrite(PinMotor0_Enbale, Enable);
-//			}
-//			else if(Status == 0)
-//			{
-//				PinWrite(PinMotor0_Enbale, Disable);
-//			}
-//			else
-//				/*Null*/;
-//
-//			// Direction
-//			if(Direction == 1)		// 1=CCW
-//			{
-//				PinWrite(PinMotor0_Direction, CCW);
-//			}
-//			else if(Status == 0)	// 0=CW
-//			{
-//				PinWrite(PinMotor0_Direction, CW);
-//			}
-//			else
-//				/*Null*/;
-//
-//			// Speed
-//			if(Speed == 0)	// OFF
-//			{
-//				PinWrite(PinMotor0_Enbale, Disable);
-//			}
-//			else if(Speed == 100)
-//			{
-//				TIM_SetCompare1(TIM2, 999);	// Set PWM duty cycle=100%
-//			}
-//			else if((Speed > 0) && (Speed < 100))
-//			{
-//				TIM_SetCompare1(TIM2, ((Speed-1)*10)); // Set PWM duty cycle
-//			}
-//			else if(Speed == 127)	// Keep
-//			{
-//				/* Null */;
-//			}
-//			else
-//				/* Null */;
-//
-//			break;
-//
-//		/* Motor1 */
-//		case 1:
-//
-//			break;
-//		default:
-//			break;
-//	}
+	else /* Null */;
 }
 
 /**

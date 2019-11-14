@@ -1,7 +1,8 @@
-GPIO_Functions.c:38:6:GPIO_Initialization	16	static
-GPIO_Functions.c:202:6:PinSet	16	static
-GPIO_Functions.c:226:6:PinClr	16	static
-GPIO_Functions.c:250:6:PinToggle	16	static
-GPIO_Functions.c:276:6:PinWrite	16	static
-GPIO_Functions.c:294:4:PinRead	24	static
-GPIO_Functions.c:322:6:PortDetermine	24	static
+GPIO_Functions.c:56:6:GPIO_Initialization	16	static
+GPIO_Functions.c:155:6:PinMod	32	static
+GPIO_Functions.c:272:6:PinSet	16	static
+GPIO_Functions.c:296:6:PinClr	16	static
+GPIO_Functions.c:320:6:PinToggle	16	static
+GPIO_Functions.c:346:6:PinWrite	16	static
+GPIO_Functions.c:364:4:PinRead	24	static
+GPIO_Functions.c:392:6:PortDetermine	24	static

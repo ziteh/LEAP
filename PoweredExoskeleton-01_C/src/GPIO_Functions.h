@@ -30,6 +30,7 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void GPIO_Initialization(void);
+void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed);
 void PinSet(u8 PortPin);
 void PinClr(u8 PortPin);
 void PinToggle(u8 PortPin);

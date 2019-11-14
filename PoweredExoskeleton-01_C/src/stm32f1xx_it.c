@@ -236,7 +236,7 @@ void USART2_IRQHandler(void)
 			// Set motor speed
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01) 		// 1xxx xxxx(b)
 			{
-//				MotorCtrl(selMotor, 2, 2, (USART_ReceivData & 0x7F));
+				MotorCtrl(selMotor, 2, 2, (USART_ReceivData & 0x7F));
 				USART_Send(USART2, " Set speed.\n");
 			}
 			else												// 0xxx xxxx(b)

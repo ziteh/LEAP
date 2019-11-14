@@ -106,10 +106,10 @@ int main(void)
 
 	/* Initialization */
 	RCC_Initialization();
-	USART_Initialization();
 	GPIO_Initialization();
+	PWM_Initialization();
+	USART_Initialization();
 	NVIC_Initialization();
-//  PWM_Initialization();	// ERROR. 會造成USART功能無法動作,假定為Timer的衝突問題。
 
 	GPIO_ResetBits(GPIOA, GPIO_Pin_5);
 
@@ -121,6 +121,7 @@ int main(void)
 		{
 			SendStatus(i);
 		}
+		USART_Send(USART2, "----------\n");
 		Delay(1000);
 	}
 }

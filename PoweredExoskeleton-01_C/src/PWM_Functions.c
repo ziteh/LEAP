@@ -40,24 +40,15 @@ void PWM_Initialization(void)
 	/* Structure Declarations */
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef 		TIM_OCInitStructure;
-//	GPIO_InitTypeDef 		GPIO_InitStructure;
-//
-//	/* Enable RCC_APB */
-//	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-//
-//	/* Configure the GPIO pin for PWM */
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;	// TIM3_CH1 = PA6
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	TIM_OCStructInit(& TIM_OCInitStructure);
 
 	/* Time base configuration */
 	TIM_TimeBaseStructure.TIM_Period = 999; // Set the Auto-Reload value
 	TIM_TimeBaseStructure.TIM_Prescaler = 0; // Set the Prescaler value
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;	// Select the Counter Mode
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+//	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);		// ERROR. 會造成USART功能無法動作。
 
 	/* PWM1 Mode configuration */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;

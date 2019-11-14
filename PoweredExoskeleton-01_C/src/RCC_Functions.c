@@ -36,6 +36,7 @@
   */
 void RCC_Initialization(void)
 {
+
 	/* Resets the RCC clock configuration to the default reset state */
 	RCC_DeInit();
 

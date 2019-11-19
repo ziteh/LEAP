@@ -46,8 +46,8 @@ RCC_ClocksTypeDef RCC_Clocks;
 
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
-#define PinMotor0_Direction	(PB4)	// Arduino:D5
-#define PinMotor0_Speed		(PB10)	// Arduino:D6(PWM); TIM2_CH3
+#define PinMotor0_Direction	(PB10)	// Arduino:D6(PWM); TIM3_CH1
+#define PinMotor0_Speed		(PB4)	// Arduino:D5
 #define PinMotor0_Ready		(PB3)	// Arduino:D3
 
 // Motor-1

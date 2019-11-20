@@ -46,8 +46,8 @@ RCC_ClocksTypeDef RCC_Clocks;
 
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
-#define PinMotor0_Direction	(PB4)	// Arduino:D5
-#define PinMotor0_Speed		(PB10)	// Arduino:D6(PWM); TIM2_CH3
+#define PinMotor0_Direction	(PB10)	// Arduino:D6(PWM); TIM3_CH1
+#define PinMotor0_Speed		(PB4)	// Arduino:D5
 #define PinMotor0_Ready		(PB3)	// Arduino:D3
 
 // Motor-1
@@ -61,78 +61,69 @@ RCC_ClocksTypeDef RCC_Clocks;
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
 
-// USART
-uint8_t TxBuf1[] = "Hello, World!\n";
+/* USART */
+uint8_t TxBuf1[] = "Hi, I'm STM32\n";
 //uint8_t RxBuf1[] = "";
 
-// Motor
-	// Row: Motor number; Column: The pin of Enable,Direction,Ready
+/* Motor */
+// Row: Motor number; Column: The pin of Enable,Direction,Ready
 uint8_t MotorPin[2][3] =
-{ 		// | Enable | Direction | Ready |
-		{PB5, PB4, PB3},	// Motor0
-		{PA8, PA9, PB6}		// Motor1
+{	// | Enable | Direction | Ready |
+	{PinMotor0_Enbale, PinMotor0_Direction, PinMotor0_Ready},	// Motor0
+	{PinMotor1_Enbale, PinMotor1_Direction, PinMotor1_Ready}	// Motor1
 };
 
-	// The PWM timer of Motor0, Motor1
+// The PWM timer of Motor0, Motor1
 uint32_t MotorTimer[2] = {TIM2, TIM3};
-
-// Motor control
-//uint8_t MotorSpeed = 0;			// 0:0%; 100:100%
-//uint8_t MotorEnable = Disable;	// 0:Disable; 1:Enable
-//uint8_t MotorDirection = CW; 	// 0:CW; 1:CCW
-
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief   Main program
-  * @param  None
-  * @retval None
-  */
+ * @brief   Main program
+ * @param  None
+ * @retval None
+ */
 int main(void)
 {
-  /*!< At this stage the microcontroller clock setting is already configured, 
-       this is done through SystemInit() function which is called from startup
-       file (startup_stm32f10x_md.s) before to branch to application main.
-       To reconfigure the default setting of SystemInit() function, refer to
-       system_stm32f10x.c file
-     */  
-  
-  /* SysTick end of count event each 1ms */
-  RCC_GetClocksFreq(&RCC_Clocks);
-  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
-  
-  /* Initialize LED2 */
+	/*!< At this stage the microcontroller clock setting is already configured,
+	 this is done through SystemInit() function which is called from startup
+	 file (startup_stm32f10x_md.s) before to branch to application main.
+	 To reconfigure the default setting of SystemInit() function, refer to
+	 system_stm32f10x.c file
+	 */
+
+	/* SysTick end of count event each 1ms */
+	RCC_GetClocksFreq(&RCC_Clocks);
+	SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
+
+	/* Initialize LED2 */
 //  STM_EVAL_LEDInit(LED2);
-  
-  /* Initialize User_Button on STM32NUCLEO */
+	/* Initialize User_Button on STM32NUCLEO */
 //  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
-  
-  /* Initiate Blink Speed variable */ 
+	/* Initiate Blink Speed variable */
 //  BlinkSpeed = 0;
 
-  /* Initialization */
-  RCC_Initialization();
-  USART_Initialization();
-  GPIO_Initialization();
-  NVIC_Initialization();
-//  PWM_Initialization();
+	/* Initialization */
+	RCC_Initialization();
+	GPIO_Initialization();
+	PWM_Initialization();
+	USART_Initialization();
+	NVIC_Initialization();
 
-  GPIO_ResetBits(GPIOA,GPIO_Pin_5);
+	GPIO_ResetBits(GPIOA, GPIO_Pin_5);
 
-  /* Infinite loop */
-  while (1)
-  {
-	for (int i = 0; TxBuf1[i] != '\0'; i++)
+	/* Infinite loop */
+	while (1)
 	{
-		USART_SendData(USART2, (uint16_t)TxBuf1[i]);
-
-		while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
-		{}	// Wait until transmission Complete
+//		USART_Send(USART2, TxBuf1);
+		for(int i=0; i<2; i++)	// Send status of motor0&1
+		{
+			SendStatus(i);
+		}
+		USART_Send(USART2, "----------\n");
+		Delay(1000);
 	}
-	Delay(100);
-  }
 }
 
 /**
@@ -145,18 +136,20 @@ void SendStatus(uint8_t Motor)
 	uint8_t TxData;
 //	uint8_t Status[] = "";
 
-	// 0b010nnrXX
+	// Binary:010nnrXX
 	TxData = ((0x40 | (Motor << 3)) | (PinRead(MotorPin[Motor][2]) << 2));
 	USART_Send(USART2, TxData);
+
 //	USART_Send(USART2, "[Status]Motor%d "+Status+"\n", Motor);
 
-	if(PinRead(MotorPin[Motor][2]) == 1)
+	if(PinRead(MotorPin[Motor][2]) == 1)	// Motor_Ready pin=High
 		USART_Send(USART2, "[Status]Motor Ready\n");
 //		Status = "Ready";
-	else
+	else									// Motor_Ready pin=Low
 		USART_Send(USART2, "[Status]Motor FAULT!\n");
 //		Status = "FAULT!";
 }
+
 
 /**
 * @brief  	Control the motor.
@@ -165,7 +158,7 @@ void SendStatus(uint8_t Motor)
 * 			This parameter should be 0~2. 0: Disable; 1: Enable; 2: maintain.
 * @param	Direction: the direction of motor.
 * 			This parameter should be 0~2. 0: CW; 1: CCW; 2: maintain.
-* @param	Speed: the speed of motor in %. This parameter should be: 0~100.
+* @param	Speed: the speed of motor in %. This parameter should be: 0~100,127.
 * @retval 	None
 */
 void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
@@ -173,28 +166,34 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 //	u16 DutyCycleValue;
 
 	// Status
-	if(Status == 1)
-	{
-		PinWrite((MotorPin[Motor][0]), Enable);
-	}
-	else if(Status == 0)
-	{
-		PinWrite((MotorPin[Motor][0]), Disable);
-	}
-	else
-		/*Null*/;
+	if(Status <= 1)
+		PinWrite((MotorPin[Motor][0]), Status);
+	else /* Null */;
+
+//	if(Status == 1)
+//	{
+//		PinWrite((MotorPin[Motor][0]), Enable);
+//	}
+//	else if(Status == 0)
+//	{
+//		PinWrite((MotorPin[Motor][0]), Disable);
+//	}
+//	else /*Null*/;
 
 	// Direction
-	if(Direction == 1)
-	{
-		PinWrite((MotorPin[Motor][1]), CCW);
-	}
-	else if(Direction == 0)
-	{
-		PinWrite((MotorPin[Motor][1]), CW);
-	}
-	else
-		/*Null*/;
+	if(Direction <= 1)
+		PinWrite((MotorPin[Motor][1]), Direction);
+	else /* Null */;
+
+//	if(Direction == 1)
+//	{
+//		PinWrite((MotorPin[Motor][1]), CCW);
+//	}
+//	else if(Direction == 0)
+//	{
+//		PinWrite((MotorPin[Motor][1]), CW);
+//	}
+//	else /*Null*/;
 
 	// Speed
 	if(Speed == 0)	// OFF
@@ -209,116 +208,57 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 	{
 		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
 	}
-	else if(Speed == 127)	// Keep
+	else if(Speed == 127)	// Keep speed of motor
 	{
 		/* Null */;
 	}
-	else
-		/* Null */;
-
-//	switch(Motor)
-//	{
-//		/* Motor0 */
-//		case 0:
-//			// Status
-//			if(Status == 1)
-//			{
-//				PinWrite(PinMotor0_Enbale, Enable);
-//			}
-//			else if(Status == 0)
-//			{
-//				PinWrite(PinMotor0_Enbale, Disable);
-//			}
-//			else
-//				/*Null*/;
-//
-//			// Direction
-//			if(Direction == 1)		// 1=CCW
-//			{
-//				PinWrite(PinMotor0_Direction, CCW);
-//			}
-//			else if(Status == 0)	// 0=CW
-//			{
-//				PinWrite(PinMotor0_Direction, CW);
-//			}
-//			else
-//				/*Null*/;
-//
-//			// Speed
-//			if(Speed == 0)	// OFF
-//			{
-//				PinWrite(PinMotor0_Enbale, Disable);
-//			}
-//			else if(Speed == 100)
-//			{
-//				TIM_SetCompare1(TIM2, 999);	// Set PWM duty cycle=100%
-//			}
-//			else if((Speed > 0) && (Speed < 100))
-//			{
-//				TIM_SetCompare1(TIM2, ((Speed-1)*10)); // Set PWM duty cycle
-//			}
-//			else if(Speed == 127)	// Keep
-//			{
-//				/* Null */;
-//			}
-//			else
-//				/* Null */;
-//
-//			break;
-//
-//		/* Motor1 */
-//		case 1:
-//
-//			break;
-//		default:
-//			break;
-//	}
+	else /* Null */;
 }
 
 /**
-* @brief  Inserts a delay time.
-* @param  nTime: specifies the delay time length, in 1 ms.
-* @retval None
-*/
+ * @brief  Inserts a delay time.
+ * @param  nTime: specifies the delay time length, in 1 ms.
+ * @retval None
+ */
 void Delay(__IO uint32_t nTime)
 {
-  TimingDelay = nTime;
+	TimingDelay = nTime;
 
-  while(TimingDelay != 0);
+	while (TimingDelay != 0)
+		;
 }
 
 /**
-* @brief  Decrements the TimingDelay variable.
-* @param  None
-* @retval None
-*/
+ * @brief  Decrements the TimingDelay variable.
+ * @param  None
+ * @retval None
+ */
 void TimingDelay_Decrement(void)
 {
-  if (TimingDelay != 0x00)
-  { 
-    TimingDelay--;
-  }
+	if (TimingDelay != 0x00)
+	{
+		TimingDelay--;
+	}
 }
-
 
 #ifdef  USE_FULL_ASSERT
 
 /**
-* @brief  Reports the name of the source file and the source line number
-*         where the assert_param error has occurred.
-* @param  file: pointer to the source file name
-* @param  line: assert_param error line source number
-* @retval None
-*/
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t* file, uint32_t line)
-{ 
-  /* User can add his own implementation to report the file name and line number,
-  ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  
-  /* Infinite loop */
-  while (1)
-  {
-  }
+{
+	/* User can add his own implementation to report the file name and line number,
+	 ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+
+	/* Infinite loop */
+	while (1)
+	{
+	}
 }
 #endif
 

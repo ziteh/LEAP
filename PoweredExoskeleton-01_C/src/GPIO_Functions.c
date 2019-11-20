@@ -152,7 +152,7 @@ void GPIO_Initialization(void)
   * @param	Speed: Pin speed.
   * @retval None
   */
-void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
+void Pin_Mod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
 {
 	/* Structure Declarations */
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -269,7 +269,7 @@ void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval None
   */
-void PinSet(u8 PortPin)
+void Pin_Set(u8 PortPin)
 {
 	if(PortPin <= 15)								// Port-A:  0~15
 		GPIOA->BSRR |= (0x0001 << PortPin);
@@ -293,7 +293,7 @@ void PinSet(u8 PortPin)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval None
   */
-void PinClr(u8 PortPin)
+void Pin_Clr(u8 PortPin)
 {
 	if(PortPin <= 15)								// Port-A:  0~15
 		GPIOA->BRR |= (0x0001 << PortPin);
@@ -317,7 +317,7 @@ void PinClr(u8 PortPin)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval None
   */
-void PinToggle(u8 PortPin)
+void Pin_Toggle(u8 PortPin)
 {
 	if(PortPin <= 15)								// Port-A:  0~15
 		GPIOA->ODR ^= (0x0001 << PortPin);
@@ -343,12 +343,12 @@ void PinToggle(u8 PortPin)
   * 		This parameter should be: 1 or 0
   * @retval None
   */
-void PinWrite(u8 PortPin, u8 Value)
+void Pin_Write(u8 PortPin, u8 Value)
 {
 	if(Value == 1)
-		PinSet(PortPin);
+		Pin_Set(PortPin);
 	else if(Value == 0)
-		PinClr(PortPin);
+		Pin_Clr(PortPin);
 	else
 		/* Null */;
 }
@@ -361,7 +361,7 @@ void PinWrite(u8 PortPin, u8 Value)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval The input-pin value
   */
-u8 PinRead(u8 PortPin)
+u8 Pin_Read(u8 PortPin)
 {
 	u8 PinInputValue;
 
@@ -389,7 +389,7 @@ u8 PinRead(u8 PortPin)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval The port
   */
-char PortDetermine(u8 PortPin)
+char Port_Determine(u8 PortPin)
 {
 	char Port;
 

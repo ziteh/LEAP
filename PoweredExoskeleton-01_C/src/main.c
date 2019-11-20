@@ -137,19 +137,18 @@ void SendStatus(uint8_t Motor)
 //	uint8_t Status[] = "";
 
 	// Binary:010nnrXX
-	TxData = ((0x40 | (Motor << 3)) | (PinRead(MotorPin[Motor][2]) << 2));
+	TxData = ((0x40 | (Motor << 3)) | (Pin_Read(MotorPin[Motor][2]) << 2));
 	USART_Send(USART2, TxData);
 
 //	USART_Send(USART2, "[Status]Motor%d "+Status+"\n", Motor);
 
-	if(PinRead(MotorPin[Motor][2]) == 1)	// Motor_Ready pin=High
+	if(Pin_Read(MotorPin[Motor][2]) == 1)	// Motor_Ready pin=High
 		USART_Send(USART2, "[Status]Motor Ready\n");
 //		Status = "Ready";
 	else									// Motor_Ready pin=Low
 		USART_Send(USART2, "[Status]Motor FAULT!\n");
 //		Status = "FAULT!";
 }
-
 
 /**
 * @brief  	Control the motor.
@@ -167,7 +166,7 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 
 	// Status
 	if(Status <= 1)
-		PinWrite((MotorPin[Motor][0]), Status);
+		Pin_Write((MotorPin[Motor][0]), Status);
 	else /* Null */;
 
 //	if(Status == 1)
@@ -182,7 +181,7 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 
 	// Direction
 	if(Direction <= 1)
-		PinWrite((MotorPin[Motor][1]), Direction);
+		Pin_Write((MotorPin[Motor][1]), Direction);
 	else /* Null */;
 
 //	if(Direction == 1)
@@ -198,7 +197,7 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 	// Speed
 	if(Speed == 0)	// OFF
 	{
-		PinWrite((MotorPin[Motor][0]), Disable);
+		Pin_Write((MotorPin[Motor][0]), Disable);
 	}
 	else if(Speed == 100)
 	{

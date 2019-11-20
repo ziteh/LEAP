@@ -142,14 +142,24 @@ void GPIO_Initialization(void)
 }
 
 /**
-  * @brief  Config a pin Mode and Speed.
+  * @brief  Config a pin mode and speed.
   * @param	PortPin: select a pin to set.
   * 		This parameter should be: 0 ~ 79
   * 		 0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @param	INout: Input or Output.
+  * 		This parameter should be: 0(Output) or 1(Input).
   * @param	Mode: Pin mode.
+  *			This parameter should be: 0~3.
+  *			0: GPPP or FL.
+  *			1: GPOD or AN.
+  *			2: AFPP or PD.
+  *			3: AFOD or PU.
   * @param	Speed: Pin speed.
+  * 		This parameter should be: 0~2.
+  * 		0:  2MHz.
+  * 		1: 10MHz.
+  * 		2: 50MHz.
   * @retval None
   */
 void Pin_Mod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)

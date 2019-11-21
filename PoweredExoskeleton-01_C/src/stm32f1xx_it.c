@@ -243,13 +243,13 @@ void USART2_IRQHandler(void)
 			{
 				/* Motor status */
 				// Enable
-				if(((USART_ReceivData & 0x60) >> 5) == 0x01)	// x01x xxxx(b)
+				if(((USART_ReceivData & 0x0C) >> 2) == 0x01)	// x01x xxxx(b)
 				{
 					MotorCtrl(selMotor, 1, 2, 127);
 					USART_Send(USART2, " Enable.\n");
 				}
 				// Disable
-				else if(((USART_ReceivData & 0x60) >> 5) == 0x00)// x00x xxxx(b)
+				else if(((USART_ReceivData & 0x0C) >> 2) == 0x00)// x00x xxxx(b)
 				{
 					MotorCtrl(selMotor, 0, 2, 127);
 					USART_Send(USART2, " Disable.\n");
@@ -259,13 +259,13 @@ void USART2_IRQHandler(void)
 
 				/* Motor direction */
 				// CCW
-				if(((USART_ReceivData & 0x18) >> 3) == 0x01)	// xxx0 1xxx(b)
+				if(((USART_ReceivData & 0x03)) == 0x01)	// xxx0 1xxx(b)
 				{
 					MotorCtrl(selMotor, 2, 1, 127);
 					USART_Send(USART2, " Direction:CCW.\n");
 				}
 				// CW
-				else if(((USART_ReceivData & 0x18) >> 3) == 0x00)// xxx0 0xxx(b)
+				else if(((USART_ReceivData & 0x03)) == 0x00)// xxx0 0xxx(b)
 				{
 					MotorCtrl(selMotor, 2, 0, 127);
 					USART_Send(USART2, " Direction:CW.\n");

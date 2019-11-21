@@ -46,8 +46,8 @@ RCC_ClocksTypeDef RCC_Clocks;
 
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
-#define PinMotor0_Direction	(PB10)	// Arduino:D6(PWM); TIM3_CH1
-#define PinMotor0_Speed		(PB4)	// Arduino:D5
+#define PinMotor0_Direction	(PB10)	// Arduino:D6
+#define PinMotor0_Speed		(PB4)	// Arduino:D5(PWM); TIM3_CH1
 #define PinMotor0_Ready		(PB3)	// Arduino:D3
 
 // Motor-1
@@ -134,20 +134,15 @@ int main(void)
 void SendStatus(uint8_t Motor)
 {
 	uint8_t TxData;
-//	uint8_t Status[] = "";
 
 	// Binary:010nnrXX
-	TxData = ((0x40 | (Motor << 3)) | (Pin_Read(MotorPin[Motor][2]) << 2));
-	USART_Send(USART2, TxData);
-
-//	USART_Send(USART2, "[Status]Motor%d "+Status+"\n", Motor);
+//	TxData = ((0x40 | (Motor << 3)) | (Pin_Read(MotorPin[Motor][2]) << 2));
+//	USART_Send(USART2, TxData);
 
 	if(Pin_Read(MotorPin[Motor][2]) == 1)	// Motor_Ready pin=High
 		USART_Send(USART2, "[Status]Motor Ready\n");
-//		Status = "Ready";
 	else									// Motor_Ready pin=Low
 		USART_Send(USART2, "[Status]Motor FAULT!\n");
-//		Status = "FAULT!";
 }
 
 /**

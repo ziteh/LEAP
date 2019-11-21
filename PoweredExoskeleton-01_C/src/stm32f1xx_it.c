@@ -183,7 +183,7 @@ void EXTI15_10_IRQHandler(void)
   */
 void USART2_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // NOT USART_FLAG_RXNE
 	{
 		uint16_t USART_ReceivData = 0xF0;
 //		uint8_t InstTex[] = "";

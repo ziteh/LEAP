@@ -97,14 +97,14 @@ void GPIO_Initialization(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	// PB4: Motor0-Direction
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	// PB10: Motor0-Direction
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	// PB10: Motor0-Speed(PWM, TIM2_CH3)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	// PB4: Motor0-Speed(PWM, TIM3_CH1)
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);

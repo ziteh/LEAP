@@ -107,7 +107,7 @@ int main(void)
 	/* Initialization */
 	RCC_Initialization();
 	GPIO_Initialization();
-	USART_Initialization(); // ERROR.會讓PWM無法動作.
+	USART_Initialization();
 	PWM_Initialization();
 	NVIC_Initialization();
 

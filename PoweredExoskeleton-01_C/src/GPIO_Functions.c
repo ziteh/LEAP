@@ -104,10 +104,16 @@ void GPIO_Initialization(void)
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	// PB4: Motor0-Speed(PWM, TIM3_CH1)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+//	GPIO_PinRemapConfig(GPIO_FullRemap_TIM3, ENABLE);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;	// TIM3_CH1 = PA6
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	// PB3: Motor0-Ready
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;

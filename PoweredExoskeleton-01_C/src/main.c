@@ -47,7 +47,7 @@ RCC_ClocksTypeDef RCC_Clocks;
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
 #define PinMotor0_Direction	(PB10)	// Arduino:D6
-#define PinMotor0_Speed		(PB4)	// Arduino:D5(PWM); TIM3_CH1
+#define PinMotor0_Speed		(PA6)	// Arduino:D5(PWM); TIM3_CH1
 #define PinMotor0_Ready		(PB3)	// Arduino:D3
 
 // Motor-1
@@ -74,7 +74,7 @@ uint8_t MotorPin[2][3] =
 };
 
 // The PWM timer of Motor0, Motor1
-uint32_t MotorTimer[2] = {TIM2, TIM3};
+uint32_t MotorTimer[2] = {TIM3, TIM3};
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -107,14 +107,14 @@ int main(void)
 	/* Initialization */
 	RCC_Initialization();
 	GPIO_Initialization();
+	USART_Initialization(); // ERROR.會讓PWM無法動作.
 	PWM_Initialization();
-	USART_Initialization();
 	NVIC_Initialization();
 
 	GPIO_ResetBits(GPIOA, GPIO_Pin_5);
 
 	/* Infinite loop */
-	while (1)
+	while(1)
 	{
 //		USART_Send(USART2, TxBuf1);
 		for(int i=0; i<2; i++)	// Send status of motor0&1
@@ -193,6 +193,7 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 	if(Speed == 0)	// OFF
 	{
 		Pin_Write((MotorPin[Motor][0]), Disable);
+		TIM_SetCompare1((MotorTimer[Motor]), 0);
 	}
 	else if(Speed == 100)
 	{

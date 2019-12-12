@@ -47,7 +47,7 @@ RCC_ClocksTypeDef RCC_Clocks;
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
 #define PinMotor0_Direction	(PB10)	// Arduino:D6
-#define PinMotor0_Speed		(PA6)	// Arduino:D5(PWM); TIM3_CH1
+#define PinMotor0_Speed		(PA6)	// Arduino:D12(PWM); TIM3_CH1
 #define PinMotor0_Ready		(PB3)	// Arduino:D3
 
 // Motor-1
@@ -111,18 +111,36 @@ int main(void)
 	PWM_Initialization();
 	NVIC_Initialization();
 
+	Pin_Write((MotorPin[0][0]), Disable);
+	TIM_SetCompare1((MotorTimer[0]), 0);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_5);
+
 
 	/* Infinite loop */
 	while(1)
 	{
+//		if(Pin_Read(MotorPin[1][3]) == 1)	// Motor_Ready pin=High
+//			GPIO_ResetBits(GPIOA, GPIO_Pin_5);
+//		else									// Motor_Ready pin=Low
+//			GPIO_SetBits(GPIOA, GPIO_Pin_5);
+
 //		USART_Send(USART2, TxBuf1);
-		for(int i=0; i<2; i++)	// Send status of motor0&1
-		{
-			SendStatus(i);
-		}
+//		for(int i=0; i<2; i++)	// Send status of motor0&1
+//		{
+//			SendStatus(i-1);
+//		}
 		USART_Send(USART2, "----------\n");
-		Delay(1000);
+
+		if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_3) == 1)	// Motor_Ready pin=High
+			USART_Send(USART2, "[Status]Motor0 Ready\n");
+		else									// Motor_Ready pin=Low
+			USART_Send(USART2, "[Status]Motor0 FAULT!\n");
+
+		if(Pin_Read(PB6) != 0)	// Motor_Ready pin=High
+			USART_Send(USART2, "[Status]Motor1 Ready\n");
+		else									// Motor_Ready pin=Low
+			USART_Send(USART2, "[Status]Motor1 FAULT!\n");
+		Delay(500);
 	}
 }
 
@@ -139,7 +157,7 @@ void SendStatus(uint8_t Motor)
 //	TxData = ((0x40 | (Motor << 3)) | (Pin_Read(MotorPin[Motor][2]) << 2));
 //	USART_Send(USART2, TxData);
 
-	if(Pin_Read(MotorPin[Motor][2]) == 1)	// Motor_Ready pin=High
+	if(Pin_Read(MotorPin[Motor][2]) != 0)	// Motor_Ready pin=High
 		USART_Send(USART2, "[Status]Motor Ready\n");
 	else									// Motor_Ready pin=Low
 		USART_Send(USART2, "[Status]Motor FAULT!\n");
@@ -149,10 +167,14 @@ void SendStatus(uint8_t Motor)
 * @brief  	Control the motor.
 * @param	Motor: the number of motor. This parameter should be: 0~1.
 * @param	Status: the status of motor.
-* 			This parameter should be 0~2. 0: Disable; 1: Enable; 2: maintain.
+* 			This parameter should be 0~3.
+* 			0: Disable; 1: Enable; 2: Toggle; 3: Keep.
 * @param	Direction: the direction of motor.
-* 			This parameter should be 0~2. 0: CW; 1: CCW; 2: maintain.
-* @param	Speed: the speed of motor in %. This parameter should be: 0~100,127.
+* 			This parameter should be 0~3.
+* 			0: CW; 1: CCW; 2: Toggle; 3: Keep.
+* @param	Speed: the speed of motor in %.
+* 			This parameter should be: 0~100, 127.
+* 			0~100: 0%~100%; 127: Keep.
 * @retval 	None
 */
 void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
@@ -160,9 +182,11 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 //	u16 DutyCycleValue;
 
 	// Status
-	if(Status <= 1)
+	if(Status <= 1)			// Disable(0) & Enable(1)
 		Pin_Write((MotorPin[Motor][0]), Status);
-	else /* Null */;
+	else if(Status == 2)	// Toggle(2)
+		Pin_Toggle((MotorPin[Motor][0]));
+	else /* Null */;		// Keep(3)
 
 //	if(Status == 1)
 //	{
@@ -175,9 +199,11 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 //	else /*Null*/;
 
 	// Direction
-	if(Direction <= 1)
+	if(Direction <= 1)		// CW(0) & CCW(1)
 		Pin_Write((MotorPin[Motor][1]), Direction);
-	else /* Null */;
+	else if(Direction == 2)	// Toggle(2)
+		Pin_Toggle((MotorPin[Motor][1]));
+	else /* Null */;		// Keep(3)
 
 //	if(Direction == 1)
 //	{
@@ -220,7 +246,7 @@ void Delay(__IO uint32_t nTime)
 	TimingDelay = nTime;
 
 	while (TimingDelay != 0)
-		;
+		/* Null */;
 }
 
 /**

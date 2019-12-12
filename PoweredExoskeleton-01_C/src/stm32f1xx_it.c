@@ -236,42 +236,54 @@ void USART2_IRQHandler(void)
 			// Set motor speed
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01) 		// 1xxx xxxx(b)
 			{
-				MotorCtrl(selMotor, 2, 2, (USART_ReceivData & 0x7F));
+				MotorCtrl(selMotor, 3, 3, (USART_ReceivData & 0x7F));
 				USART_Send(USART2, " Set speed.\n");
 			}
 			else												// 0xxx xxxx(b)
 			{
 				/* Motor status */
-				// Enable
-				if(((USART_ReceivData & 0x0C) >> 2) == 0x01)	// x01x xxxx(b)
-				{
-					MotorCtrl(selMotor, 1, 2, 127);
-					USART_Send(USART2, " Enable.\n");
-				}
 				// Disable
-				else if(((USART_ReceivData & 0x0C) >> 2) == 0x00)// x00x xxxx(b)
+				if(((USART_ReceivData & 0x0C) >> 2) == 0x00)	 // xxxx 00xx(b)
 				{
-					MotorCtrl(selMotor, 0, 2, 127);
+					MotorCtrl(selMotor, 0, 3, 127);
 					USART_Send(USART2, " Disable.\n");
 				}
+				// Enable
+				else if(((USART_ReceivData & 0x0C) >> 2) == 0x01)// xxxx 01xx(b)
+				{
+					MotorCtrl(selMotor, 1, 3, 127);
+					USART_Send(USART2, " Enable.\n");
+				}
+				// Toggle
+				else if(((USART_ReceivData & 0x0C) >> 2) == 0x02)// xxxx 10xx(b)
+				{
+					MotorCtrl(selMotor, 2, 3, 127);
+					USART_Send(USART2, " Toggle.\n");
+				}
 				// Keep
-				else /* Null */;
+				else /* Null */;								 // xxxx 11xx(b)
 
 				/* Motor direction */
-				// CCW
-				if(((USART_ReceivData & 0x03)) == 0x01)	// xxx0 1xxx(b)
-				{
-					MotorCtrl(selMotor, 2, 1, 127);
-					USART_Send(USART2, " Direction:CCW.\n");
-				}
 				// CW
-				else if(((USART_ReceivData & 0x03)) == 0x00)// xxx0 0xxx(b)
+				if(((USART_ReceivData & 0x03)) == 0x00)		// xxxx xx00(b)
 				{
-					MotorCtrl(selMotor, 2, 0, 127);
+					MotorCtrl(selMotor, 3, 0, 127);
 					USART_Send(USART2, " Direction:CW.\n");
 				}
+				// CCW
+				else if(((USART_ReceivData & 0x03)) == 0x01)// xxxx xx01(b)
+				{
+					MotorCtrl(selMotor, 3, 1, 127);
+					USART_Send(USART2, " Direction:CCW.\n");
+				}
+				// Toggle
+				else if(((USART_ReceivData & 0x03)) == 0x02)// xxxx xx10(b)
+				{
+					MotorCtrl(selMotor, 3, 2, 127);
+					USART_Send(USART2, " Direction:Toggle.\n");
+				}
 				// Keep
-				else /* Null */;
+				else /* Null */;							// xxxx xx11(b)
 			}
 
 			// End of instruction

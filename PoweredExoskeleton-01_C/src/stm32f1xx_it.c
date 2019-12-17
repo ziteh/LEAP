@@ -197,12 +197,27 @@ void USART2_IRQHandler(void)
 		{
 			USART_Send(USART2, "STM32:\n");
 
-			if(USART_ReceivData == 0xE0)				// System stop
+			if(USART_ReceivData == 0xE0)		// System stop
 			{
 				USART_Send(USART2, "[System]Stop.\n");
 			}
-			else if(USART_ReceivData == 0xE1)			// System reset
+			else if(USART_ReceivData == 0xE1)	// System reset
 			{
+				/* Initialization */
+				// Functions & Setups
+				RCC_Initialization();
+				GPIO_Initialization();
+				USART_Initialization();
+				PWM_Initialization();
+				NVIC_Initialization();
+
+				// Reset all motor
+				MotorCtrl(0, 0, 1, 0);	// Motor0: Disable, CCW, Speed:0
+				MotorCtrl(1, 0, 0, 0);	// Motor1: Disable, CW, Speed:0
+
+				// Turn off LD2(User-LED)
+				Pin_Clr(5); // #define LD2 (5)
+
 				USART_Send(USART2, "[System]Reset.\n");
 			}
 			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start

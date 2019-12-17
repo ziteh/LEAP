@@ -95,7 +95,8 @@ int main(void)
 	MotorCtrl(0, Disable, CCW, 0);	// Motor0: Disable, CCW, Speed:0
 	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable, CW, Speed:0
 
-	Pin_Clr(LD2);					// Turn off LD2(User-LED)
+	// Turn off LD2(User-LED)
+	Pin_Clr(LD2);
 
 	/* Infinite loop */
 	while(1)
@@ -119,10 +120,10 @@ void SendStatus(void)
 
 	// Motor0
 	USART_Send(USART2, "[Status]Motor0 ");
-	if(Pin_ReadInput(PB4) == 1)				// Motor_Ready pin=High
+	if(Pin_ReadInput(PinMotor0_Ready) == 1)				// Motor_Ready pin=High
 		USART_Send(USART2, "Ready ; ");
 	else									// Motor_Ready pin=Low
-		USART_Send(USART2, "FAULT! ; ");
+		USART_Send(USART2, "FAULT ; ");
 
 	if(Pin_ReadOutput(PinMotor0_Enbale) == 1)
 		USART_Send(USART2, " Enable ; ");
@@ -136,10 +137,10 @@ void SendStatus(void)
 
 	// Motor1
 	USART_Send(USART2, "[Status]Motor1 ");
-	if(Pin_ReadInput(PA7) == 1)				// Motor_Ready pin=High
+	if(Pin_ReadInput(PinMotor1_Ready) == 1)				// Motor_Ready pin=High
 		USART_Send(USART2, "Ready ; ");
 	else									// Motor_Ready pin=Low
-		USART_Send(USART2, "FAULT! ; ");
+		USART_Send(USART2, "FAULT ; ");
 
 	if(Pin_ReadOutput(PinMotor1_Enbale) == 1)
 		USART_Send(USART2, " Enable ; ");
@@ -152,9 +153,6 @@ void SendStatus(void)
 		USART_Send(USART2, " CW\n");
 
 	USART_Send(USART2, "----------\n");
-
-
-
 }
 
 /**

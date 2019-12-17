@@ -24,6 +24,23 @@
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
+/* Pin define */
+// Nucleo-64 board
+//#define PinButton_User	(PC13)	// B1. When push the button, the I/O is LOW value.
+//#define PinLED_User		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
+
+// Motor-0
+#define PinMotor0_Enbale	(PB5)	// Arduino:D4
+#define PinMotor0_Direction	(PB10)	// Arduino:D6
+#define PinMotor0_Speed		(PA6)	// Arduino:D12(PWM); TIM3_CH1
+#define PinMotor0_Ready		(PB3)	// Arduino:D3
+
+// Motor-1
+#define PinMotor1_Enbale	(PA8)	// Arduino:D7
+#define PinMotor1_Direction	(PA9)	// Arduino:D8
+#define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2
+#define PinMotor1_Ready		(PB6)	// Arduino:D10
+
 /* STM32 Pin(Morpho) */
 /*
  * Default=Alternate functions Default
@@ -152,7 +169,9 @@
 
 /* STM32 Nucleo-64 board */
 #define Button_User	(45)// PC13. B1. When push the button, the I/O is LOW value.
+#define B1			(45)
 #define LED_User	(5)	// PA5. LD2. When the I/O is HIGH value, the LED is on.
+#define LD2			(5)
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

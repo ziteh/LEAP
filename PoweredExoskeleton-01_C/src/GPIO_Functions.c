@@ -38,9 +38,9 @@
 #define PD		(2)
 #define PU		(3)
 
-#define S2M		(0)
-#define S10M	(1)
-#define S50M	(2)
+#define S2M		(2)
+#define S10M	(10)
+#define S50M	(50)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -115,7 +115,7 @@ void GPIO_Initialization(void)
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	// PB3: Motor0-Ready
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -140,10 +140,10 @@ void GPIO_Initialization(void)
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	// PB6: Motor1-Ready
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
 /**
@@ -162,9 +162,9 @@ void GPIO_Initialization(void)
   *			3: AFOD or PU.
   * @param	Speed: Pin speed.
   * 		This parameter should be: 0~2.
-  * 		0:  2MHz.
-  * 		1: 10MHz.
-  * 		2: 50MHz.
+  * 		 2:  2MHz.
+  * 		10: 10MHz.
+  * 		50: 50MHz.
   * @retval None
   */
 void Pin_Mod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
@@ -175,13 +175,13 @@ void Pin_Mod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
 	// GPIO_Speed
 	switch(Speed)
 	{
-		case S2M:	// S2M:0
+		case S2M:	// S2M:2
 			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 			break;
-		case S10M:	// S10M:1
+		case S10M:	// S10M:10
 			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 			break;
-		case S50M:	// S50M:2
+		case S50M:	// S50M:50
 			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 			break;
 		default:
@@ -376,20 +376,64 @@ void Pin_Write(u8 PortPin, u8 Value)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval The input-pin value
   */
-u8 Pin_Read(u8 PortPin)
+u8 Pin_ReadInput(u8 PortPin)
 {
-	u8 PinInputValue;
+	u8 PinInputValue = 0x00;
+
+
+	// !! ERROR: u8 Pin_Read(u8 PortPin)
+
+//	if(PortPin <= 15)									// Port-A:  0~15
+//		PinInputValue = (GPIOA->IDR & (0x0001 << PortPin));
+//	else if(PortPin <= 31)								// Port-B: 16~31
+//		PinInputValue = (GPIOB->IDR & (0x0001 << (PortPin - 16)));
+//	else if(PortPin <= 47)								// Port-C: 32~47
+//		PinInputValue = (GPIOC->IDR & (0x0001 << (PortPin - 32)));
+//	else if(PortPin <= 63)								// Port-D: 48~63
+//		PinInputValue = (GPIOD->IDR & (0x0001 << (PortPin - 48)));
+//	else if(PortPin <= 79)								// Port-E: 64~79
+//		PinInputValue = (GPIOE->IDR & (0x0001 << (PortPin - 64)));
+//	else												// Out of range(0~79)
+//		/* Null */;
 
 	if(PortPin <= 15)									// Port-A:  0~15
-		PinInputValue = (GPIOA->IDR & (0x0001 << PortPin));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOA, (0x0001 << PortPin));
 	else if(PortPin <= 31)								// Port-B: 16~31
-		PinInputValue = (GPIOB->IDR & (0x0001 << (PortPin - 16)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 16)));
 	else if(PortPin <= 47)								// Port-C: 32~47
-		PinInputValue = (GPIOC->IDR & (0x0001 << (PortPin - 32)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 32)));
 	else if(PortPin <= 63)								// Port-D: 48~63
-		PinInputValue = (GPIOD->IDR & (0x0001 << (PortPin - 48)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 48)));
 	else if(PortPin <= 79)								// Port-E: 64~79
-		PinInputValue = (GPIOE->IDR & (0x0001 << (PortPin - 64)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 64)));
+	else												// Out of range(0~79)
+		/* Null */;
+
+	return PinInputValue;
+}
+
+/**
+  * @brief  Read a output-pin value.
+  * @param	PortPin: select a pin to read.
+  * 		This parameter should be: 0 ~ 79
+  * 		 0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
+  * 		48~63:PD0~PD15; 64~79:PE0~PE15
+  * @retval The output-pin value
+  */
+u8 Pin_ReadOutput(u8 PortPin)
+{
+	u8 PinInputValue = 0x00;
+
+	if(PortPin <= 15)									// Port-A:  0~15
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOA, (0x0001 << PortPin));
+	else if(PortPin <= 31)								// Port-B: 16~31
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 16)));
+	else if(PortPin <= 47)								// Port-C: 32~47
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 32)));
+	else if(PortPin <= 63)								// Port-D: 48~63
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 48)));
+	else if(PortPin <= 79)								// Port-E: 64~79
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 64)));
 	else												// Out of range(0~79)
 		/* Null */;
 

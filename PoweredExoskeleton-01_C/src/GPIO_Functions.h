@@ -35,7 +35,8 @@ void Pin_Set(u8 PortPin);
 void Pin_Clr(u8 PortPin);
 void Pin_Toggle(u8 PortPin);
 void Pin_Write(u8 PortPin, u8 Value);
-u8   Pin_Read(u8 PortPin);
+u8   Pin_ReadInput(u8 PortPin);
+u8   Pin_ReadOutput(u8 PortPin);
 char Port_Determine(u8 PortPin);
 
 #endif /* __GPIO_FUNCTIONS_H */

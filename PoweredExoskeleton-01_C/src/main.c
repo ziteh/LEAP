@@ -39,31 +39,10 @@ RCC_ClocksTypeDef RCC_Clocks;
 #define CW		(0)
 #define CCW		(1)
 
-/* Pin define */
-// Nucleo-64 board
-#define PinButton_User	(PC13)	// B1. When push the button, the I/O is LOW value.
-#define PinLED_User		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
-
-// Motor-0
-#define PinMotor0_Enbale	(PB5)	// Arduino:D4
-#define PinMotor0_Direction	(PB10)	// Arduino:D6
-#define PinMotor0_Speed		(PA6)	// Arduino:D12(PWM); TIM3_CH1
-#define PinMotor0_Ready		(PB3)	// Arduino:D3
-
-// Motor-1
-#define PinMotor1_Enbale	(PA8)	// Arduino:D7
-#define PinMotor1_Direction	(PA9)	// Arduino:D8
-#define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2
-#define PinMotor1_Ready		(PB6)	// Arduino:D10
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
-
-/* USART */
-uint8_t TxBuf1[] = "Hi, I'm STM32\n";
-//uint8_t RxBuf1[] = "";
 
 /* Motor */
 // Row: Motor number; Column: The pin of Enable,Direction,Ready
@@ -105,62 +84,77 @@ int main(void)
 //  BlinkSpeed = 0;
 
 	/* Initialization */
+	// Functions & Setups
 	RCC_Initialization();
 	GPIO_Initialization();
 	USART_Initialization();
 	PWM_Initialization();
 	NVIC_Initialization();
 
-	Pin_Write((MotorPin[0][0]), Disable);
-	TIM_SetCompare1((MotorTimer[0]), 0);
-	GPIO_ResetBits(GPIOA, GPIO_Pin_5);
+	// Reset all motor
+	MotorCtrl(0, Disable, CCW, 0);	// Motor0: Disable, CCW, Speed:0
+	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable, CW, Speed:0
 
+	Pin_Clr(LD2);					// Turn off LD2(User-LED)
 
 	/* Infinite loop */
 	while(1)
 	{
-//		if(Pin_Read(MotorPin[1][3]) == 1)	// Motor_Ready pin=High
-//			GPIO_ResetBits(GPIOA, GPIO_Pin_5);
-//		else									// Motor_Ready pin=Low
-//			GPIO_SetBits(GPIOA, GPIO_Pin_5);
-
-//		USART_Send(USART2, TxBuf1);
-//		for(int i=0; i<2; i++)	// Send status of motor0&1
-//		{
-//			SendStatus(i-1);
-//		}
-		USART_Send(USART2, "----------\n");
-
-		if(GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_3) == 1)	// Motor_Ready pin=High
-			USART_Send(USART2, "[Status]Motor0 Ready\n");
-		else									// Motor_Ready pin=Low
-			USART_Send(USART2, "[Status]Motor0 FAULT!\n");
-
-		if(Pin_Read(PB6) != 0)	// Motor_Ready pin=High
-			USART_Send(USART2, "[Status]Motor1 Ready\n");
-		else									// Motor_Ready pin=Low
-			USART_Send(USART2, "[Status]Motor1 FAULT!\n");
-		Delay(500);
+		SendStatus();
+		Delay(250);
 	}
 }
 
 /**
 * @brief  	Send status.
-* @param	Motor: the number of motor. This parameter should be: 0~1.
 * @retval 	None
 */
-void SendStatus(uint8_t Motor)
+void SendStatus(void)
 {
-	uint8_t TxData;
+//	uint8_t TxData;
 
 	// Binary:010nnrXX
 //	TxData = ((0x40 | (Motor << 3)) | (Pin_Read(MotorPin[Motor][2]) << 2));
 //	USART_Send(USART2, TxData);
 
-	if(Pin_Read(MotorPin[Motor][2]) != 0)	// Motor_Ready pin=High
-		USART_Send(USART2, "[Status]Motor Ready\n");
+	// Motor0
+	USART_Send(USART2, "[Status]Motor0 ");
+	if(Pin_ReadInput(PB4) == 1)				// Motor_Ready pin=High
+		USART_Send(USART2, "Ready ; ");
 	else									// Motor_Ready pin=Low
-		USART_Send(USART2, "[Status]Motor FAULT!\n");
+		USART_Send(USART2, "FAULT! ; ");
+
+	if(Pin_ReadOutput(PinMotor0_Enbale) == 1)
+		USART_Send(USART2, " Enable ; ");
+	else
+		USART_Send(USART2, "Disable ; ");
+
+	if(Pin_ReadOutput(PinMotor0_Direction) == 1)
+		USART_Send(USART2, "CCW\n");
+	else
+		USART_Send(USART2, " CW\n");
+
+	// Motor1
+	USART_Send(USART2, "[Status]Motor1 ");
+	if(Pin_ReadInput(PA7) == 1)				// Motor_Ready pin=High
+		USART_Send(USART2, "Ready ; ");
+	else									// Motor_Ready pin=Low
+		USART_Send(USART2, "FAULT! ; ");
+
+	if(Pin_ReadOutput(PinMotor1_Enbale) == 1)
+		USART_Send(USART2, " Enable ; ");
+	else
+		USART_Send(USART2, "Disable ; ");
+
+	if(Pin_ReadOutput(PinMotor1_Direction) == 1)
+		USART_Send(USART2, "CCW\n");
+	else
+		USART_Send(USART2, " CW\n");
+
+	USART_Send(USART2, "----------\n");
+
+
+
 }
 
 /**
@@ -182,41 +176,21 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 //	u16 DutyCycleValue;
 
 	// Status
-	if(Status <= 1)			// Disable(0) & Enable(1)
+	if(Status <= 1)								// Disable(0) & Enable(1)
 		Pin_Write((MotorPin[Motor][0]), Status);
-	else if(Status == 2)	// Toggle(2)
+	else if(Status == 2)						// Toggle(2)
 		Pin_Toggle((MotorPin[Motor][0]));
-	else /* Null */;		// Keep(3)
-
-//	if(Status == 1)
-//	{
-//		PinWrite((MotorPin[Motor][0]), Enable);
-//	}
-//	else if(Status == 0)
-//	{
-//		PinWrite((MotorPin[Motor][0]), Disable);
-//	}
-//	else /*Null*/;
+	else /* Null */;							// Keep(3)
 
 	// Direction
-	if(Direction <= 1)		// CW(0) & CCW(1)
+	if(Direction <= 1)							// CW(0) & CCW(1)
 		Pin_Write((MotorPin[Motor][1]), Direction);
-	else if(Direction == 2)	// Toggle(2)
+	else if(Direction == 2)						// Toggle(2)
 		Pin_Toggle((MotorPin[Motor][1]));
-	else /* Null */;		// Keep(3)
-
-//	if(Direction == 1)
-//	{
-//		PinWrite((MotorPin[Motor][1]), CCW);
-//	}
-//	else if(Direction == 0)
-//	{
-//		PinWrite((MotorPin[Motor][1]), CW);
-//	}
-//	else /*Null*/;
+	else /* Null */;							// Keep(3)
 
 	// Speed
-	if(Speed == 0)	// OFF
+	if(Speed == 0)	// Turn OFF the motor
 	{
 		Pin_Write((MotorPin[Motor][0]), Disable);
 		TIM_SetCompare1((MotorTimer[Motor]), 0);

@@ -96,6 +96,7 @@ int main(void)
 	NVIC_Initialization();
 
 	// Reset all motor
+	TIM_SetCompare1(TIM3, 0);
 	MotorCtrl(0, Disable, CCW, 0);	// Motor0: Disable, CCW, Speed:0
 	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable,  CW, Speed:0
 
@@ -236,7 +237,7 @@ void MotorAccelerationCtrol(uint8_t Motor, uint16_t TargetSpeed)
 			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed-1)); // Set duty cycle
 		}
 
-		Delay_normal(0xEFF);
+		Delay_normal(0xFCF);
 //		Delay(50);// ERROR IntLoop
 	}
 }

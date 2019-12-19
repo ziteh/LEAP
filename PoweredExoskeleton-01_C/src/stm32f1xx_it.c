@@ -186,12 +186,7 @@ void USART2_IRQHandler(void)
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // NOT USART_FLAG_RXNE
 	{
 		uint16_t USART_ReceivData = 0xF0;
-//		uint8_t InstTex[] = "";
-
 		USART_ReceivData = USART_ReceiveData(USART2);
-
-//		USART_Send(USART2, USART_ReceivData);
-//		USART_Send(USART2, "STM32:");
 
 		if(nInst == 0)
 		{
@@ -213,7 +208,7 @@ void USART2_IRQHandler(void)
 
 				// Reset all motor
 				MotorCtrl(0, 0, 1, 0);	// Motor0: Disable, CCW, Speed:0
-				MotorCtrl(1, 0, 0, 0);	// Motor1: Disable, CW, Speed:0
+				MotorCtrl(1, 0, 0, 0);	// Motor1: Disable,  CW, Speed:0
 
 				// Turn off LD2(User-LED)
 				Pin_Clr(5); // #define LD2 (5)
@@ -252,7 +247,8 @@ void USART2_IRQHandler(void)
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01) 		// 1xxx xxxx(b)
 			{
 				MotorCtrl(selMotor, 3, 3, (USART_ReceivData & 0x7F));
-				USART_Send(USART2, " Set speed.\n");
+				USART_Send(USART2, " Set speed:");
+				SendSpeedValue(USART_ReceivData & 0x7F);
 			}
 			else												// 0xxx xxxx(b)
 			{

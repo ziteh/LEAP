@@ -18,6 +18,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stdio.h>
 #include "main.h"
 #include "stm32f10x.h"
 #include "GPIO_Functions.h"
@@ -54,6 +55,9 @@ uint8_t MotorPin[2][3] =
 
 // The PWM timer of Motor0, Motor1
 uint32_t MotorTimer[2] = {TIM3, TIM3};
+
+//uint8_t Motor0_Speed_Char[] = "0";
+uint8_t Motor0_Speed_Value = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -93,7 +97,7 @@ int main(void)
 
 	// Reset all motor
 	MotorCtrl(0, Disable, CCW, 0);	// Motor0: Disable, CCW, Speed:0
-	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable, CW, Speed:0
+	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable,  CW, Speed:0
 
 	// Turn off LD2(User-LED)
 	Pin_Clr(LD2);
@@ -131,9 +135,11 @@ void SendStatus(void)
 		USART_Send(USART2, "Disable ; ");
 
 	if(Pin_ReadOutput(PinMotor0_Direction) == 1)
-		USART_Send(USART2, "CCW\n");
+		USART_Send(USART2, "CCW ; ");
 	else
-		USART_Send(USART2, " CW\n");
+		USART_Send(USART2, " CW ; ");
+	USART_Send(USART2, "S: ");
+	SendSpeedValue(Motor0_Speed_Value);
 
 	// Motor1
 	USART_Send(USART2, "[Status]Motor1 ");
@@ -169,7 +175,7 @@ void SendStatus(void)
 * 			0~100: 0%~100%; 127: Keep.
 * @retval 	None
 */
-void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
+void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed)
 {
 //	u16 DutyCycleValue;
 
@@ -191,21 +197,62 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
 	if(Speed == 0)	// Turn OFF the motor
 	{
 		Pin_Write((MotorPin[Motor][0]), Disable);
-		TIM_SetCompare1((MotorTimer[Motor]), 0);
+//		TIM_SetCompare1((MotorTimer[Motor]), 0);
+		MotorAccelerationCtrol(Motor, 0);
+		Motor0_Speed_Value = Speed;
 	}
 	else if(Speed == 100)
 	{
-		TIM_SetCompare1((MotorTimer[Motor]), 999);	// Set PWM duty cycle=100%
+//		TIM_SetCompare1((MotorTimer[Motor]), 999);	// Set PWM duty cycle=100%
+		MotorAccelerationCtrol(Motor, 999);
+		Motor0_Speed_Value = Speed;
 	}
-	else if((Speed > 0) && (Speed < 100))
+	else if((Speed > 0) && (Speed < 100))//ERROR SpeedComand = 9A 9B
 	{
-		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
+//		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
+		MotorAccelerationCtrol(Motor, ((Speed-1)*10));
+		Motor0_Speed_Value = Speed;
 	}
 	else if(Speed == 127)	// Keep speed of motor
 	{
 		/* Null */;
 	}
 	else /* Null */;
+}
+
+void MotorAccelerationCtrol(uint8_t Motor, uint16_t TargetSpeed)
+{
+	while(TargetSpeed != (TIM3->CCR1))
+	{
+		uint16_t NowSpeed = (TIM3->CCR1);
+		int32_t SpeedDif = TargetSpeed - NowSpeed;
+
+		if(SpeedDif > 0)
+		{
+			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed+1)); // Set duty cycle
+		}
+		else if(SpeedDif < 0)
+		{
+			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed-1)); // Set duty cycle
+		}
+
+		Delay_normal(0xEFF);
+//		Delay(50);// ERROR IntLoop
+	}
+}
+
+void SendSpeedValue(uint16_t Number)
+{
+	char buff[3];
+	sprintf (buff, "%d", Number);
+
+	USART_Send(USART2, buff);
+	USART_Send(USART2, "%\n");
+}
+
+void Delay_normal(__IO u32 number)
+{
+	for(; number != 0; number--);
 }
 
 /**

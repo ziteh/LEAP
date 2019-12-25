@@ -190,7 +190,7 @@ void USART2_IRQHandler(void)
 
 		if(nInst == 0)
 		{
-			USART_Send(USART2, "STM32:\n");
+//			USART_Send(USART2, "STM32:\n");
 
 			if(USART_ReceivData == 0xE0)		// System stop
 			{

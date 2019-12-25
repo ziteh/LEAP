@@ -80,13 +80,6 @@ int main(void)
 	RCC_GetClocksFreq(&RCC_Clocks);
 	SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
 
-	/* Initialize LED2 */
-//  STM_EVAL_LEDInit(LED2);
-	/* Initialize User_Button on STM32NUCLEO */
-//  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
-	/* Initiate Blink Speed variable */
-//  BlinkSpeed = 0;
-
 	/* Initialization */
 	// Functions & Setups
 	RCC_Initialization();
@@ -96,12 +89,14 @@ int main(void)
 	NVIC_Initialization();
 
 	// Reset all motor
-	TIM_SetCompare1(TIM3, 0);
-	MotorCtrl(0, Disable, CCW, 0);	// Motor0: Disable, CCW, Speed:0
-	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable,  CW, Speed:0
+	TIM_SetCompare1(TIM3, 0);		// Immediately set motor0 speed=0%
+	MotorCtrl(0, Disable, CCW, 0);	// Motor0: Disable, CCW, Speed:0%
+	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable,  CW, Speed:0%
 
 	// Turn off LD2(User-LED)
 	Pin_Clr(LD2);
+
+	USART_Send(USART2, "[System]Start.\n");
 
 	/* Infinite loop */
 	while(1)
@@ -113,6 +108,7 @@ int main(void)
 
 /**
 * @brief  	Send status.
+* @param	None
 * @retval 	None
 */
 void SendStatus(void)
@@ -125,7 +121,7 @@ void SendStatus(void)
 
 	// Motor0
 	USART_Send(USART2, "[Status]Motor0 ");
-	if(Pin_ReadInput(PinMotor0_Ready) == 1)				// Motor_Ready pin=High
+	if(Pin_ReadInput(PinMotor0_Ready) == 1)	// Motor_Ready pin=High
 		USART_Send(USART2, "Ready ; ");
 	else									// Motor_Ready pin=Low
 		USART_Send(USART2, "FAULT ; ");
@@ -144,7 +140,7 @@ void SendStatus(void)
 
 	// Motor1
 	USART_Send(USART2, "[Status]Motor1 ");
-	if(Pin_ReadInput(PinMotor1_Ready) == 1)				// Motor_Ready pin=High
+	if(Pin_ReadInput(PinMotor1_Ready) == 1)	// Motor_Ready pin=High
 		USART_Send(USART2, "Ready ; ");
 	else									// Motor_Ready pin=Low
 		USART_Send(USART2, "FAULT ; ");
@@ -184,14 +180,14 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed)
 	if(Status <= 1)								// Disable(0) & Enable(1)
 		Pin_Write((MotorPin[Motor][0]), Status);
 	else if(Status == 2)						// Toggle(2)
-		Pin_Toggle((MotorPin[Motor][0]));
+		Pin_Toggle(MotorPin[Motor][0]);
 	else /* Null */;							// Keep(3)
 
 	// Direction
 	if(Direction <= 1)							// CW(0) & CCW(1)
 		Pin_Write((MotorPin[Motor][1]), Direction);
 	else if(Direction == 2)						// Toggle(2)
-		Pin_Toggle((MotorPin[Motor][1]));
+		Pin_Toggle(MotorPin[Motor][1]);
 	else /* Null */;							// Keep(3)
 
 	// Speed
@@ -205,16 +201,16 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed)
 	else if(Speed == 100)
 	{
 //		TIM_SetCompare1((MotorTimer[Motor]), 999);	// Set PWM duty cycle=100%
-		MotorAccelerationCtrol(Motor, 999);
+		MotorAccelerationCtrol(Motor, 999);		// Set PWM duty cycle=100%
 		Motor0_Speed_Value = Speed;
 	}
-	else if((Speed > 0) && (Speed < 100))//ERROR SpeedComand = 9A 9B
+	else if((Speed > 0) && (Speed < 100))
 	{
 //		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
-		MotorAccelerationCtrol(Motor, ((Speed-1)*10));
+		MotorAccelerationCtrol(Motor, ((Speed-1)*10));	// Set duty cycle
 		Motor0_Speed_Value = Speed;
 	}
-	else if(Speed == 127)	// Keep speed of motor
+	else if(Speed == 127)	// Keep the speed of motor
 	{
 		/* Null */;
 	}
@@ -238,7 +234,6 @@ void MotorAccelerationCtrol(uint8_t Motor, uint16_t TargetSpeed)
 		}
 
 		Delay_normal(0xFCF);
-//		Delay(50);// ERROR IntLoop
 	}
 }
 
@@ -251,9 +246,9 @@ void SendSpeedValue(uint16_t Number)
 	USART_Send(USART2, "%\n");
 }
 
-void Delay_normal(__IO u32 number)
+void Delay_normal(__IO u32 nTime)
 {
-	for(; number != 0; number--);
+	for(; nTime != 0; nTime--);
 }
 
 /**

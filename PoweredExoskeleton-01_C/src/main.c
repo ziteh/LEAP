@@ -135,6 +135,7 @@ void SendStatus(void)
 		USART_Send(USART2, "CCW ; ");
 	else
 		USART_Send(USART2, " CW ; ");
+
 	USART_Send(USART2, "S: ");
 	USART_Send(USART2, Number_TO_String(PerMill_TO_Percentage(TIM3->CCR1)));
 	USART_Send(USART2, "%\n");
@@ -230,13 +231,14 @@ void MotorAccelerationCtrl(uint8_t Motor, uint16_t TargetSpeed)
 		uint16_t NowSpeed = (TIM3->CCR1);	// Read PMW Duty-Cycle% Value
 //		int32_t SpeedDif = TargetSpeed - NowSpeed;
 
+		// Set duty cycle
 		if((TargetSpeed - NowSpeed) > 0)
 		{
-			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed+1)); // Set duty cycle
+			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed+1));
 		}
 		else if((TargetSpeed - NowSpeed) < 0)
 		{
-			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed-1)); // Set duty cycle
+			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed-1));
 		}
 
 		Delay_normal(0xFCF);

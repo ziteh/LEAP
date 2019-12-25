@@ -57,7 +57,7 @@ uint8_t MotorPin[2][3] =
 uint32_t MotorTimer[2] = {TIM3, TIM3};
 
 //uint8_t Motor0_Speed_Char[] = "0";
-uint8_t Motor0_Speed_Value = 0;
+//uint8_t Motor0_Speed_Value = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -196,20 +196,20 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed)
 	{
 		Pin_Write((MotorPin[Motor][0]), Disable);
 //		TIM_SetCompare1((MotorTimer[Motor]), 0);
-		MotorAccelerationCtrol(Motor, 0);
-		Motor0_Speed_Value = Speed;
+		MotorAccelerationCtrl(Motor, 0);
+//		Motor0_Speed_Value = Speed;
 	}
 	else if(Speed == 100)
 	{
 //		TIM_SetCompare1((MotorTimer[Motor]), 999);	// Set PWM duty cycle=100%
-		MotorAccelerationCtrol(Motor, 999);		// Set PWM duty cycle=100%
-		Motor0_Speed_Value = Speed;
+		MotorAccelerationCtrl(Motor, 999);		// Set PWM duty cycle=100%
+//		Motor0_Speed_Value = Speed;
 	}
 	else if((Speed > 0) && (Speed < 100))
 	{
 //		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
-		MotorAccelerationCtrol(Motor, ((Speed*10)-1));	// Set duty cycle
-		Motor0_Speed_Value = Speed;
+		MotorAccelerationCtrl(Motor, ((Speed*10)-1));	// Set duty cycle
+//		Motor0_Speed_Value = Speed;
 	}
 	else if(Speed == 127)	// Keep the speed of motor
 	{
@@ -218,18 +218,23 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed)
 	else /* Null */;
 }
 
-void MotorAccelerationCtrol(uint8_t Motor, uint16_t TargetSpeed)
+/**
+ * @brief	Motor acceleration control
+ * @param 	Motor: The motor want to control.
+ * @param 	TargetSpeed: The Target speed.
+ */
+void MotorAccelerationCtrl(uint8_t Motor, uint16_t TargetSpeed)
 {
 	while(TargetSpeed != (TIM3->CCR1))
 	{
-		uint16_t NowSpeed = (TIM3->CCR1);
-		int32_t SpeedDif = TargetSpeed - NowSpeed;
+		uint16_t NowSpeed = (TIM3->CCR1);	// Read PMW Duty-Cycle% Value
+//		int32_t SpeedDif = TargetSpeed - NowSpeed;
 
-		if(SpeedDif > 0)
+		if((TargetSpeed - NowSpeed) > 0)
 		{
 			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed+1)); // Set duty cycle
 		}
-		else if(SpeedDif < 0)
+		else if((TargetSpeed - NowSpeed) < 0)
 		{
 			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed-1)); // Set duty cycle
 		}
@@ -238,6 +243,11 @@ void MotorAccelerationCtrol(uint8_t Motor, uint16_t TargetSpeed)
 	}
 }
 
+/**
+ * @brief	Convert number into string
+ * @param 	Number: The number want to convert.
+ * @return	The converted string.
+ */
 char* Number_TO_String(uint16_t Number)
 {
 	static char string[3];
@@ -245,6 +255,11 @@ char* Number_TO_String(uint16_t Number)
 	return string;
 }
 
+/**
+ * @brief	Convert 0~999 into 0~100
+ * @param 	PerMill: The PerMill number want to convert. 0~999.
+ * @return	The converted percentage.
+ */
 u8 PerMill_TO_Percentage(u16 PerMill)
 {
 	u8 Percentage;

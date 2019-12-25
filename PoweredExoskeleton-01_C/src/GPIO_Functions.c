@@ -62,88 +62,83 @@ void GPIO_Initialization(void)
 	GPIO_StructInit(&GPIO_InitStructure);
 
 	/* Configure the GPIO pin */
-	/* user */
-	// PA5: LED-user
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	/* STM32 Nucleo-64 board */
+	Pin_Mod(LD2, OUT, GPPP, S2M);	// PA5: LED-user
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PC13: Button-user
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	Pin_Mod(B1, IN, FL, S2M);	// PC13: Button-user
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 
 	/* USART */
-	// PA2: USART2_TX
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinUSART2_TX, OUT, AFPP, S50M);	// PA2: USART2_TX
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PA3: USART2_RX
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinUSART2_RX, IN, FL, S50M);	// PA3: USART2_RX
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 
 	/* Motor0 */
-	// PB5: Motor0_Enbale
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	// PB10: Motor0-Direction
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	// PB4: Motor0-Speed(PWM, TIM3_CH1)
-//	GPIO_PinRemapConfig(GPIO_FullRemap_TIM3, ENABLE);
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	Pin_Mod(PinMotor0_Enbale, OUT, GPPP, S2M);	// PB5: Motor0_Enbale
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 //	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;	// TIM3_CH1 = PA6
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PB3: Motor0-Ready
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	Pin_Mod(PinMotor0_Direction, OUT, GPPP, S2M);	// PB10: Motor0-Direction
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	Pin_Mod(PinMotor0_Speed, OUT, AFOD, S50M);	// PB4: Motor0-Speed(PWM, TIM3_CH1)
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;	// TIM3_CH1 = PA6
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	Pin_Mod(PinMotor0_Ready, IN, PD, S2M);	// PB3: Motor0-Ready
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	/* Motor1 */
-	// PA8: Motor1_Enbale
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Enbale, OUT, GPPP, S2M);	// PA8: Motor1_Enbale
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PA9: Motor1-Direction
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Direction, OUT, GPPP, S2M);	// PA9: Motor1-Direction
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PC7: Motor1-Speed(PWM, TIM3_CH2)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Speed, OUT, AFOD, S50M);	// PC7: Motor1-Speed(PWM, TIM3_CH2)
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	// PB6: Motor1-Ready
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Ready, IN, PD, S2M);	// PB6: Motor1-Ready
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
 /**

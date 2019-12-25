@@ -25,6 +25,10 @@
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Pin define */
+// USART
+#define PinUSART2_TX		(PA2)
+#define PinUSART2_RX		(PA3)
+
 // Motor-0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
 #define PinMotor0_Direction	(PB10)	// Arduino:D6

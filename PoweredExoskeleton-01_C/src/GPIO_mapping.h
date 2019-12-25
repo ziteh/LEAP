@@ -29,13 +29,13 @@
 #define PinUSART2_TX		(PA2)
 #define PinUSART2_RX		(PA3)
 
-// Motor-0
+// Motor0
 #define PinMotor0_Enbale	(PB5)	// Arduino:D4
 #define PinMotor0_Direction	(PB10)	// Arduino:D6
 #define PinMotor0_Speed		(PA6)	// Arduino:D12(PWM); TIM3_CH1
 #define PinMotor0_Ready		(PB4)	// Arduino:D5
 
-// Motor-1
+// Motor1
 #define PinMotor1_Enbale	(PA8)	// Arduino:D7
 #define PinMotor1_Direction	(PA9)	// Arduino:D8
 #define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2

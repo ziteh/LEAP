@@ -42,8 +42,9 @@ void Delay(__IO uint32_t nTime);
 void SendStatus(void);
 void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed);
 void MotorAccelerationCtrol(uint8_t Motor, uint16_t TargetSpeed);
+char* Number_TO_String(uint16_t Number);
+u8 PerMill_TO_Percentage(u16 PerMill);
 void Delay_normal(__IO u32 nTime);
-void SendSpeedValue(uint16_t Number);
 
 #endif /* __MAIN_H */
 

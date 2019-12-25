@@ -136,7 +136,8 @@ void SendStatus(void)
 	else
 		USART_Send(USART2, " CW ; ");
 	USART_Send(USART2, "S: ");
-	SendSpeedValue(Motor0_Speed_Value);
+	USART_Send(USART2, Number_TO_String(PerMill_TO_Percentage(TIM3->CCR1)));
+	USART_Send(USART2, "%\n");
 
 	// Motor1
 	USART_Send(USART2, "[Status]Motor1 ");
@@ -207,7 +208,7 @@ void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed)
 	else if((Speed > 0) && (Speed < 100))
 	{
 //		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
-		MotorAccelerationCtrol(Motor, ((Speed-1)*10));	// Set duty cycle
+		MotorAccelerationCtrol(Motor, ((Speed*10)-1));	// Set duty cycle
 		Motor0_Speed_Value = Speed;
 	}
 	else if(Speed == 127)	// Keep the speed of motor
@@ -237,15 +238,33 @@ void MotorAccelerationCtrol(uint8_t Motor, uint16_t TargetSpeed)
 	}
 }
 
-void SendSpeedValue(uint16_t Number)
+char* Number_TO_String(uint16_t Number)
 {
-	char buff[3];
-	sprintf (buff, "%d", Number);
-
-	USART_Send(USART2, buff);
-	USART_Send(USART2, "%\n");
+	static char string[3];
+	sprintf(string, "%d", Number);
+	return string;
 }
 
+u8 PerMill_TO_Percentage(u16 PerMill)
+{
+	u8 Percentage;
+
+	if(PerMill == 0)
+		Percentage = 0;
+	else if(PerMill == 999)
+		Percentage = 100;
+	else if(PerMill > 1 && PerMill < 999)
+		Percentage = ((PerMill+1)/10);
+	else /* Null */;
+
+	return Percentage;
+}
+
+/**
+ * @brief  Inserts a delay time(no-interrupt).
+ * @param  nTime: specifies the delay time length.
+ * @retval None
+ */
 void Delay_normal(__IO u32 nTime)
 {
 	for(; nTime != 0; nTime--);

@@ -248,7 +248,8 @@ void USART2_IRQHandler(void)
 			{
 				MotorCtrl(selMotor, 3, 3, (USART_ReceivData & 0x7F));
 				USART_Send(USART2, " Set speed:");
-				SendSpeedValue(USART_ReceivData & 0x7F);
+				USART_Send(USART2, Number_TO_String(USART_ReceivData & 0x7F));
+				USART_Send(USART2, "%\n");
 			}
 			else												// 0xxx xxxx(b)
 			{

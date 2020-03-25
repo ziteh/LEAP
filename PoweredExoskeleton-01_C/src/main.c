@@ -19,8 +19,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>
-#include "main.h"
 #include "stm32f10x.h"
+#include "main.h"
 #include "GPIO_Functions.h"
 #include "RCC_Functions.h"
 #include "NVIC_Functions.h"
@@ -270,7 +270,7 @@ u8 PerMill_TO_Percentage(u16 PerMill)
 		Percentage = 0;
 	else if(PerMill == 999)
 		Percentage = 100;
-	else if(PerMill > 1 && PerMill < 999)
+	else if((PerMill > 1) && (PerMill < 999))
 		Percentage = ((PerMill+1)/10);
 	else /* Null */;
 

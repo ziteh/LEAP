@@ -1,14 +1,14 @@
 
 /**
  ******************************************************************************
- * @file   		RCC_Functions.c
- *	@author  	Huang Tzu-Fu
+ * @file   		NVIC_Functions.c
+ * @author  	Huang Tzu-Fu
  * 				National Formosa University
  * 				Department of Electronic Engineering
  * 				Intelligent Robot System Laboratory
  * @version 	V1.0.0
  * @date    	08-October-2019
- * @brief   	RCC functions program
+ * @brief   	NVIC functions program
  ******************************************************************************
  * @attention
  *
@@ -19,7 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
-#include "RCC_Functions.h"
+#include "NVIC_Functions.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -29,30 +29,23 @@
 /* Private functions ---------------------------------------------------------*/
 
 /**
-  * @brief  Initialize the different system clocks.
+  * @brief  Initialize NVIC.
   * @param  None
   * @retval None
-  * @attention Please run this function before any other initialization.
   */
-void RCC_Initialization(void)
+void NVIC_Initialization(void)
 {
+	NVIC_InitTypeDef NVIC_InitStructure;	// Structure Declarations
 
-	/* Resets the RCC clock configuration to the default reset state */
-	RCC_DeInit();
+	/* Configures the priority grouping */
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
-	/* RCC APB1 */
-	RCC_APB1PeriphClockCmd(	RCC_APB1Periph_USART2	|
-							RCC_APB1Periph_TIM3		,
-							ENABLE);
-
-	/* RCC APB2 */
-	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOA |
-							RCC_APB2Periph_GPIOB |
-							RCC_APB2Periph_GPIOC |
-							RCC_APB2Periph_GPIOD |
-							RCC_APB2Periph_GPIOE ,
-//							RCC_APB2Periph_AFIO,
-							ENABLE);
+	/* Configure the NVIC */
+	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 }
 
 /********************************END OF FILE***********************************/

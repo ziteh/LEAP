@@ -24,6 +24,7 @@
 #include "RCC_Functions.h"
 #include "PWM_Functions.h"
 #include "USART_Functions.h"
+#include "NVIC_Functions.h"
 
 
 /* Private typedef */
@@ -56,30 +57,31 @@ int main(void)
 	GPIO_Initialization();
 	USART_Initialization();
 	PWM_Initialization();
+	NVIC_Initialization();
 
-//	TIM_SetCompare2(TIM3, 1728);
+	TIM_SetCompare2(TIM3, 1720);
 
-	int vPWM = 400;
+	int vPWM = 525; // 525～1720
 	int dPWM = 0;
 
 	/* Infinite loop */
 	while (1)
 	{
-		Delay_normal(0xFFF); // 0xFCF
-//		TIM_SetCompare2(TIM3, 840);
-//		Delay_normal(0xFFFEF); // 0xFCF
-//		TIM_SetCompare2(TIM3, 1140);
-
-		if(dPWM)
-			vPWM++;
-		else
-			vPWM--;
-
-		if(vPWM >= 1720)
-			dPWM = 0;
-		if(vPWM <= 525)
-			dPWM = 1;
-		TIM_SetCompare2(TIM3, vPWM);
+//		Delay_normal(0xFFF); // 0xFCF
+////		TIM_SetCompare2(TIM3, 840);
+////		Delay_normal(0xFFFEF); // 0xFCF
+////		TIM_SetCompare2(TIM3, 1140);
+//
+//		if(dPWM)
+//			vPWM++;
+//		else
+//			vPWM--;
+//
+//		if(vPWM >= 1220)
+//			dPWM = 0;
+//		if(vPWM <= 700)
+//			dPWM = 1;
+//		TIM_SetCompare2(TIM3, vPWM);
 	}
 }
 

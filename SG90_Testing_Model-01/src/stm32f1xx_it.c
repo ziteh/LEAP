@@ -38,6 +38,9 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+uint16_t nInst = 0;			// The number of instruction
+uint8_t selMotor = 0xFF;	// The motor which be selected
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -105,6 +108,51 @@ void UsageFault_Handler(void)
   {
   }
 }
+
+/**
+  * @brief  This function handles USART2_IRQHandler Handler.
+  * @param  None
+  * @retval None
+  */
+void USART2_IRQHandler(void)
+{
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // NOT USART_FLAG_RXNE
+	{
+		uint16_t USART_ReceivData = 0xF0;
+		USART_ReceivData = USART_ReceiveData(USART2);
+
+			if(USART_ReceivData == 0xE0)		// System stop
+			{
+				USART_Send(USART2, "[System]Stop.\n");
+			}
+			else if(USART_ReceivData == 0xE1)	// System reset
+			{
+				/* Initialization */
+				// Functions & Setups
+				RCC_Initialization();
+				GPIO_Initialization();
+				USART_Initialization();
+				PWM_Initialization();
+				NVIC_Initialization();
+
+				USART_Send(USART2, "[System]Reset.\n");
+			}
+			else if((USART_ReceivData >= 0x35)||(USART_ReceivData <= 0xAB))
+			{
+				TIM_SetCompare2(TIM3, (USART_ReceivData)*10);
+			}
+			else if(USART_ReceivData == 0xF0)
+				/* Null */;
+			else	// Unknown instruction
+			{
+				USART_Send(USART2, "[Error]Unknown instruction.\n");
+			}
+
+		/* NO need to clears the USARTx's interrupt pending bits */
+		/* USART_ClearITPendingBit(USART2,USART_IT_RXNE); */
+	}
+}
+
 
 /**
   * @brief  This function handles SVCall exception.

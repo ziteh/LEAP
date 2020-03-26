@@ -66,23 +66,14 @@ void GPIO_Initialization(void)
 	Pin_Mod(LD2, OUT, GPPP, S2M);	// PA5: LED-user
 	Pin_Mod(B1, IN, FL, S2M);	// PC13: Button-user
 
-//	/* USART */
-//	Pin_Mod(PinUSART2_TX, OUT, AFPP, S50M);	// PA2: USART2_TX
-//	Pin_Mod(PinUSART2_RX, IN, FL, S50M);	// PA3: USART2_RX
-//
-//	/* Motor0 */
-//	Pin_Mod(PinMotor0_Enbale, OUT, GPPP, S2M);	// PB5: Motor0_Enbale
-//	Pin_Mod(PinMotor0_Direction, OUT, GPPP, S2M);	// PB10: Motor0-Direction
-	Pin_Mod(PB5, OUT, AFPP, S50M);	// PB4: Motor0-Speed(PWM, TIM3_CH1)
-	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
+	/* USART */
+	Pin_Mod(PA2, OUT, AFPP, S50M);	// USART2_TX
+	Pin_Mod(PA3, IN, FL, S50M);	// USART2_RX//
 
-	//	Pin_Mod(PinMotor0_Ready, IN, PD, S2M);	// PB3: Motor0-Ready
-//
-//	/* Motor1 */
-//	Pin_Mod(PinMotor1_Enbale, OUT, GPPP, S2M);	// PA8: Motor1_Enbale
-//	Pin_Mod(PinMotor1_Direction, OUT, GPPP, S2M);	// PA9: Motor1-Direction
-//	Pin_Mod(PinMotor1_Speed, OUT, AFOD, S50M);	// PC7: Motor1-Speed(PWM, TIM3_CH2)
-//	Pin_Mod(PinMotor1_Ready, IN, PD, S2M);	// PB6: Motor1-Ready
+//	/* Motor */
+	Pin_Mod(PA7, OUT, AFPP, S50M);	// SG90-PWM
+//	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
+
 }
 
 /**

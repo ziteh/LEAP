@@ -41,6 +41,9 @@
 /* Private functions */
  void Delay_normal(__IO u32 nTime);
  void Delay(__IO uint32_t nTime);
+ float get_adc1();
+ char* Number_TO_String(uint16_t Number);
+// int fputc(int ch, FILE *f);
 
 /**
 **===========================================================================
@@ -64,25 +67,75 @@ int main(void)
 	int vPWM = 525; // 525～1720
 	int dPWM = 0;
 
-	/* Infinite loop */
-	while (1)
+	ADC_InitTypeDef ADC_InitStruct;
+
+//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);//IO时钟打开，ADC1时钟打开
+	RCC_ADCCLKConfig(RCC_PCLK2_Div6);//这个是对ADC时钟分频的，ADC时钟不能超过14m，
+
+	ADC_DeInit(ADC1);
+	ADC_InitStruct.ADC_ContinuousConvMode=DISABLE;//不需要连续转换
+	ADC_InitStruct.ADC_DataAlign=ADC_DataAlign_Right;//数据向右对齐
+	ADC_InitStruct.ADC_ExternalTrigConv=ADC_ExternalTrigConv_None;//不需要事件触发，软件触发就好
+	ADC_InitStruct.ADC_Mode=ADC_Mode_Independent;//独立模式
+	ADC_InitStruct.ADC_NbrOfChannel=1;//只转换一个通道
+	ADC_InitStruct.ADC_ScanConvMode=DISABLE;//只有一个通道，所以不需要浏览转换
+	ADC_Init(ADC1,&ADC_InitStruct);
+
+	ADC_Cmd(ADC1,ENABLE);//这是个坑，一定要使能ADC后才能校准，
+	ADC_ResetCalibration(ADC1);//复位校准
+	while(ADC_GetResetCalibrationStatus(ADC1)==1);//等待复位校准完成
+	ADC_StartCalibration(ADC1);//校准
+	while(ADC_GetCalibrationStatus(ADC1)==1);//等待校准完成
+
+
+	float Voltage=0;//电压值
+//	delay_init();	//延时函数初始化
+//	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //设置NVIC中断分组2:2位抢占优先级，2位响应优先级
+//	init__uart1();//串口1初始化
+//	init_adc3();
+
+	while(1)
 	{
-//		Delay_normal(0xFFF); // 0xFCF
-////		TIM_SetCompare2(TIM3, 840);
-////		Delay_normal(0xFFFEF); // 0xFCF
-////		TIM_SetCompare2(TIM3, 1140);
-//
-//		if(dPWM)
-//			vPWM++;
-//		else
-//			vPWM--;
-//
-//		if(vPWM >= 1220)
-//			dPWM = 0;
-//		if(vPWM <= 700)
-//			dPWM = 1;
-//		TIM_SetCompare2(TIM3, vPWM);
+		Voltage=get_adc1();//获取ADC的电压值
+//		printf("Voltage=%f\r\n",Voltage);//发送到电脑
+		USART_Send(USART2, Number_TO_String(Voltage*10000));
+		USART_Send(USART2, "\n");//发送到电脑
+		Delay_normal(0xFFF1);	//这个延时只是为了让数据输出慢点，方便观察
 	}
+}
+
+
+
+//重定义fputc函数 ,想要使用printf函数得添加这个函数
+//int fputc(int ch, FILE *f)
+//{
+//	while((USART1->SR&0X40)==0);//循环发送,直到发送完毕
+//    USART1->DR = (u8) ch;
+//	return ch;
+//}
+
+/**
+ * @brief	Convert number into string
+ * @param 	Number: The number want to convert.
+ * @return	The converted string.
+ */
+char* Number_TO_String(uint16_t Number)
+{
+	static char string[3];
+	sprintf(string, "%d", Number);
+	return string;
+}
+
+//获取ADC的电压值
+float get_adc1()
+{
+	float temp;
+	ADC_RegularChannelConfig(ADC1,ADC_Channel_1,1,ADC_SampleTime_55Cycles5);//这里选择要转换的通道和转换时间
+	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//软件触发转换
+	while(ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC)==0);//等待转换完成
+	temp=ADC_GetConversionValue(ADC1);//获取ADC的值
+	temp=3.3/4096*temp;//转换为相应的电压，默认是12位转换的吧
+	return temp;
 }
 
 /**

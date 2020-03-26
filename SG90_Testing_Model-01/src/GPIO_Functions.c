@@ -74,6 +74,7 @@ void GPIO_Initialization(void)
 	Pin_Mod(PA7, OUT, AFPP, S50M);	// SG90-PWM
 //	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
 
+	Pin_Mod(PA1, IN, AN, S50M); // ADC
 }
 
 /**

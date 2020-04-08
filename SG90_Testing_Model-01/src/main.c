@@ -32,8 +32,8 @@
 #define MESSAGE5   " program built with "
 #define MESSAGE6   " Atollic TrueSTUDIO "
 
-#define PosStr		(2.8)	// Leg straight
-#define PosBen		(0.05)	// Knee bent
+#define PosStr		(0.05)	// Leg straight
+#define PosBen		(3)	// Knee bent
 #define PosOffset	(0)
 
 /* Private macro */
@@ -141,7 +141,7 @@ void MotorCtrl(u16 TargetCCR)
 
 	if(POTdir == 0)	// Def
 	{
-		while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosStr)&(get_adc1() > PosBen)))
+		while((TargetCCR != (TIM3->CCR2)&(get_adc1() > PosStr)&(get_adc1() < PosBen)))
 		{
 			u16 NowCCR = (TIM3->CCR2);
 			if(TargetCCR > NowCCR)
@@ -156,32 +156,32 @@ void MotorCtrl(u16 TargetCCR)
 			Delay_normal(0xf0f);
 		}
 	}
-	else if(POTdir == 1) //
+	else if(POTdir == 1) //Stred
 	{
-		while((TargetCCR != (TIM3->CCR2)&(get_adc1() > PosBen)))
-		{
-			u16 NowCCR = (TIM3->CCR2);
-			TIM_SetCompare2(TIM3, NowCCR-1);
-			Delay_normal(0xf0f);
-		}
-	}
-	else if(POTdir == -1) //
-	{
-		while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosStr)))
+		while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosBen)))
 		{
 			u16 NowCCR = (TIM3->CCR2);
 			TIM_SetCompare2(TIM3, NowCCR+1);
 			Delay_normal(0xf0f);
 		}
 	}
+	else if(POTdir == -1) //Bented
+	{
+		while((TargetCCR != (TIM3->CCR2)&(get_adc1() > PosStr)))
+		{
+			u16 NowCCR = (TIM3->CCR2);
+			TIM_SetCompare2(TIM3, NowCCR-1);
+			Delay_normal(0xf0f);
+		}
+	}
 
-	if(!(get_adc1() < PosStr))
+	if(!(get_adc1() > PosStr))
 	{
 		POTdir = 1;
 //		TIM_SetCompare2(TIM3, (TIM3->CCR2)-1);
 		USART_Send(USART2, "POS_Str\n");
 	}
-	else if(!(get_adc1() > PosBen))
+	else if(!(get_adc1() < PosBen))
 	{
 		POTdir = -1;
 //		TIM_SetCompare2(TIM3, (TIM3->CCR2)+1);

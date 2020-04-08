@@ -166,6 +166,19 @@ void USART2_IRQHandler(void)
 	}
 }
 
+void EXTI0_IRQHandler(void)
+{
+	if(EXTI_GetITStatus(EXTI_Line0) != RESET)
+	{
+		Delay_normal(0xAF); //debounce
+		if(!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0))	//debounce
+		{
+			USART_Send(USART2, "[STOP]\n");
+			while(1);
+		}
+		EXTI_ClearITPendingBit(EXTI_Line0);
+	}
+}
 
 /**
   * @brief  This function handles SVCall exception.

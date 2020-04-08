@@ -79,6 +79,19 @@ void GPIO_Initialization(void)
 //	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
 
 	Pin_Mod(PA1, IN, AN, S50M); // ADC
+
+	// EXT
+	Pin_Mod(PA0, IN, PD, S50M); // EXT
+
+	EXTI_InitTypeDef EXTI_InitStructure;
+
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0);
+
+	EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_Init(&EXTI_InitStructure);
 }
 
 /**

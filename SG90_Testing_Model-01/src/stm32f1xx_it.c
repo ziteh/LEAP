@@ -30,6 +30,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
 #include "stm32f10x.h"
+#include "GPIO_Functions.h"
 
 /** @addtogroup IO_Toggle
   * @{
@@ -138,7 +139,7 @@ void USART2_IRQHandler(void)
 
 				USART_Send(USART2, "[System]Reset.\n");
 			}
-			else if((USART_ReceivData >= 0x25)||(USART_ReceivData <= 0xB3))
+			else if((USART_ReceivData >= 0x25)&(USART_ReceivData <= 0xB3))
 			{
 				/*
 					50Hz ; 20ms
@@ -152,6 +153,7 @@ void USART2_IRQHandler(void)
 					270度: 3.5ms = 17.5% : CCR:2520 -> 0xFC
 				*/
 //					TIM_SetCompare2(TIM3, (((USART_ReceivData)*10)+5));
+				USART_Send(USART2, "OK\n");
 				MotorCtrl((USART_ReceivData)*10);
 			}
 			else if(USART_ReceivData == 0xF0)

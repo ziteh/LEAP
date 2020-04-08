@@ -32,7 +32,7 @@
 #define MESSAGE5   " program built with "
 #define MESSAGE6   " Atollic TrueSTUDIO "
 
-#define PosMax		(2.2)
+#define PosMax		(2.8)
 #define PosMin		(0.05)
 #define PosOffset	(0)
 
@@ -68,7 +68,7 @@ int main(void)
 	PWM_Initialization();
 	NVIC_Initialization();
 
-	TIM_SetCompare2(TIM3, 1720);
+	TIM_SetCompare2(TIM3, 1080);
 
 	//int vPWM = 525; // 525～1720
 	//int dPWM = 0;
@@ -131,6 +131,17 @@ void MotorCtrl(u16 TargetCCR)
 
 		Delay_normal(0xf0f);
 	}
+
+	if(!(get_adc1() < PosMax))
+	{
+		TIM_SetCompare2(TIM3, (TIM3->CCR2)-1);
+		USART_Send(USART2, "POS_Max\n");
+	}
+	else if(!(get_adc1() > PosMin))
+	{
+		TIM_SetCompare2(TIM3, (TIM3->CCR2)+1);
+		USART_Send(USART2, "POS_Min\n");
+	}
 	Pin_Clr(LD2);
 }
 
@@ -154,7 +165,7 @@ float get_adc1()
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//软件触发转换
 	while(ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC)==0);//等待转换完成
 	temp=ADC_GetConversionValue(ADC1);//获取ADC的值
-	temp=3.3/4096*temp;//转换为相应的电压，默认是12位转换的吧
+	temp=(3.3/4096)*temp;//转换为相应的电压，默认是12位转换的吧
 	return temp;
 }
 

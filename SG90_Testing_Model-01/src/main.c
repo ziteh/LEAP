@@ -32,14 +32,15 @@
 #define MESSAGE5   " program built with "
 #define MESSAGE6   " Atollic TrueSTUDIO "
 
-#define PosMax		(2.8)
-#define PosMin		(0.05)
+#define PosStr		(2.8)	// Leg straight
+#define PosBen		(0.05)	// Knee bent
 #define PosOffset	(0)
 
 /* Private macro */
 /* Private variables */
  USART_InitTypeDef USART_InitStructure;
  static __IO uint32_t TimingDelay;
+ int POTdir=0; //0:Def; 1:Straight-MAX; -1:Bent-MAX
 
 /* Private function prototypes */
 /* Private functions */
@@ -106,9 +107,13 @@ int main(void)
 	{
 		Voltage=get_adc1();//获取ADC的电压值
 //		printf("Voltage=%f\r\n",Voltage);//发送到电脑
-		USART_Send(USART2, Number_TO_String(Voltage*10000));
-		USART_Send(USART2, "   ");
 		USART_Send(USART2, Number_TO_String(TIM3->CCR2));
+		USART_Send(USART2, "   ");
+		USART_Send(USART2, Number_TO_String(POTdir));
+		USART_Send(USART2, "   ");
+		USART_Send(USART2, Number_TO_String(Voltage*10000));
+
+
 		USART_Send(USART2, "\n");//发送到电脑
 		Delay_normal(0xFFFA);	//这个延时只是为了让数据输出慢点，方便观察
 	}
@@ -116,7 +121,8 @@ int main(void)
 
 void MotorCtrl(u16 TargetCCR)
 {
-	while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosMax)&(get_adc1() > PosMin)))
+	/*
+	while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosStr)&(get_adc1() > PosBen)))
 	{
 		u16 NowCCR = (TIM3->CCR2);
 		Pin_Set(LD2);
@@ -131,18 +137,57 @@ void MotorCtrl(u16 TargetCCR)
 
 		Delay_normal(0xf0f);
 	}
+	*/
 
-	if(!(get_adc1() < PosMax))
+	if(POTdir == 0)	// Def
 	{
-		TIM_SetCompare2(TIM3, (TIM3->CCR2)-1);
-		USART_Send(USART2, "POS_Max\n");
+		while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosStr)&(get_adc1() > PosBen)))
+		{
+			u16 NowCCR = (TIM3->CCR2);
+			if(TargetCCR > NowCCR)
+			{
+				TIM_SetCompare2(TIM3, NowCCR+1);
+			}
+			else
+			{
+				TIM_SetCompare2(TIM3, NowCCR-1);
+			}
+
+			Delay_normal(0xf0f);
+		}
 	}
-	else if(!(get_adc1() > PosMin))
+	else if(POTdir == 1) //
 	{
-		TIM_SetCompare2(TIM3, (TIM3->CCR2)+1);
-		USART_Send(USART2, "POS_Min\n");
+		while((TargetCCR != (TIM3->CCR2)&(get_adc1() > PosBen)))
+		{
+			u16 NowCCR = (TIM3->CCR2);
+			TIM_SetCompare2(TIM3, NowCCR-1);
+			Delay_normal(0xf0f);
+		}
 	}
-	Pin_Clr(LD2);
+	else if(POTdir == -1) //
+	{
+		while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosStr)))
+		{
+			u16 NowCCR = (TIM3->CCR2);
+			TIM_SetCompare2(TIM3, NowCCR+1);
+			Delay_normal(0xf0f);
+		}
+	}
+
+	if(!(get_adc1() < PosStr))
+	{
+		POTdir = 1;
+//		TIM_SetCompare2(TIM3, (TIM3->CCR2)-1);
+		USART_Send(USART2, "POS_Str\n");
+	}
+	else if(!(get_adc1() > PosBen))
+	{
+		POTdir = -1;
+//		TIM_SetCompare2(TIM3, (TIM3->CCR2)+1);
+		USART_Send(USART2, "POS_Bet\n");
+	}
+//	Pin_Clr(LD2);
 }
 
 /**

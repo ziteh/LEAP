@@ -32,6 +32,10 @@
 #define MESSAGE5   " program built with "
 #define MESSAGE6   " Atollic TrueSTUDIO "
 
+#define PosMax		(2.2)
+#define PosMin		(0.05)
+#define PosOffset	(0)
+
 /* Private macro */
 /* Private variables */
  USART_InitTypeDef USART_InitStructure;
@@ -43,6 +47,8 @@
  void Delay(__IO uint32_t nTime);
  float get_adc1();
  char* Number_TO_String(uint16_t Number);
+ float get_adc1();
+ void MotorCtrl(u16 TargetCCR);
 // int fputc(int ch, FILE *f);
 
 /**
@@ -64,8 +70,8 @@ int main(void)
 
 	TIM_SetCompare2(TIM3, 1720);
 
-	int vPWM = 525; // 525～1720
-	int dPWM = 0;
+	//int vPWM = 525; // 525～1720
+	//int dPWM = 0;
 
 	ADC_InitTypeDef ADC_InitStruct;
 
@@ -94,25 +100,39 @@ int main(void)
 //	init__uart1();//串口1初始化
 //	init_adc3();
 
+	Pin_Clr(LD2);
+
 	while(1)
 	{
 		Voltage=get_adc1();//获取ADC的电压值
 //		printf("Voltage=%f\r\n",Voltage);//发送到电脑
 		USART_Send(USART2, Number_TO_String(Voltage*10000));
+		USART_Send(USART2, "   ");
+		USART_Send(USART2, Number_TO_String(TIM3->CCR2));
 		USART_Send(USART2, "\n");//发送到电脑
-		Delay_normal(0xFFF1);	//这个延时只是为了让数据输出慢点，方便观察
+		Delay_normal(0xFFFA);	//这个延时只是为了让数据输出慢点，方便观察
 	}
 }
 
+void MotorCtrl(u16 TargetCCR)
+{
+	while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosMax)&(get_adc1() > PosMin)))
+	{
+		u16 NowCCR = (TIM3->CCR2);
+		Pin_Set(LD2);
+		if(TargetCCR > NowCCR)
+		{
+			TIM_SetCompare2(TIM3, NowCCR+1);
+		}
+		else
+		{
+			TIM_SetCompare2(TIM3, NowCCR-1);
+		}
 
-
-//重定义fputc函数 ,想要使用printf函数得添加这个函数
-//int fputc(int ch, FILE *f)
-//{
-//	while((USART1->SR&0X40)==0);//循环发送,直到发送完毕
-//    USART1->DR = (u8) ch;
-//	return ch;
-//}
+		Delay_normal(0xf0f);
+	}
+	Pin_Clr(LD2);
+}
 
 /**
  * @brief	Convert number into string

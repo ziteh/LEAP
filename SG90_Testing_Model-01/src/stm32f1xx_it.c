@@ -29,6 +29,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_it.h"
+#include "stm32f10x.h"
 
 /** @addtogroup IO_Toggle
   * @{
@@ -137,9 +138,21 @@ void USART2_IRQHandler(void)
 
 				USART_Send(USART2, "[System]Reset.\n");
 			}
-			else if((USART_ReceivData >= 0x35)||(USART_ReceivData <= 0xAB))
+			else if((USART_ReceivData >= 0x25)||(USART_ReceivData <= 0xB3))
 			{
-				TIM_SetCompare2(TIM3, (USART_ReceivData)*10);
+				/*
+					50Hz ; 20ms
+
+					  0度: 0.5ms = 2.50% : CCR:360  -> 0x24
+					 45度: 1.0ms = 5.00% : CCR:720  -> 0x48
+					 90度: 1.5ms = 7.50% : CCR:1080 -> 0x6C
+					135度: 2.0ms = 10.0% : CCR:1440 -> 0x90
+					180度: 2.5ms = 12.5% : CCR:1800 -> 0xB4
+
+					270度: 3.5ms = 17.5% : CCR:2520 -> 0xFC
+				*/
+//					TIM_SetCompare2(TIM3, (((USART_ReceivData)*10)+5));
+				MotorCtrl((USART_ReceivData)*10);
 			}
 			else if(USART_ReceivData == 0xF0)
 				/* Null */;

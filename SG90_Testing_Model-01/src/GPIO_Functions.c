@@ -71,6 +71,10 @@ void GPIO_Initialization(void)
 	Pin_Mod(PA3, IN, FL, S50M);	// USART2_RX//
 
 //	/* Motor */
+	//紅色：5V 電源正極
+	//棕色：共地線
+	//橙色：控制訊號線
+
 	Pin_Mod(PA7, OUT, AFPP, S50M);	// SG90-PWM
 //	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
 

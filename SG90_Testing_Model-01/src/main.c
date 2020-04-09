@@ -32,7 +32,7 @@
 #define MESSAGE5   " program built with "
 #define MESSAGE6   " Atollic TrueSTUDIO "
 
-#define PosStr		(0.05)	// Leg straight
+#define PosStr		(0.07)	// Leg straight
 #define PosBen		(3)	// Knee bent
 #define PosOffset	(0)
 

@@ -175,6 +175,7 @@ void EXTI0_IRQHandler(void)
 		Delay_normal(0xAF); //debounce
 		if(!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0))	//debounce
 		{
+			TIM_Cmd(TIM3, DISABLE);	// Disable PWM
 			USART_Send(USART2, "[STOP]\n");
 			while(1);
 		}

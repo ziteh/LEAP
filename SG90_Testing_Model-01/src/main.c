@@ -69,7 +69,7 @@ int main(void)
 	PWM_Initialization();
 	NVIC_Initialization();
 
-	TIM_SetCompare2(TIM3, 64);
+	TIM_SetCompare2(TIM3, 530);
 
 	//int vPWM = 525; // 525～1720
 	//int dPWM = 0;

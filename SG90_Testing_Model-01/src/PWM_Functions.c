@@ -53,7 +53,7 @@ void PWM_Initialization(void)
 	/* PWM1 Mode configuration */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-//	TIM_OCInitStructure.TIM_Pulse = 0;	// TIM_Pulse=CCR1
+	TIM_OCInitStructure.TIM_Pulse = 530;	// TIM_Pulse=CCR1
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 //	TIM_OC2Init(TIM3, &TIM_OCInitStructure);	// TIM3_CH2
 	TIM_OC2Init(TIM3, &TIM_OCInitStructure);	// TIM3_CH1

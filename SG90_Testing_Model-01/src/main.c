@@ -69,7 +69,7 @@ int main(void)
 	PWM_Initialization();
 	NVIC_Initialization();
 
-	TIM_SetCompare2(TIM3, 1080);
+	TIM_SetCompare2(TIM3, 64);
 
 	//int vPWM = 525; // 525～1720
 	//int dPWM = 0;
@@ -141,7 +141,7 @@ void MotorCtrl(u16 TargetCCR)
 
 	if(POTdir == 0)	// Def
 	{
-		while((TargetCCR != (TIM3->CCR2)&(get_adc1() > PosStr)&(get_adc1() < PosBen)))
+		while((TargetCCR != (TIM3->CCR2)) & (get_adc1() > PosStr) & (get_adc1() < PosBen))
 		{
 			u16 NowCCR = (TIM3->CCR2);
 			if(TargetCCR > NowCCR)
@@ -158,7 +158,7 @@ void MotorCtrl(u16 TargetCCR)
 	}
 	else if(POTdir == 1) //Stred
 	{
-		while((TargetCCR != (TIM3->CCR2)&(get_adc1() < PosBen)))
+		while((TargetCCR > (TIM3->CCR2)) & (get_adc1() < PosBen))
 		{
 			u16 NowCCR = (TIM3->CCR2);
 			TIM_SetCompare2(TIM3, NowCCR+1);
@@ -167,7 +167,7 @@ void MotorCtrl(u16 TargetCCR)
 	}
 	else if(POTdir == -1) //Bented
 	{
-		while((TargetCCR != (TIM3->CCR2)&(get_adc1() > PosStr)))
+		while((TargetCCR < (TIM3->CCR2)) & (get_adc1() > PosStr))
 		{
 			u16 NowCCR = (TIM3->CCR2);
 			TIM_SetCompare2(TIM3, NowCCR-1);

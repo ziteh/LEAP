@@ -18,29 +18,29 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
+//#include "stm32f10x.h"
 #include "GPIO_Functions.h"
-#include "GPIO_mapping.h"
+//#include "GPIO_mapping.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* -----Pin Mode and Speed----- */
-#define OUT		(0)
-#define IN		(1)
-
-#define GPPP	(0)
-#define GPOD	(1)
-#define AFPP	(2)
-#define AFOD	(3)
-
-#define FL		(0)
-#define AN		(1)
-#define PD		(2)
-#define PU		(3)
-
-#define S2M		(2)
-#define S10M	(10)
-#define S50M	(50)
+//#define OUT		(0)
+//#define IN		(1)
+//
+//#define GPPP	(0)
+//#define GPOD	(1)
+//#define AFPP	(2)
+//#define AFOD	(3)
+//
+//#define FL		(0)
+//#define AN		(1)
+//#define PD		(2)
+//#define PU		(3)
+//
+//#define S2M		(2)
+//#define S10M	(10)
+//#define S50M	(50)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -78,7 +78,7 @@ void GPIO_Initialization(void)
 	Pin_Mod(PA7, OUT, AFPP, S50M);	// SG90-PWM
 //	GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
 
-	Pin_Mod(PA1, IN, AN, S50M); // ADC
+//	Pin_Mod(PA1, IN, AN, S50M); // ADC
 
 	// EXT
 	Pin_Mod(PA0, IN, PD, S50M); // EXT
@@ -207,22 +207,22 @@ void Pin_Mod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
 	else /* Null */;		// Out of range(0~79)
 }
 
-#undef OUT
-#undef IN
-
-#undef GPPP
-#undef GPOD
-#undef AFPP
-#undef AFOD
-
-#undef FL
-#undef AN
-#undef PD
-#undef PU
-
-#undef S2M
-#undef S10M
-#undef S50M
+//#undef OUT
+//#undef IN
+//
+//#undef GPPP
+//#undef GPOD
+//#undef AFPP
+//#undef AFOD
+//
+//#undef FL
+//#undef AN
+//#undef PD
+//#undef PU
+//
+//#undef S2M
+//#undef S10M
+//#undef S50M
 
 /**
   * @brief  Set a pin to High(1).

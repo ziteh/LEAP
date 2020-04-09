@@ -25,7 +25,7 @@
 #include "PWM_Functions.h"
 #include "USART_Functions.h"
 #include "NVIC_Functions.h"
-
+#include "ADC_Functions.h"
 
 /* Private typedef */
 /* Private define  */
@@ -34,7 +34,7 @@
 
 #define PosStr		(0.07)	// Leg straight
 #define PosBen		(3)	// Knee bent
-#define PosOffset	(0)
+//#define PosOffset	(0)
 
 /* Private macro */
 /* Private variables */
@@ -50,7 +50,6 @@
  char* Number_TO_String(uint16_t Number);
  float get_adc1();
  void MotorCtrl(u16 TargetCCR);
-// int fputc(int ch, FILE *f);
 
 /**
 **===========================================================================
@@ -65,6 +64,7 @@ int main(void)
 	// Functions & Setups
 	RCC_Initialization();
 	GPIO_Initialization();
+	ADC_Initialization();
 	USART_Initialization();
 	PWM_Initialization();
 	NVIC_Initialization();
@@ -74,7 +74,7 @@ int main(void)
 
 	//int vPWM = 525; // 525～1720
 	//int dPWM = 0;
-
+/*
 	ADC_InitTypeDef ADC_InitStruct;
 
 //	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);//IO时钟打开，ADC1时钟打开
@@ -94,7 +94,7 @@ int main(void)
 	while(ADC_GetResetCalibrationStatus(ADC1)==1);//等待复位校准完成
 	ADC_StartCalibration(ADC1);//校准
 	while(ADC_GetCalibrationStatus(ADC1)==1);//等待校准完成
-
+*/
 
 	float Voltage=0;//电压值
 //	delay_init();	//延时函数初始化

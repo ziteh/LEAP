@@ -50,8 +50,8 @@ void RCC_Initialization(void)
 							RCC_APB2Periph_GPIOB |
 							RCC_APB2Periph_GPIOC |
 							RCC_APB2Periph_GPIOD |
-							RCC_APB2Periph_GPIOE |
-							RCC_APB2Periph_ADC1,
+							RCC_APB2Periph_GPIOE,
+//							RCC_APB2Periph_ADC1,
 //							RCC_APB2Periph_AFIO,
 							ENABLE);
 }

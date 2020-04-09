@@ -18,8 +18,8 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
-#include "GPIO_mapping.h"
+//#include "stm32f10x.h"
+#include "ADC_Functions.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -38,23 +38,23 @@ void ADC_Initialization(void)
 	/* Structure Declarations */
 	ADC_InitTypeDef ADC_InitStruct;
 
-	/* RCC config*/
-//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-//	RCC_ADCCLKConfig(RCC_PCLK2_Div6);	// ADC's clock con't over 14MHz
+	/* RCC config */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+	RCC_ADCCLKConfig(RCC_PCLK2_Div6);	// ADC's clock con't over 14MHz
 
 	/* GPIO config */
-//	Pin_Mod(PA1, IN, AN, S50M);
+	Pin_Mod(PA1, IN, AN, S50M);
 
 	/* Deinitializes the ADCx peripheral registers to their default reset values */
 	ADC_DeInit(ADC1);
 
 	/* ADC configuration */
-	ADC_InitStruct.ADC_ContinuousConvMode=DISABLE;
-	ADC_InitStruct.ADC_DataAlign=ADC_DataAlign_Right;
-	ADC_InitStruct.ADC_ExternalTrigConv=ADC_ExternalTrigConv_None;
-	ADC_InitStruct.ADC_Mode=ADC_Mode_Independent;
-	ADC_InitStruct.ADC_NbrOfChannel=1;
-	ADC_InitStruct.ADC_ScanConvMode=DISABLE;
+	ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
+	ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
+	ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+	ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;
+	ADC_InitStruct.ADC_NbrOfChannel = 1;
+	ADC_InitStruct.ADC_ScanConvMode = DISABLE;
 	ADC_Init(ADC1, &ADC_InitStruct);
 
 	/* Enable */
@@ -106,9 +106,9 @@ void ADC_Initialization(void)
 uint16_t ADC_GetValue(ADC_TypeDef* ADCx, uint8_t ADC_Channel, uint8_t Rank, uint8_t ADC_SampleTime)
 {
 	ADC_RegularChannelConfig(ADCx, ADC_Channel, Rank, ADC_SampleTime);// ADC Config
-	ADC_SoftwareStartConvCmd(ADCx, ENABLE);				// Software start convert
-	while(ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC)==0);	// Wait until convert complete
-	return (uint16_t) ADC_GetConversionValue(ADCx);		// Get conversion value
+	ADC_SoftwareStartConvCmd(ADCx, ENABLE);			// Software start convert
+	while(ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC)==0);// Wait until convert complete
+	return (uint16_t) ADC_GetConversionValue(ADCx);	// Get conversion value
 }
 
 /********************************END OF FILE***********************************/

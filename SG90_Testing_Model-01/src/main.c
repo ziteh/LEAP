@@ -156,7 +156,7 @@ void MotorCtrl(u16 TargetCCR)
 			Delay_normal(0xf0f);
 		}
 	}
-	else if(POTdir == 1) //Stred
+	else if(POTdir == 1) //Str-Max
 	{
 		while((TargetCCR > (TIM3->CCR2)) & (get_adc1() < PosBen))
 		{
@@ -165,7 +165,7 @@ void MotorCtrl(u16 TargetCCR)
 			Delay_normal(0xf0f);
 		}
 	}
-	else if(POTdir == -1) //Bented
+	else if(POTdir == -1) //Bent-Max
 	{
 		while((TargetCCR < (TIM3->CCR2)) & (get_adc1() > PosStr))
 		{
@@ -175,17 +175,22 @@ void MotorCtrl(u16 TargetCCR)
 		}
 	}
 
-	if(!(get_adc1() > PosStr))
+//	if(!(get_adc1() > PosStr))
+	if(get_adc1() <= PosStr)
 	{
 		POTdir = 1;
-//		TIM_SetCompare2(TIM3, (TIM3->CCR2)-1);
-		USART_Send(USART2, "POS_Str\n");
+		USART_Send(USART2, "POS_Str-Max\n");
 	}
-	else if(!(get_adc1() < PosBen))
+//	else if(!(get_adc1() < PosBen))
+	else if(get_adc1() >= PosBen)
 	{
 		POTdir = -1;
-//		TIM_SetCompare2(TIM3, (TIM3->CCR2)+1);
-		USART_Send(USART2, "POS_Bet\n");
+		USART_Send(USART2, "POS_Bet-Max\n");
+	}
+	else
+	{
+		POTdir = 0;
+		USART_Send(USART2, "POS_Nor\n");
 	}
 //	Pin_Clr(LD2);
 }

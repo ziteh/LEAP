@@ -157,7 +157,7 @@ void USART2_IRQHandler(void)
 				MotorCtrl((USART_ReceivData)*10);
 			}
 			else if(USART_ReceivData == 0xF0)
-				/* Null */;
+				/* Null instruction */;
 			else	// Unknown instruction
 			{
 				USART_Send(USART2, "[Error]Unknown instruction.\n");

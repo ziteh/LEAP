@@ -69,6 +69,7 @@ int main(void)
 	PWM_Initialization();
 	NVIC_Initialization();
 
+//	MotorCtrl(530);
 	TIM_SetCompare2(TIM3, 530);
 
 	//int vPWM = 525; // 525～1720
@@ -115,7 +116,7 @@ int main(void)
 
 
 		USART_Send(USART2, "\n");//发送到电脑
-		Delay_normal(0xFFFA);	//这个延时只是为了让数据输出慢点，方便观察
+		Delay_normal(0xFFFF);	//这个延时只是为了让数据输出慢点，方便观察
 	}
 }
 
@@ -139,7 +140,25 @@ void MotorCtrl(u16 TargetCCR)
 	}
 	*/
 
-	if(POTdir == 0)	// Def
+	if((POTdir == 1)|(get_adc1() <= PosStr)) //Str-Max
+	{
+		while((TargetCCR > (TIM3->CCR2)) & (get_adc1() < PosBen))
+		{
+			u16 NowCCR = (TIM3->CCR2);
+			TIM_SetCompare2(TIM3, NowCCR+1);
+			Delay_normal(0xf0f);
+		}
+	}
+	else if((POTdir == -1)|(get_adc1() >= PosBen)) //Bent-Max
+	{
+		while((TargetCCR < (TIM3->CCR2)) & (get_adc1() > PosStr))
+		{
+			u16 NowCCR = (TIM3->CCR2);
+			TIM_SetCompare2(TIM3, NowCCR-1);
+			Delay_normal(0xf0f);
+		}
+	}
+	else	//((POTdir == 0))	// Def
 	{
 		while((TargetCCR != (TIM3->CCR2)) & (get_adc1() > PosStr) & (get_adc1() < PosBen))
 		{
@@ -153,24 +172,6 @@ void MotorCtrl(u16 TargetCCR)
 				TIM_SetCompare2(TIM3, NowCCR-1);
 			}
 
-			Delay_normal(0xf0f);
-		}
-	}
-	else if(POTdir == 1) //Str-Max
-	{
-		while((TargetCCR > (TIM3->CCR2)) & (get_adc1() < PosBen))
-		{
-			u16 NowCCR = (TIM3->CCR2);
-			TIM_SetCompare2(TIM3, NowCCR+1);
-			Delay_normal(0xf0f);
-		}
-	}
-	else if(POTdir == -1) //Bent-Max
-	{
-		while((TargetCCR < (TIM3->CCR2)) & (get_adc1() > PosStr))
-		{
-			u16 NowCCR = (TIM3->CCR2);
-			TIM_SetCompare2(TIM3, NowCCR-1);
 			Delay_normal(0xf0f);
 		}
 	}

@@ -18,8 +18,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
+#include <stdio.h>
 #include "stm32f10x.h"
+#include "main.h"
 #include "GPIO_Functions.h"
 #include "RCC_Functions.h"
 #include "NVIC_Functions.h"
@@ -39,31 +40,10 @@ RCC_ClocksTypeDef RCC_Clocks;
 #define CW		(0)
 #define CCW		(1)
 
-/* Pin define */
-// Nucleo-64 board
-#define PinButton_User	(PC13)	// B1. When push the button, the I/O is LOW value.
-#define PinLED_User		(PA5)	// LD2. When the I/O is HIGH value, the LED is on.
-
-// Motor-0
-#define PinMotor0_Enbale	(PB5)	// Arduino:D4
-#define PinMotor0_Direction	(PB10)	// Arduino:D6(PWM); TIM3_CH1
-#define PinMotor0_Speed		(PB4)	// Arduino:D5
-#define PinMotor0_Ready		(PB3)	// Arduino:D3
-
-// Motor-1
-#define PinMotor1_Enbale	(PA8)	// Arduino:D7
-#define PinMotor1_Direction	(PA9)	// Arduino:D8
-#define PinMotor1_Speed		(PC7)	// Arduino:D9(PWM); TIM3_CH2
-#define PinMotor1_Ready		(PB6)	// Arduino:D10
-
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static __IO uint32_t TimingDelay;
 uint8_t BlinkSpeed = 0;
-
-/* USART */
-uint8_t TxBuf1[] = "Hi, I'm STM32\n";
-//uint8_t RxBuf1[] = "";
 
 /* Motor */
 // Row: Motor number; Column: The pin of Enable,Direction,Ready
@@ -74,7 +54,10 @@ uint8_t MotorPin[2][3] =
 };
 
 // The PWM timer of Motor0, Motor1
-uint32_t MotorTimer[2] = {TIM2, TIM3};
+uint32_t MotorTimer[2] = {TIM3, TIM3};
+
+//uint8_t Motor0_Speed_Char[] = "0";
+//uint8_t Motor0_Speed_Value = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -97,122 +80,211 @@ int main(void)
 	RCC_GetClocksFreq(&RCC_Clocks);
 	SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
 
-	/* Initialize LED2 */
-//  STM_EVAL_LEDInit(LED2);
-	/* Initialize User_Button on STM32NUCLEO */
-//  STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
-	/* Initiate Blink Speed variable */
-//  BlinkSpeed = 0;
-
 	/* Initialization */
+	// Functions & Setups
 	RCC_Initialization();
 	GPIO_Initialization();
-	PWM_Initialization();
 	USART_Initialization();
+	PWM_Initialization();
 	NVIC_Initialization();
 
-	GPIO_ResetBits(GPIOA, GPIO_Pin_5);
+	// Reset all motor
+	TIM_SetCompare1(TIM3, 0);		// Immediately set motor0 speed=0%
+	MotorCtrl(0, Disable, CCW, 0);	// Motor0: Disable, CCW, Speed:0%
+	MotorCtrl(1, Disable, CW, 0);	// Motor1: Disable,  CW, Speed:0%
+
+	// Turn off LD2(User-LED)
+	Pin_Clr(LD2);
+
+	USART_Send(USART2, "[System]Start.\n");
 
 	/* Infinite loop */
-	while (1)
+	while(1)
 	{
-//		USART_Send(USART2, TxBuf1);
-		for(int i=0; i<2; i++)	// Send status of motor0&1
-		{
-			SendStatus(i);
-		}
-		USART_Send(USART2, "----------\n");
-		Delay(1000);
+		SendStatus();
+		Delay(250);
 	}
 }
 
 /**
 * @brief  	Send status.
-* @param	Motor: the number of motor. This parameter should be: 0~1.
+* @param	None
 * @retval 	None
 */
-void SendStatus(uint8_t Motor)
+void SendStatus(void)
 {
-	uint8_t TxData;
-//	uint8_t Status[] = "";
+//	uint8_t TxData;
 
 	// Binary:010nnrXX
-	TxData = ((0x40 | (Motor << 3)) | (PinRead(MotorPin[Motor][2]) << 2));
-	USART_Send(USART2, TxData);
+//	TxData = ((0x40 | (Motor << 3)) | (Pin_Read(MotorPin[Motor][2]) << 2));
+//	USART_Send(USART2, TxData);
 
-//	USART_Send(USART2, "[Status]Motor%d "+Status+"\n", Motor);
-
-	if(PinRead(MotorPin[Motor][2]) == 1)	// Motor_Ready pin=High
-		USART_Send(USART2, "[Status]Motor Ready\n");
-//		Status = "Ready";
+	// Motor0
+	USART_Send(USART2, "[Status]Motor0 ");
+	if(Pin_ReadInput(PinMotor0_Ready) == 1)	// Motor_Ready pin=High
+		USART_Send(USART2, "Ready ; ");
 	else									// Motor_Ready pin=Low
-		USART_Send(USART2, "[Status]Motor FAULT!\n");
-//		Status = "FAULT!";
-}
+		USART_Send(USART2, "FAULT ; ");
 
+	if(Pin_ReadOutput(PinMotor0_Enbale) == 1)
+		USART_Send(USART2, " Enable ; ");
+	else
+		USART_Send(USART2, "Disable ; ");
+
+	if(Pin_ReadOutput(PinMotor0_Direction) == 1)
+		USART_Send(USART2, "CCW ; ");
+	else
+		USART_Send(USART2, " CW ; ");
+
+	USART_Send(USART2, "S: ");
+	USART_Send(USART2, Number_TO_String(PerMill_TO_Percentage(TIM3->CCR1)));
+	USART_Send(USART2, "%\n");
+
+	// Motor1
+	USART_Send(USART2, "[Status]Motor1 ");
+	if(Pin_ReadInput(PinMotor1_Ready) == 1)	// Motor_Ready pin=High
+		USART_Send(USART2, "Ready ; ");
+	else									// Motor_Ready pin=Low
+		USART_Send(USART2, "FAULT ; ");
+
+	if(Pin_ReadOutput(PinMotor1_Enbale) == 1)
+		USART_Send(USART2, " Enable ; ");
+	else
+		USART_Send(USART2, "Disable ; ");
+
+	if(Pin_ReadOutput(PinMotor1_Direction) == 1)
+		USART_Send(USART2, "CCW\n");
+	else
+		USART_Send(USART2, " CW\n");
+
+	USART_Send(USART2, "----------\n");
+}
 
 /**
 * @brief  	Control the motor.
 * @param	Motor: the number of motor. This parameter should be: 0~1.
 * @param	Status: the status of motor.
-* 			This parameter should be 0~2. 0: Disable; 1: Enable; 2: maintain.
+* 			This parameter should be 0~3.
+* 			0: Disable; 1: Enable; 2: Toggle; 3: Keep.
 * @param	Direction: the direction of motor.
-* 			This parameter should be 0~2. 0: CW; 1: CCW; 2: maintain.
-* @param	Speed: the speed of motor in %. This parameter should be: 0~100,127.
+* 			This parameter should be 0~3.
+* 			0: CW; 1: CCW; 2: Toggle; 3: Keep.
+* @param	Speed: the speed of motor in %.
+* 			This parameter should be: 0~100, 127.
+* 			0~100: 0%~100%; 127: Keep.
 * @retval 	None
 */
-void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint8_t Speed)
+void MotorCtrl(uint8_t Motor, uint8_t Status, uint8_t Direction, uint16_t Speed)
 {
 //	u16 DutyCycleValue;
 
 	// Status
-	if(Status <= 1)
-		PinWrite((MotorPin[Motor][0]), Status);
-	else /* Null */;
-
-//	if(Status == 1)
-//	{
-//		PinWrite((MotorPin[Motor][0]), Enable);
-//	}
-//	else if(Status == 0)
-//	{
-//		PinWrite((MotorPin[Motor][0]), Disable);
-//	}
-//	else /*Null*/;
+	if(Status <= 1)								// Disable(0) & Enable(1)
+		Pin_Write((MotorPin[Motor][0]), Status);
+	else if(Status == 2)						// Toggle(2)
+		Pin_Toggle(MotorPin[Motor][0]);
+	else /* Null */;							// Keep(3)
 
 	// Direction
-	if(Direction <= 1)
-		PinWrite((MotorPin[Motor][1]), Direction);
-	else /* Null */;
-
-//	if(Direction == 1)
-//	{
-//		PinWrite((MotorPin[Motor][1]), CCW);
-//	}
-//	else if(Direction == 0)
-//	{
-//		PinWrite((MotorPin[Motor][1]), CW);
-//	}
-//	else /*Null*/;
+	if(Direction <= 1)							// CW(0) & CCW(1)
+		Pin_Write((MotorPin[Motor][1]), Direction);
+	else if(Direction == 2)						// Toggle(2)
+		Pin_Toggle(MotorPin[Motor][1]);
+	else /* Null */;							// Keep(3)
 
 	// Speed
-	if(Speed == 0)	// OFF
+	if(Speed == 0)	// Turn OFF the motor
 	{
-		PinWrite((MotorPin[Motor][0]), Disable);
+		Pin_Write((MotorPin[Motor][0]), Disable);
+//		TIM_SetCompare1((MotorTimer[Motor]), 0);
+		MotorAccelerationCtrl(Motor, 0);
+//		Motor0_Speed_Value = Speed;
 	}
 	else if(Speed == 100)
 	{
-		TIM_SetCompare1((MotorTimer[Motor]), 999);	// Set PWM duty cycle=100%
+//		TIM_SetCompare1((MotorTimer[Motor]), 999);	// Set PWM duty cycle=100%
+		MotorAccelerationCtrl(Motor, 999);		// Set PWM duty cycle=100%
+//		Motor0_Speed_Value = Speed;
 	}
 	else if((Speed > 0) && (Speed < 100))
 	{
-		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
+//		TIM_SetCompare1((MotorTimer[Motor]), ((Speed-1)*10)); // Set duty cycle
+		MotorAccelerationCtrl(Motor, ((Speed*10)-1));	// Set duty cycle
+//		Motor0_Speed_Value = Speed;
 	}
-	else if(Speed == 127)	// Keep speed of motor
+	else if(Speed == 127)	// Keep the speed of motor
 	{
 		/* Null */;
 	}
 	else /* Null */;
+}
+
+/**
+ * @brief	Motor acceleration control
+ * @param 	Motor: The motor want to control.
+ * @param 	TargetSpeed: The Target speed.
+ */
+void MotorAccelerationCtrl(uint8_t Motor, uint16_t TargetSpeed)
+{
+	while(TargetSpeed != (TIM3->CCR1))
+	{
+		uint16_t NowSpeed = (TIM3->CCR1);	// Read PMW Duty-Cycle% Value
+//		int32_t SpeedDif = TargetSpeed - NowSpeed;
+
+		// Set duty cycle
+		if((TargetSpeed - NowSpeed) > 0)
+		{
+			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed+1));
+		}
+		else if((TargetSpeed - NowSpeed) < 0)
+		{
+			TIM_SetCompare1((MotorTimer[Motor]), (NowSpeed-1));
+		}
+
+		Delay_normal(0xFCF);
+	}
+}
+
+/**
+ * @brief	Convert number into string
+ * @param 	Number: The number want to convert.
+ * @return	The converted string.
+ */
+char* Number_TO_String(uint16_t Number)
+{
+	static char string[3];
+	sprintf(string, "%d", Number);
+	return string;
+}
+
+/**
+ * @brief	Convert 0~999 into 0~100
+ * @param 	PerMill: The PerMill number want to convert. 0~999.
+ * @return	The converted percentage.
+ */
+u8 PerMill_TO_Percentage(u16 PerMill)
+{
+	u8 Percentage;
+
+	if(PerMill == 0)
+		Percentage = 0;
+	else if(PerMill == 999)
+		Percentage = 100;
+	else if((PerMill > 1) && (PerMill < 999))
+		Percentage = ((PerMill+1)/10);
+	else /* Null */;
+
+	return Percentage;
+}
+
+/**
+ * @brief  Inserts a delay time(no-interrupt).
+ * @param  nTime: specifies the delay time length.
+ * @retval None
+ */
+void Delay_normal(__IO u32 nTime)
+{
+	for(; nTime != 0; nTime--);
 }
 
 /**
@@ -225,7 +297,7 @@ void Delay(__IO uint32_t nTime)
 	TimingDelay = nTime;
 
 	while (TimingDelay != 0)
-		;
+		/* Null */;
 }
 
 /**

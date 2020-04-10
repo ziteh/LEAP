@@ -1,7 +1,11 @@
 core_cm3.h:1014:22:NVIC_SetPriority	16	static
 core_cm3.h:1139:26:SysTick_Config	16	static
-main.c:87:5:main	16	static
-main.c:134:6:SendStatus	32	static
-main.c:164:6:MotorCtrl	24	static
-main.c:223:6:Delay	16	static
-main.c:236:6:TimingDelay_Decrement	4	static
+main.c:70:5:main	8	static
+main.c:114:6:SendStatus	8	static
+main.c:176:6:MotorCtrl	24	static
+main.c:226:6:MotorAccelerationCtrl	24	static
+main.c:251:7:Number_TO_String	16	static
+main.c:263:4:PerMill_TO_Percentage	24	static
+main.c:283:6:Delay_normal	16	static
+main.c:293:6:Delay	16	static
+main.c:306:6:TimingDelay_Decrement	4	static

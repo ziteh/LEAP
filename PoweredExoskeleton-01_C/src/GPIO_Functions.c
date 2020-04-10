@@ -38,9 +38,9 @@
 #define PD		(2)
 #define PU		(3)
 
-#define S2M		(0)
-#define S10M	(1)
-#define S50M	(2)
+#define S2M		(2)
+#define S10M	(10)
+#define S50M	(50)
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -62,97 +62,107 @@ void GPIO_Initialization(void)
 	GPIO_StructInit(&GPIO_InitStructure);
 
 	/* Configure the GPIO pin */
-	/* user */
-	// PA5: LED-user
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	/* STM32 Nucleo-64 board */
+	Pin_Mod(LD2, OUT, GPPP, S2M);	// PA5: LED-user
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PC13: Button-user
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	Pin_Mod(B1, IN, FL, S2M);	// PC13: Button-user
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 
 	/* USART */
-	// PA2: USART2_TX
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinUSART2_TX, OUT, AFPP, S50M);	// PA2: USART2_TX
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PA3: USART2_RX
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinUSART2_RX, IN, FL, S50M);	// PA3: USART2_RX
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 
 	/* Motor0 */
-	// PB5: Motor0_Enbale
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	Pin_Mod(PinMotor0_Enbale, OUT, GPPP, S2M);	// PB5: Motor0_Enbale
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	// PB4: Motor0-Direction
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	Pin_Mod(PinMotor0_Direction, OUT, GPPP, S2M);	// PB10: Motor0-Direction
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	// PB10: Motor0-Speed(PWM, TIM2_CH3)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	Pin_Mod(PinMotor0_Speed, OUT, AFOD, S50M);	// PB4: Motor0-Speed(PWM, TIM3_CH1)
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;	// TIM3_CH1 = PA6
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PB3: Motor0-Ready
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	Pin_Mod(PinMotor0_Ready, IN, PD, S2M);	// PB3: Motor0-Ready
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	/* Motor1 */
-	// PA8: Motor1_Enbale
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Enbale, OUT, GPPP, S2M);	// PA8: Motor1_Enbale
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PA9: Motor1-Direction
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Direction, OUT, GPPP, S2M);	// PA9: Motor1-Direction
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	// PC7: Motor1-Speed(PWM, TIM3_CH2)
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Speed, OUT, AFOD, S50M);	// PC7: Motor1-Speed(PWM, TIM3_CH2)
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	// PB6: Motor1-Ready
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	Pin_Mod(PinMotor1_Ready, IN, PD, S2M);	// PB6: Motor1-Ready
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
 /**
-  * @brief  Config a pin Mode and Speed.
+  * @brief  Config a pin mode and speed.
   * @param	PortPin: select a pin to set.
   * 		This parameter should be: 0 ~ 79
   * 		 0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @param	INout: Input or Output.
+  * 		This parameter should be: 0(Output) or 1(Input).
   * @param	Mode: Pin mode.
+  *			This parameter should be: 0~3.
+  *			0: GPPP or FL.
+  *			1: GPOD or AN.
+  *			2: AFPP or PD.
+  *			3: AFOD or PU.
   * @param	Speed: Pin speed.
+  * 		This parameter should be: 0~2.
+  * 		 2:  2MHz.
+  * 		10: 10MHz.
+  * 		50: 50MHz.
   * @retval None
   */
-void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
+void Pin_Mod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
 {
 	/* Structure Declarations */
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -160,13 +170,13 @@ void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
 	// GPIO_Speed
 	switch(Speed)
 	{
-		case S2M:	// S2M:0
+		case S2M:	// S2M:2
 			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 			break;
-		case S10M:	// S10M:1
+		case S10M:	// S10M:10
 			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 			break;
-		case S50M:	// S50M:2
+		case S50M:	// S50M:50
 			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 			break;
 		default:
@@ -269,7 +279,7 @@ void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval None
   */
-void PinSet(u8 PortPin)
+void Pin_Set(u8 PortPin)
 {
 	if(PortPin <= 15)								// Port-A:  0~15
 		GPIOA->BSRR |= (0x0001 << PortPin);
@@ -293,7 +303,7 @@ void PinSet(u8 PortPin)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval None
   */
-void PinClr(u8 PortPin)
+void Pin_Clr(u8 PortPin)
 {
 	if(PortPin <= 15)								// Port-A:  0~15
 		GPIOA->BRR |= (0x0001 << PortPin);
@@ -317,7 +327,7 @@ void PinClr(u8 PortPin)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval None
   */
-void PinToggle(u8 PortPin)
+void Pin_Toggle(u8 PortPin)
 {
 	if(PortPin <= 15)								// Port-A:  0~15
 		GPIOA->ODR ^= (0x0001 << PortPin);
@@ -343,12 +353,12 @@ void PinToggle(u8 PortPin)
   * 		This parameter should be: 1 or 0
   * @retval None
   */
-void PinWrite(u8 PortPin, u8 Value)
+void Pin_Write(u8 PortPin, u8 Value)
 {
 	if(Value == 1)
-		PinSet(PortPin);
+		Pin_Set(PortPin);
 	else if(Value == 0)
-		PinClr(PortPin);
+		Pin_Clr(PortPin);
 	else
 		/* Null */;
 }
@@ -361,20 +371,64 @@ void PinWrite(u8 PortPin, u8 Value)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval The input-pin value
   */
-u8 PinRead(u8 PortPin)
+u8 Pin_ReadInput(u8 PortPin)
 {
-	u8 PinInputValue;
+	u8 PinInputValue = 0x00;
+
+
+	// !! ERROR: u8 Pin_Read(u8 PortPin)
+
+//	if(PortPin <= 15)									// Port-A:  0~15
+//		PinInputValue = (GPIOA->IDR & (0x0001 << PortPin));
+//	else if(PortPin <= 31)								// Port-B: 16~31
+//		PinInputValue = (GPIOB->IDR & (0x0001 << (PortPin - 16)));
+//	else if(PortPin <= 47)								// Port-C: 32~47
+//		PinInputValue = (GPIOC->IDR & (0x0001 << (PortPin - 32)));
+//	else if(PortPin <= 63)								// Port-D: 48~63
+//		PinInputValue = (GPIOD->IDR & (0x0001 << (PortPin - 48)));
+//	else if(PortPin <= 79)								// Port-E: 64~79
+//		PinInputValue = (GPIOE->IDR & (0x0001 << (PortPin - 64)));
+//	else												// Out of range(0~79)
+//		/* Null */;
 
 	if(PortPin <= 15)									// Port-A:  0~15
-		PinInputValue = (GPIOA->IDR & (0x0001 << PortPin));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOA, (0x0001 << PortPin));
 	else if(PortPin <= 31)								// Port-B: 16~31
-		PinInputValue = (GPIOB->IDR & (0x0001 << (PortPin - 16)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 16)));
 	else if(PortPin <= 47)								// Port-C: 32~47
-		PinInputValue = (GPIOC->IDR & (0x0001 << (PortPin - 32)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 32)));
 	else if(PortPin <= 63)								// Port-D: 48~63
-		PinInputValue = (GPIOD->IDR & (0x0001 << (PortPin - 48)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 48)));
 	else if(PortPin <= 79)								// Port-E: 64~79
-		PinInputValue = (GPIOE->IDR & (0x0001 << (PortPin - 64)));
+		PinInputValue = GPIO_ReadInputDataBit(GPIOB, (0x0001 << (PortPin - 64)));
+	else												// Out of range(0~79)
+		/* Null */;
+
+	return PinInputValue;
+}
+
+/**
+  * @brief  Read a output-pin value.
+  * @param	PortPin: select a pin to read.
+  * 		This parameter should be: 0 ~ 79
+  * 		 0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
+  * 		48~63:PD0~PD15; 64~79:PE0~PE15
+  * @retval The output-pin value
+  */
+u8 Pin_ReadOutput(u8 PortPin)
+{
+	u8 PinInputValue = 0x00;
+
+	if(PortPin <= 15)									// Port-A:  0~15
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOA, (0x0001 << PortPin));
+	else if(PortPin <= 31)								// Port-B: 16~31
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 16)));
+	else if(PortPin <= 47)								// Port-C: 32~47
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 32)));
+	else if(PortPin <= 63)								// Port-D: 48~63
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 48)));
+	else if(PortPin <= 79)								// Port-E: 64~79
+		PinInputValue = GPIO_ReadOutputDataBit(GPIOB, (0x0001 << (PortPin - 64)));
 	else												// Out of range(0~79)
 		/* Null */;
 
@@ -389,7 +443,7 @@ u8 PinRead(u8 PortPin)
   * 		48~63:PD0~PD15; 64~79:PE0~PE15
   * @retval The port
   */
-char PortDetermine(u8 PortPin)
+char Port_Determine(u8 PortPin)
 {
 	char Port;
 

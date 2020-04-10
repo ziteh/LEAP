@@ -183,26 +183,36 @@ void EXTI15_10_IRQHandler(void)
   */
 void USART2_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // 注意不是USART_FLAG_RXNE
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) // NOT USART_FLAG_RXNE
 	{
 		uint16_t USART_ReceivData = 0xF0;
-//		uint8_t InstTex[] = "";
-
 		USART_ReceivData = USART_ReceiveData(USART2);
-
-//		USART_Send(USART2, USART_ReceivData);
-//		USART_Send(USART2, "STM32:");
 
 		if(nInst == 0)
 		{
-			USART_Send(USART2, "STM32:\n");
+//			USART_Send(USART2, "STM32:\n");
 
-			if(USART_ReceivData == 0xE0)				// System stop
+			if(USART_ReceivData == 0xE0)		// System stop
 			{
 				USART_Send(USART2, "[System]Stop.\n");
 			}
-			else if(USART_ReceivData == 0xE1)			// System reset
+			else if(USART_ReceivData == 0xE1)	// System reset
 			{
+				/* Initialization */
+				// Functions & Setups
+				RCC_Initialization();
+				GPIO_Initialization();
+				USART_Initialization();
+				PWM_Initialization();
+				NVIC_Initialization();
+
+				// Reset all motor
+				MotorCtrl(0, 0, 1, 0);	// Motor0: Disable, CCW, Speed:0
+				MotorCtrl(1, 0, 0, 0);	// Motor1: Disable,  CW, Speed:0
+
+				// Turn off LD2(User-LED)
+				Pin_Clr(5); // #define LD2 (5)
+
 				USART_Send(USART2, "[System]Reset.\n");
 			}
 			else if((USART_ReceivData & 0xE0) == 0x20)	// Instruction start
@@ -236,42 +246,56 @@ void USART2_IRQHandler(void)
 			// Set motor speed
 			if(((USART_ReceivData & 0x80) >> 7) == 0x01) 		// 1xxx xxxx(b)
 			{
-				MotorCtrl(selMotor, 2, 2, (USART_ReceivData & 0x7F));
-				USART_Send(USART2, " Set speed.\n");
+				MotorCtrl(selMotor, 3, 3, (USART_ReceivData & 0x7F));
+				USART_Send(USART2, " Set speed:");
+				USART_Send(USART2, Number_TO_String(USART_ReceivData & 0x7F));
+				USART_Send(USART2, "%\n");
 			}
 			else												// 0xxx xxxx(b)
 			{
 				/* Motor status */
-				// Enable
-				if(((USART_ReceivData & 0x60) >> 5) == 0x01)	// x01x xxxx(b)
-				{
-					MotorCtrl(selMotor, 1, 2, 127);
-					USART_Send(USART2, " Enable.\n");
-				}
 				// Disable
-				else if(((USART_ReceivData & 0x60) >> 5) == 0x00)// x00x xxxx(b)
+				if(((USART_ReceivData & 0x0C) >> 2) == 0x00)	 // xxxx 00xx(b)
 				{
-					MotorCtrl(selMotor, 0, 2, 127);
+					MotorCtrl(selMotor, 0, 3, 127);
 					USART_Send(USART2, " Disable.\n");
 				}
+				// Enable
+				else if(((USART_ReceivData & 0x0C) >> 2) == 0x01)// xxxx 01xx(b)
+				{
+					MotorCtrl(selMotor, 1, 3, 127);
+					USART_Send(USART2, " Enable.\n");
+				}
+				// Toggle
+				else if(((USART_ReceivData & 0x0C) >> 2) == 0x02)// xxxx 10xx(b)
+				{
+					MotorCtrl(selMotor, 2, 3, 127);
+					USART_Send(USART2, " Toggle.\n");
+				}
 				// Keep
-				else /* Null */;
+				else /* Null */;								 // xxxx 11xx(b)
 
 				/* Motor direction */
-				// CCW
-				if(((USART_ReceivData & 0x18) >> 3) == 0x01)	// xxx0 1xxx(b)
-				{
-					MotorCtrl(selMotor, 2, 1, 127);
-					USART_Send(USART2, " Direction:CCW.\n");
-				}
 				// CW
-				else if(((USART_ReceivData & 0x18) >> 3) == 0x00)// xxx0 0xxx(b)
+				if(((USART_ReceivData & 0x03)) == 0x00)		// xxxx xx00(b)
 				{
-					MotorCtrl(selMotor, 2, 0, 127);
+					MotorCtrl(selMotor, 3, 0, 127);
 					USART_Send(USART2, " Direction:CW.\n");
 				}
+				// CCW
+				else if(((USART_ReceivData & 0x03)) == 0x01)// xxxx xx01(b)
+				{
+					MotorCtrl(selMotor, 3, 1, 127);
+					USART_Send(USART2, " Direction:CCW.\n");
+				}
+				// Toggle
+				else if(((USART_ReceivData & 0x03)) == 0x02)// xxxx xx10(b)
+				{
+					MotorCtrl(selMotor, 3, 2, 127);
+					USART_Send(USART2, " Direction:Toggle.\n");
+				}
 				// Keep
-				else /* Null */;
+				else /* Null */;							// xxxx xx11(b)
 			}
 
 			// End of instruction

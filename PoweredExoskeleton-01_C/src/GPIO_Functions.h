@@ -30,13 +30,14 @@
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 void GPIO_Initialization(void);
-void PinMod(u8 PortPin, u8 INout, u8 Mode, u8 Speed);
-void PinSet(u8 PortPin);
-void PinClr(u8 PortPin);
-void PinToggle(u8 PortPin);
-void PinWrite(u8 PortPin, u8 Value);
-u8   PinRead(u8 PortPin);
-char PortDetermine(u8 PortPin);
+void Pin_Mod(u8 PortPin, u8 INout, u8 Mode, u8 Speed);
+void Pin_Set(u8 PortPin);
+void Pin_Clr(u8 PortPin);
+void Pin_Toggle(u8 PortPin);
+void Pin_Write(u8 PortPin, u8 Value);
+u8   Pin_ReadInput(u8 PortPin);
+u8   Pin_ReadOutput(u8 PortPin);
+char Port_Determine(u8 PortPin);
 
 #endif /* __GPIO_FUNCTIONS_H */
 

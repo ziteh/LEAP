@@ -1,3 +1,8 @@
-main.c:120:5:main	16	static
-main.c:252:6:__assert_func	24	static
-main.c:261:6:__assert	24	static
+main.c:58:5:main	8	static
+main.c:90:6:MotorCtrl	24	static
+main.c:147:7:Number_TO_String	16	static
+main.c:158:6:CommunicationEncoder	16	static
+main.c:186:6:Delay_normal	16	static
+main.c:196:6:Delay	16	static
+main.c:226:6:__assert_func	24	static
+main.c:237:6:__assert	24	static

@@ -1,0 +1,12 @@
+stm32f1xx_nucleo.c:90:6:STM_EVAL_LEDInit	24	static
+stm32f1xx_nucleo.c:110:6:STM_EVAL_LEDOn	16	static
+stm32f1xx_nucleo.c:121:6:STM_EVAL_LEDOff	16	static
+stm32f1xx_nucleo.c:132:6:STM_EVAL_LEDToggle	16	static
+stm32f1xx_nucleo.c:147:6:STM_EVAL_PBInit	32	static
+stm32f1xx_nucleo.c:190:10:STM_EVAL_PBGetState	16	static
+stm32f1xx_nucleo.c:203:6:STM_SPI_Init	32	static
+stm32f1xx_nucleo.c:261:6:LCD_CtrlLines_Config	16	static
+stm32f1xx_nucleo.c:287:6:SD_CtrlLines_Config	16	static
+stm32f1xx_nucleo.c:311:9:STM_SPI_WriteRead	24	static
+stm32f1xx_nucleo.c:346:6:STM_ADC_Config	32	static
+stm32f1xx_nucleo.c:418:18:STM_Get_JOYState	16	static

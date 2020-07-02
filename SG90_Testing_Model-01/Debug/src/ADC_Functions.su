@@ -1,0 +1,2 @@
+ADC_Functions.c:35:6:ADC_Initialization	32	static
+ADC_Functions.c:106:10:ADC_GetValue	16	static

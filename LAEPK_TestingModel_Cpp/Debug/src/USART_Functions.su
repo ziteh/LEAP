@@ -1,0 +1,2 @@
+USART_Functions.cpp:44:6:void USART_Initialization()	24	static
+USART_Functions.cpp:89:6:void USART_Send(USART_TypeDef*, uint8_t*)	24	static

@@ -1,0 +1,5 @@
+{
+  "stm32-for-vscode.makePath": "make",
+  "stm32-for-vscode.armToolchainPath": ".",
+  "cortex-debug.armToolchainPath": "."
+}

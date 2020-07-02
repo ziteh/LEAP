@@ -1,0 +1,7 @@
+main.cpp:68:5:int main()	8	static
+main.cpp:101:6:void MotorCtrl(u16)	24	static
+main.cpp:159:6:void CommunicationEncoder(uint8_t, uint16_t, int8_t, uint16_t, uint8_t, uint8_t, uint8_t, uint16_t)	16	static
+main.cpp:175:7:char* Number_TO_String(uint16_t)	16	static
+main.cpp:181:6:void Delay_NonTimer(u32)	16	static
+main.cpp:193:10:void Delay(uint32_t)	16	static
+main.cpp:205:10:void TimingDelay_Decrement()	4	static

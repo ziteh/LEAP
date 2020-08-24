@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+  ],
+  "settings": {
+    "C_Cpp.default.includePath": [
+      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include",
+
+      "${workspaceFolder}/src",
+      "${workspaceFolder}/Libraries/CMSIS/Include",
+      "${workspaceFolder}/Libraries/CMSIS/Device/ST/STM32F10x/Include",
+      "${workspaceFolder}/Libraries/STM32F10x_StdPeriph_Driver/inc",
+      "${workspaceFolder}/Utilities/STM32F103_Nucleo"
+    ],
+    "C_Cpp.default.systemIncludePath": [
+      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include/*",
+      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include/sys"
+    ],
+    "cortex-debug.openocdPath": "C:/STM32Toolchain/openocd/bin/openocd.exe",
+    "cortex-debug.armToolchainPath": "C:/STM32Toolchain/gcc-arm/bin/",
+  }
+}

@@ -21,8 +21,6 @@
 
 /**
  * @brief  Initialization GPIO.
- * @param  None
- * @retval None
  * @attention Please run "RCC_Initialization()" before this function.
  */
 void GPIO_Initialization(void)
@@ -65,7 +63,6 @@ void GPIO_Initialization(void)
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
  * @param Mode: Pin mode.
  * @param Speed: Pin speed.
- * @retval  None
  */
 void GPIO_SetMode(GPIO_PortPinTypeDef PortPin,
                   GPIOMode_TypeDef Mode,
@@ -95,7 +92,7 @@ void GPIO_SetMode(GPIO_PortPinTypeDef PortPin,
  *                  This parameter should be: 0 ~ 79.
  *                   0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
- * @retval  None
+ * @return  None
  */
 void GPIO_SetHigh(GPIO_PortPinTypeDef PortPin)
 {
@@ -108,7 +105,7 @@ void GPIO_SetHigh(GPIO_PortPinTypeDef PortPin)
  *                  This parameter should be: 0 ~ 79.
  *                   0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
- * @retval  None
+ * @return  None
  */
 void GPIO_SetLow(GPIO_PortPinTypeDef PortPin)
 {
@@ -121,7 +118,7 @@ void GPIO_SetLow(GPIO_PortPinTypeDef PortPin)
  *                  This parameter should be: 0 ~ 79.
  *                   0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
- * @retval  None
+ * @return  None
  */
 void GPIO_SetToggle(GPIO_PortPinTypeDef PortPin)
 {
@@ -136,7 +133,7 @@ void GPIO_SetToggle(GPIO_PortPinTypeDef PortPin)
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
  * @param Value:  select High(1) or Low(0) to set.
  *                This parameter should be HIGH or LOW
- * @retval  None
+ * @return  None
  */
 void GPIO_SetValue(GPIO_PortPinTypeDef PortPin, GPIO_ValueTypeDef Value)
 {
@@ -167,7 +164,7 @@ GPIO_ValueTypeDef GPIO_GetValue(GPIO_PortPinTypeDef PortPin)
  *                  This parameter should be: 0 ~ 79.
  *                   0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
- * @retval  The input-pin value
+ * @return  The input-pin value
  */
 GPIO_ValueTypeDef GPIO_GetInputValue(GPIO_PortPinTypeDef PortPin)
 {
@@ -191,7 +188,7 @@ GPIO_ValueTypeDef GPIO_GetInputValue(GPIO_PortPinTypeDef PortPin)
  *                  This parameter should be: 0 ~ 79.
  *                   0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
- * @retval  The output-pin value
+ * @return  The output-pin value.
  */
 GPIO_ValueTypeDef GPIO_GetOutputValue(GPIO_PortPinTypeDef PortPin)
 {
@@ -215,7 +212,7 @@ GPIO_ValueTypeDef GPIO_GetOutputValue(GPIO_PortPinTypeDef PortPin)
  *                  This parameter should be: 0 ~ 79.
  *                   0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
- * @retval  The port.
+ * @return  The port.
  */
 GPIO_TypeDef* GPIO_GetPort(GPIO_PortPinTypeDef PortPin)
 {
@@ -237,7 +234,7 @@ GPIO_TypeDef* GPIO_GetPort(GPIO_PortPinTypeDef PortPin)
  *                  This parameter should be: 0 ~ 79.
  *                   0~15:PA0~PA15; 16~31:PB0~PB15; 32~47:PC0~PC15;
  *                  48~63:PD0~PD15; 64~79:PE0~PE15
- * @retval  The pin.
+ * @return  The pin.
  */
 uint16_t GPIO_GetPin(GPIO_PortPinTypeDef PortPin)
 {
@@ -260,7 +257,7 @@ uint16_t GPIO_GetPin(GPIO_PortPinTypeDef PortPin)
 /**
  * @brief   Convert uint8_t to GPIO_Value_TypeDef.
  * @param   value: The value in uint8_t. This parameter should be 0 or 1.
- * @retval  The converted GPIO_Value_TypeDef value.
+ * @return  The converted GPIO_Value_TypeDef value.
  */
 GPIO_ValueTypeDef uint8_t_to_GPIO_Value_TypeDef(uint8_t Value)
 {

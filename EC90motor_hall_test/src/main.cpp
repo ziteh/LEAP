@@ -25,6 +25,7 @@
   ******************************************************************************
   */
 
+#include "GPIO_Functions.hpp"
 /* Modified by Atollic to build with c++ */
 extern "C"
 {
@@ -78,21 +79,33 @@ int main(void)
                          RCC_APB2Periph_GPIOC,
                          ENABLE);
 
-  GPIO_InitTypeDef GPIO_IS;
-  GPIO_IS.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_IS.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_IS.GPIO_Pin = GPIO_Pin_10;
-  GPIO_Init(GPIOA, &GPIO_IS);
+//  GPIO_InitTypeDef GPIO_IS;
+//  GPIO_IS.GPIO_Mode = GPIO_Mode_Out_PP;
+//  GPIO_IS.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_IS.GPIO_Pin = GPIO_Pin_10;
+//  GPIO_Init(GPIOA, &GPIO_IS);
+//
+//  GPIO_IS.GPIO_Mode = GPIO_Mode_Out_PP;
+//  GPIO_IS.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_IS.GPIO_Pin = GPIO_Pin_7;
+//  GPIO_Init(GPIOB, &GPIO_IS);
+//
+//  GPIO_IS.GPIO_Mode = GPIO_Mode_Out_PP;
+//  GPIO_IS.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_IS.GPIO_Pin = GPIO_Pin_5;
+//  GPIO_Init(GPIOB, &GPIO_IS);
 
-  GPIO_IS.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_IS.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_IS.GPIO_Pin = GPIO_Pin_7;
-  GPIO_Init(GPIOB, &GPIO_IS);
+  GPIO_SetMode(PA10, GPIO_Mode_Out_PP, GPIO_Speed_50MHz);
+  GPIO_SetMode(PC7, GPIO_Mode_Out_PP, GPIO_Speed_50MHz);
+  GPIO_SetMode(PB5, GPIO_Mode_Out_PP, GPIO_Speed_50MHz);
 
-  GPIO_IS.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_IS.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_IS.GPIO_Pin = GPIO_Pin_5;
-  GPIO_Init(GPIOB, &GPIO_IS);
+        GPIO_SetValue(PA10, HIGH);
+        GPIO_SetValue(PC7, HIGH);
+        GPIO_SetValue(PB5, HIGH);
+    Delay(500);
+        GPIO_SetValue(PA10, LOW);
+        GPIO_SetValue(PC7, LOW);
+        GPIO_SetValue(PB5, LOW);
 
   int mod = 0;
   /* Infinite loop */
@@ -100,40 +113,40 @@ int main(void)
   {
     switch (mod) {
       case 0:
-         GPIO_SetBits(GPIOA, GPIO_Pin_10);
-         GPIO_ResetBits(GPIOC, GPIO_Pin_7);
-         GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+        GPIO_SetValue(PA10, HIGH);
+        GPIO_SetValue(PC7, LOW);
+        GPIO_SetValue(PB5, LOW);
          mod = 1;
         break;
       case 1:
-         GPIO_SetBits(GPIOA, GPIO_Pin_10);
-         GPIO_SetBits(GPIOC, GPIO_Pin_7);
-         GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+        GPIO_SetValue(PA10, HIGH);
+        GPIO_SetValue(PC7, HIGH);
+        GPIO_SetValue(PB5, LOW);
          mod = 2;
         break;
       case 2:
-         GPIO_ResetBits(GPIOA, GPIO_Pin_10);
-         GPIO_SetBits(GPIOC, GPIO_Pin_7);
-         GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+        GPIO_SetValue(PA10, LOW);
+        GPIO_SetValue(PC7, HIGH);
+        GPIO_SetValue(PB5, LOW);
          mod = 3;
         break;
       case 3:
-         GPIO_ResetBits(GPIOA, GPIO_Pin_10);
-         GPIO_SetBits(GPIOC, GPIO_Pin_7);
-         GPIO_SetBits(GPIOB, GPIO_Pin_5);
+        GPIO_SetValue(PA10, LOW);
+        GPIO_SetValue(PC7, HIGH);
+        GPIO_SetValue(PB5, HIGH);
          mod = 4;
         break;
       case 4:
-         GPIO_ResetBits(GPIOA, GPIO_Pin_10);
-         GPIO_ResetBits(GPIOC, GPIO_Pin_7);
-         GPIO_SetBits(GPIOB, GPIO_Pin_5);
+        GPIO_SetValue(PA10, LOW);
+        GPIO_SetValue(PC7, LOW);
+        GPIO_SetValue(PB5, HIGH);
          mod = 5;
         break;
       case 5:
       default:
-         GPIO_SetBits(GPIOA, GPIO_Pin_10);
-         GPIO_ResetBits(GPIOC, GPIO_Pin_7);
-         GPIO_SetBits(GPIOB, GPIO_Pin_5);
+        GPIO_SetValue(PA10, HIGH);
+        GPIO_SetValue(PC7, LOW);
+        GPIO_SetValue(PB5, HIGH);
          mod = 0;
         break;
     }

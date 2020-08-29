@@ -322,9 +322,7 @@ void Full_Initialization(void)
 
 /**
  * @brief       Initialize the different system clocks.
- * @param       None
- * @retval      None
- * @attention   Please run this function BEFORE any other initialization.
+ * @attention   Please call this function BEFORE any other initialization.
  */
 void RCC_Initialization(void)
 {

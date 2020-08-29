@@ -21,7 +21,7 @@
 
 /**
  * @brief  Initialization GPIO.
- * @attention Please run "RCC_Initialization()" before this function.
+ * @attention Please call "RCC_Initialization()" before this function.
  */
 void GPIO_Initialization(void)
 {

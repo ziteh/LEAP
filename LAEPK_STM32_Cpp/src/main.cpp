@@ -239,6 +239,8 @@ inline bool StopFlexionIsTriggered(void)
 {
   /*
    * If Stop-Flexion is triggered,
+   *
+   *
    * that is if Front FSR ADC Value > Flexion Stop Threshold,
    * then return TRUE, else return FALSE.
    */
@@ -429,8 +431,9 @@ void ADC_Initialization(void)
   /* ADC's clock con't over than 14MHz */
   RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
-  ADC_InitTypeDef ADC_InitStruct;
   ADC_DeInit(ADC1);
+
+  ADC_InitTypeDef ADC_InitStruct;
 
   ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
@@ -492,9 +495,9 @@ void PWM_Initialization(void)
 
 void EXIT_Initialization(void)
 {
-  EXTI_InitTypeDef EXTI_InitStructure;
-
   GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0);
+
+  EXTI_InitTypeDef EXTI_InitStructure;
 
   EXTI_InitStructure.EXTI_Line = EXTI_Line0;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
@@ -505,9 +508,9 @@ void EXIT_Initialization(void)
 
 void Timer_Initialization(void)
 {
-  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
   TIM_TimeBaseStructure.TIM_Period = 72 - 1;
   TIM_TimeBaseStructure.TIM_Prescaler = 1000;

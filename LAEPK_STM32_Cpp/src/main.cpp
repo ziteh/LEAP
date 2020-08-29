@@ -46,7 +46,7 @@ int main(void)
   /* Initialization Functions */
   RCC_Initialization();
   GPIO_Initialization();
-//  Timer_Initialization();
+  //  Timer_Initialization();
   EXIT_Initialization();
   NVIC_Initialization();
   USART_Initialization();
@@ -72,7 +72,7 @@ int main(void)
     {
       USART_Send(USART2, "Start Ext\r\n");
 
-      GPIO_SetValue(RightMotor_DirectionPin, HIGH); // CW(0) = Flexion; CCW(1) = Extension
+      GPIO_SetValue(RightMotor_DirectionPin, HIGH);     // CW(0) = Flexion; CCW(1) = Extension
       GPIO_SetValue(RightMotor_FunctionStatePin, HIGH); // LOW(0) = Disable; HIGH(1) = Enbale
       PWM_SetDutyCycle(TIM3, CH2, PWM_DefaultDutyCycle);
 
@@ -98,7 +98,7 @@ int main(void)
     {
       USART_Send(USART2, "Start Fle\r\n");
 
-      GPIO_SetValue(RightMotor_DirectionPin, LOW); // CW(0) = Flexion; CCW(1) = Extension
+      GPIO_SetValue(RightMotor_DirectionPin, LOW);      // CW(0) = Flexion; CCW(1) = Extension
       GPIO_SetValue(RightMotor_FunctionStatePin, HIGH); // LOW(0) = Disable; HIGH(1) = Enbale
       PWM_SetDutyCycle(TIM3, CH2, PWM_DefaultDutyCycle);
 
@@ -149,21 +149,19 @@ void Joint_SetAbsoluteAngle(float TargetAngle)
   PWM_SetDutyCycle(TIM3, CH2, 0);
 
   /* Extension */
-  if ((NowAngle > TargetAngle)
-      && (NowAngle > Convert_ADCValueToAngle(Joint_FullExtensionADCValue)))
+  if ((NowAngle > TargetAngle) && (NowAngle > Convert_ADCValueToAngle(Joint_FullExtensionADCValue)))
   {
-    GPIO_SetValue(RightMotor_DirectionPin, HIGH); // CW(0) = Flexion; CCW(1) = Extension
+    GPIO_SetValue(RightMotor_DirectionPin, HIGH);     // CW(0) = Flexion; CCW(1) = Extension
     GPIO_SetValue(RightMotor_FunctionStatePin, HIGH); // LOW(0) = Disable; HIGH(1) = Enbale
     PWM_SetDutyCycle(TIM3, CH2, PWM_DefaultDutyCycle);
 
-    while ((NowAngle > TargetAngle)
-        && (NowAngle > Convert_ADCValueToAngle(Joint_FullExtensionADCValue)))
+    while ((NowAngle > TargetAngle) && (NowAngle > Convert_ADCValueToAngle(Joint_FullExtensionADCValue)))
     {
       NowAngle = Joint_GetAbsoluteAngle(); // Update angle.
       USART_Send(USART2,
-          convertIntToString(
-              round(Convert_ADCValueToAngle(ADC_GetValue(ADC1, ADC_Channel_1, 1,
-              ADC_SampleTime_55Cycles5)))));
+                 convertIntToString(
+                     round(Convert_ADCValueToAngle(ADC_GetValue(ADC1, ADC_Channel_1, 1,
+                                                                ADC_SampleTime_55Cycles5)))));
       USART_Send(USART2, "\r\n");
     }
 
@@ -171,21 +169,19 @@ void Joint_SetAbsoluteAngle(float TargetAngle)
     PWM_SetDutyCycle(TIM3, CH2, 0);
   }
   /* Flexion */
-  else if ((NowAngle < TargetAngle)
-      && (NowAngle < Convert_ADCValueToAngle(Joint_FullFlexionADCValue)))
+  else if ((NowAngle < TargetAngle) && (NowAngle < Convert_ADCValueToAngle(Joint_FullFlexionADCValue)))
   {
-    GPIO_SetValue(RightMotor_DirectionPin, LOW); // CW(0) = Flexion; CCW(1) = Extension
+    GPIO_SetValue(RightMotor_DirectionPin, LOW);      // CW(0) = Flexion; CCW(1) = Extension
     GPIO_SetValue(RightMotor_FunctionStatePin, HIGH); // LOW(0) = Disable; HIGH(1) = Enbale
     PWM_SetDutyCycle(TIM3, CH2, PWM_DefaultDutyCycle);
 
-    while ((NowAngle < TargetAngle)
-        && (NowAngle < Convert_ADCValueToAngle(Joint_FullFlexionADCValue)))
+    while ((NowAngle < TargetAngle) && (NowAngle < Convert_ADCValueToAngle(Joint_FullFlexionADCValue)))
     {
       NowAngle = Joint_GetAbsoluteAngle(); // Update angle.
       USART_Send(USART2,
-          convertIntToString(
-              round(Convert_ADCValueToAngle(ADC_GetValue(ADC1, ADC_Channel_1, 1,
-              ADC_SampleTime_55Cycles5)))));
+                 convertIntToString(
+                     round(Convert_ADCValueToAngle(ADC_GetValue(ADC1, ADC_Channel_1, 1,
+                                                                ADC_SampleTime_55Cycles5)))));
       USART_Send(USART2, "\r\n");
     }
 
@@ -202,14 +198,12 @@ float Joint_GetAbsoluteAngle(void)
 
 inline Joint_LimitStateTypeDef Joint_GetLimitState(void)
 {
-  if (ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5)
-      <= Joint_FullExtensionADCValue)
-    return ((Joint_LimitStateTypeDef) FullExtension);
-  else if (ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5)
-      >= Joint_FullFlexionADCValue)
-    return ((Joint_LimitStateTypeDef) FullFlexion);
+  if (ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5) <= Joint_FullExtensionADCValue)
+    return ((Joint_LimitStateTypeDef)FullExtension);
+  else if (ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5) >= Joint_FullFlexionADCValue)
+    return ((Joint_LimitStateTypeDef)FullFlexion);
   else
-    return ((Joint_LimitStateTypeDef) Unlimited);
+    return ((Joint_LimitStateTypeDef)Unlimited);
 }
 
 inline bool StartExtensionIsTriggered(void)
@@ -219,8 +213,7 @@ inline bool StartExtensionIsTriggered(void)
    * that is if Front FSR ADC Value > Extension Start Threshold,
    * then return TRUE, else return FALSE.
    */
-  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5)
-      > Joint_ExtensionFSRStartThreshold);
+  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStartThreshold);
 }
 
 inline bool StartFlexionIsTriggered(void)
@@ -230,8 +223,7 @@ inline bool StartFlexionIsTriggered(void)
    * that is if Back FSR ADC Value > Flexion Start Threshold,
    * then return TRUE, else return FALSE.
    */
-  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5)
-      > Joint_FlexionFSRStartThreshold);
+  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStartThreshold);
 }
 
 inline bool StopExtensionIsTriggered(void)
@@ -241,8 +233,7 @@ inline bool StopExtensionIsTriggered(void)
    * that is if Back FSR ADC Value > Extension Stop Threshold,
    * then return TRUE, else return FALSE.
    */
-  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5)
-      > Joint_ExtensionFSRStopThreshold);
+  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStopThreshold);
 }
 
 inline bool StopFlexionIsTriggered(void)
@@ -252,8 +243,7 @@ inline bool StopFlexionIsTriggered(void)
    * that is if Front FSR ADC Value > Flexion Stop Threshold,
    * then return TRUE, else return FALSE.
    */
-  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5)
-      > Joint_FlexionFSRStopThreshold);
+  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStopThreshold);
 }
 
 float Convert_ADCValueToAngle(uint16_t ADCValue)
@@ -283,7 +273,7 @@ float Convert_ADCValueToAngle(uint16_t ADCValue)
    * Joint_Angle = [(ADC_Value - Full_Extension_ADC_Value)*(9/128)]-5
    */
 
-  return ((float) ((ADCValue - Joint_FullExtensionADCValue)*(0.0703125) -5));
+  return ((float)((ADCValue - Joint_FullExtensionADCValue) * (0.0703125) - 5));
 }
 
 uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
@@ -307,23 +297,23 @@ uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
    */
 
   /* gear ration * RespectivelySpeed in rpm */
-  float RespectivelySpeed = 100*(DegPerSec/6.0);
+  float RespectivelySpeed = 100 * (DegPerSec / 6.0);
 
   /* Vset = {[(N-Nmin)/(Nmax-Nmin)]*4.9}+0.1 */
-  float Vset = ((RespectivelySpeed/2720.0)*4.9)+0.1;
+  float Vset = ((RespectivelySpeed / 2720.0) * 4.9) + 0.1;
 
   /* PWM Dutu Cucly = (Vset/Vp)*100% */
-  float PWMDutyCycle = (Vset/3.3)*100;
+  float PWMDutyCycle = (Vset / 3.3) * 100;
 
   if (PWMDutyCycle >= 100)
-    return ((uint8_t) 100);
+    return ((uint8_t)100);
   else
-    return ((uint8_t) PWMDutyCycle);
+    return ((uint8_t)PWMDutyCycle);
 }
 
 void CommunicationDecoder(uint8_t Command)
 {
-  Joint_SetAbsoluteAngle(Command-5);
+  Joint_SetAbsoluteAngle(Command - 5);
 }
 
 void Full_Initialization(void)
@@ -342,19 +332,19 @@ void RCC_Initialization(void)
   RCC_DeInit();
 
   /* RCC APB1 */
-  RCC_APB1PeriphClockCmd( RCC_APB1Periph_USART2 |
-                          RCC_APB1Periph_TIM3,
-                          ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2 |
+                             RCC_APB1Periph_TIM3,
+                         ENABLE);
 
   /* RCC APB2 */
-  RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA |
-                          RCC_APB2Periph_GPIOB |
-                          RCC_APB2Periph_GPIOC |
-                          RCC_APB2Periph_GPIOD |
-                          RCC_APB2Periph_GPIOE,
-//                          RCC_APB2Periph_ADC1,
-//                          RCC_APB2Periph_AFIO,
-                          ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
+                             RCC_APB2Periph_GPIOB |
+                             RCC_APB2Periph_GPIOC |
+                             RCC_APB2Periph_GPIOD |
+                             RCC_APB2Periph_GPIOE,
+                         //                          RCC_APB2Periph_ADC1,
+                         //                          RCC_APB2Periph_AFIO,
+                         ENABLE);
 }
 
 void EXIT_Initialization(void)
@@ -376,7 +366,7 @@ void Timer_Initialization(void)
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
-  TIM_TimeBaseStructure.TIM_Period = 72-1;
+  TIM_TimeBaseStructure.TIM_Period = 72 - 1;
   TIM_TimeBaseStructure.TIM_Prescaler = 1000;
   TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
@@ -388,8 +378,8 @@ void Timer_Initialization(void)
 }
 
 /* class Motor */
-void EC90Motor::setPWMTimerChannelPortPin(TIM_TypeDef* NewTimer,
-    PWM_TimerChannelTypeDef NewChannel, GPIO_PortPinTypeDef NewPWMPortPin)
+void EC90Motor::setPWMTimerChannelPortPin(TIM_TypeDef *NewTimer,
+                                          PWM_TimerChannelTypeDef NewChannel, GPIO_PortPinTypeDef NewPWMPortPin)
 {
   PWM_Speed.setTimer(NewTimer);
   PWM_Speed.setChannel(NewChannel);
@@ -397,7 +387,7 @@ void EC90Motor::setPWMTimerChannelPortPin(TIM_TypeDef* NewTimer,
 
   PWM_Speed.setFrequency(50);
   PWM_Speed.setDutyCycle(0);
-//  PWM_Speed.setDisable();
+  //  PWM_Speed.setDisable();
   PWM_Speed.setEnable();
 }
 
@@ -432,9 +422,9 @@ void EC90Motor::setInputPinRPM(GPIO_PortPinTypeDef NewRPMPortPin)
 void EC90Motor::setFunctionState(Motor_FunctionStateTypeDef NewState)
 {
   if (NewState == Enable)
-    GPIO_FunctionState.setValue(HIGH);  // HIGH: Enable
+    GPIO_FunctionState.setValue(HIGH); // HIGH: Enable
   else if (NewState == Disable)
-    GPIO_FunctionState.setValue(LOW);  // HIGH: Enable
+    GPIO_FunctionState.setValue(LOW); // HIGH: Enable
   else if (NewState == ToggleState)
     GPIO_FunctionState.setValueToggle();
 }
@@ -442,9 +432,9 @@ void EC90Motor::setFunctionState(Motor_FunctionStateTypeDef NewState)
 void EC90Motor::setDirection(Motor_DirectionTypeDef NewDirection)
 {
   if (NewDirection == CCW)
-    GPIO_Direction.setValue(HIGH);  // HIGH: CCW
+    GPIO_Direction.setValue(HIGH); // HIGH: CCW
   else if (NewDirection == CW)
-    GPIO_Direction.setValue(LOW);  // HIGH: CW
+    GPIO_Direction.setValue(LOW); // HIGH: CW
   else if (NewDirection == ToggleDirection)
     GPIO_Direction.setValueToggle();
 }
@@ -460,7 +450,7 @@ Motor_ReadyStateTypeDef EC90Motor::getReadyState(void)
 
   if (GPIO_ReadyState.getValue() == HIGH) // HIGH: Ready
     ReadyState = Ready;
-  else  // LOW: Fault
+  else // LOW: Fault
     ReadyState = Fault;
 
   return ReadyState;
@@ -492,7 +482,7 @@ Motor_DirectionTypeDef EC90Motor::getDirection(void)
 
 uint16_t EC90Motor::getDutyCycle(void)
 {
- return PWM_Speed.getDutyCycle();
+  return PWM_Speed.getDutyCycle();
 }
 
 //Joint_Joint(void)
@@ -633,7 +623,7 @@ uint16_t EC90Motor::getDutyCycle(void)
 //    return Unlimited;
 //}
 
-char* convertIntToString(int IntNumber)
+char *convertIntToString(int IntNumber)
 {
   static char string[3];
   sprintf(string, "%d", IntNumber);
@@ -659,31 +649,31 @@ void Delay_NonTimer(__IO uint32_t nTime)
 extern "C"
 {
 
-void Delay_ms(__IO uint32_t nTime)
-{
-  TimingDelay = (nTime*0.125);
-
-  while (TimingDelay != 0)
+  void Delay_ms(__IO uint32_t nTime)
   {
-  }
-}
+    TimingDelay = (nTime * 0.125);
 
-/**
+    while (TimingDelay != 0)
+    {
+    }
+  }
+
+  /**
  * @brief  Decrements the TimingDelay variable.
  * @param  None
  * @retval None
  */
-void TimingDelay_Decrement(void)
-{
-  if (TimingDelay != 0x00)
+  void TimingDelay_Decrement(void)
   {
-    TimingDelay--;
+    if (TimingDelay != 0x00)
+    {
+      TimingDelay--;
+    }
   }
-}
 
 } /* extern "C" { */
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 
 /**
  * @brief  Reports the name of the source file and the source line number
@@ -692,7 +682,7 @@ void TimingDelay_Decrement(void)
  * @param  line: assert_param error line source number
  * @retval None
  */
-void assert_failed(uint8_t* file, uint32_t line)
+void assert_failed(uint8_t *file, uint32_t line)
 {
   /* User can add his own implementation to report the file name and line number,
    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */

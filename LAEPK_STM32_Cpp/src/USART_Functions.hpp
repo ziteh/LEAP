@@ -37,7 +37,6 @@ extern "C"
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void USART_Initialization(void);
 void USART_Send(USART_TypeDef* USARTx, uint8_t *Data);
 void USART_Send(USART_TypeDef* USARTx, std::string Data);
 

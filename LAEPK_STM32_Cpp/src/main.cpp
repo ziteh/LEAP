@@ -316,10 +316,6 @@ void CommunicationDecoder(uint8_t Command)
   Joint_SetAbsoluteAngle(Command - 5);
 }
 
-void Full_Initialization(void)
-{
-}
-
 /**
  * @brief       Initialize the different system clocks.
  * @attention   Please call this function BEFORE any other initialization.

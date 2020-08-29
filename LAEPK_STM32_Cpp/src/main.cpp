@@ -318,38 +318,25 @@ void CommunicationDecoder(uint8_t Command)
 
 /**
  * @brief       Initialize the different system clocks.
- * @attention   Please call this function BEFORE any other initialization.
  */
 void RCC_Initialization(void)
 {
-  /* Resets the RCC clock configuration to the default reset state */
   RCC_DeInit();
+}
 
-  /* RCC APB1 */
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2 |
-                             RCC_APB1Periph_TIM3,
-                         ENABLE);
-
-  /* RCC APB2 */
+/**
+ * @brief  Initialization GPIO.
+ */
+void GPIO_Initialization(void)
+{
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
                              RCC_APB2Periph_GPIOB |
                              RCC_APB2Periph_GPIOC |
                              RCC_APB2Periph_GPIOD |
                              RCC_APB2Periph_GPIOE,
-                         //                          RCC_APB2Periph_ADC1,
-                         //                          RCC_APB2Periph_AFIO,
                          ENABLE);
-}
 
-/**
- * @brief  Initialization GPIO.
- * @attention Please call "RCC_Initialization()" before this function.
- */
-void GPIO_Initialization(void)
-{
   GPIO_InitTypeDef GPIO_InitStructure;
-
-  /* Fills each GPIO_InitStruct member with its default value */
   GPIO_StructInit(&GPIO_InitStructure);
 
   // STM32 Nucleo-64 board
@@ -382,7 +369,6 @@ void GPIO_Initialization(void)
 
 /**
  * @brief  Initialize NVIC.
- * @attention Please call "RCC_Initialization()" before this function.
  */
 void NVIC_Initialization(void)
 {
@@ -416,24 +402,21 @@ void NVIC_Initialization(void)
 
 /**
  * @brief       Initialize USART.
- * @attention   Please call "RCC_Initialization()" before this function.
  */
 void USART_Initialization(void)
 {
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+
   USART_InitTypeDef USART_InitStructure;
+  USART_StructInit(&USART_InitStructure);
 
   //    USART_DeInit(USART2);
 
-  /* Fills each USART_InitStruct member with its default value */
-  USART_StructInit(&USART_InitStructure);
-
-  /* Configure the USART */
   USART_InitStructure.USART_BaudRate = 9600;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
   USART_InitStructure.USART_Parity = USART_Parity_No;
-  USART_InitStructure.USART_HardwareFlowControl =
-      USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
   USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
   USART_Init(USART2, &USART_InitStructure);
 
@@ -449,19 +432,15 @@ void USART_Initialization(void)
 
 /**
  * @brief  Initialize ADC.
- * @attention   Please call "RCC_Initialization()" before this function.
  */
 void ADC_Initialization(void)
 {
+  /* ADC's clock con't over than 14MHz */
+  RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+
   ADC_InitTypeDef ADC_InitStruct;
-
-  /* RCC config */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-  RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over than 14MHz
-
   ADC_DeInit(ADC1);
 
-  /* ADC configuration */
   ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
   ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
@@ -470,18 +449,19 @@ void ADC_Initialization(void)
   ADC_InitStruct.ADC_ScanConvMode = DISABLE;
   ADC_Init(ADC1, &ADC_InitStruct);
 
-  /* Enable */
   ADC_Cmd(ADC1, ENABLE);
 
   /* ADC Calibration */
-  ADC_ResetCalibration(ADC1); // Reset calibration
+  // Reset calibration
+  ADC_ResetCalibration(ADC1);
 
   // Wait until reset calibration complete
   while (ADC_GetResetCalibrationStatus(ADC1) == 1)
   {
   }
 
-  ADC_StartCalibration(ADC1); // Start calibration
+  // Start calibration
+  ADC_StartCalibration(ADC1);
 
   // Wait until calibration complete
   while (ADC_GetCalibrationStatus(ADC1) == 1)
@@ -491,10 +471,11 @@ void ADC_Initialization(void)
 
 /**
  * @brief  Initialize PWM.
- * @attention   Please call "RCC_Initialization()" before this function.
  */
 void PWM_Initialization(void)
 {
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
   TIM_OCInitTypeDef TIM_OCInitStructure;
 
@@ -508,7 +489,7 @@ void PWM_Initialization(void)
   /* PWM1 Mode configuration */
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_Pulse = 530;    // TIM_Pulse=CCRx
+  TIM_OCInitStructure.TIM_Pulse = 530; // TIM_Pulse=CCRx
   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
   TIM_OC2Init(TIM3, &TIM_OCInitStructure);
 

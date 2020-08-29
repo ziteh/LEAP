@@ -489,6 +489,35 @@ void ADC_Initialization(void)
   }
 }
 
+/**
+ * @brief  Initialize PWM.
+ * @attention   Please call "RCC_Initialization()" before this function.
+ */
+void PWM_Initialization(void)
+{
+  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+  TIM_OCInitTypeDef TIM_OCInitStructure;
+
+  /* Time base configuration */
+  TIM_TimeBaseStructure.TIM_Period = 14399; // Set the Auto-Reload value
+  TIM_TimeBaseStructure.TIM_Prescaler = 10; // Set the Prescaler value
+  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // Select the Counter Mode
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+  /* PWM1 Mode configuration */
+  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = 530;    // TIM_Pulse=CCRx
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+  TIM_OC2Init(TIM3, &TIM_OCInitStructure);
+
+  /* Enable */
+  TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
+  TIM_ARRPreloadConfig(TIM3, ENABLE);
+  TIM_Cmd(TIM3, ENABLE);
+}
+
 void EXIT_Initialization(void)
 {
   EXTI_InitTypeDef EXTI_InitStructure;

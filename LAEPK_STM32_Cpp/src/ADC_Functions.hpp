@@ -27,7 +27,6 @@
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void ADC_Initialization(void);
 uint16_t ADC_GetValue(  ADC_TypeDef* ADCx,
                         uint8_t ADC_Channel,
                         uint8_t Rank,

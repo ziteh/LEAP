@@ -110,7 +110,6 @@ uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec);
 
 void CommunicationDecoder(uint8_t Command);
 
-void RCC_Initialization(void);
 void GPIO_Initialization(void);
 void NVIC_Initialization(void);
 void USART_Initialization(void)

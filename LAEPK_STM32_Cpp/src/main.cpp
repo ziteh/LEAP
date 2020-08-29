@@ -44,7 +44,6 @@ int main(void)
   float Joint_Angle;
 
   /* Initialization Functions */
-  RCC_Initialization();
   GPIO_Initialization();
   //  Timer_Initialization();
   EXIT_Initialization();
@@ -314,14 +313,6 @@ uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
 void CommunicationDecoder(uint8_t Command)
 {
   Joint_SetAbsoluteAngle(Command - 5);
-}
-
-/**
- * @brief       Initialize the different system clocks.
- */
-void RCC_Initialization(void)
-{
-  RCC_DeInit();
 }
 
 /**

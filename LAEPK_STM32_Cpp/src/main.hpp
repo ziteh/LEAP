@@ -110,8 +110,9 @@ uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec);
 
 void CommunicationDecoder(uint8_t Command);
 
-void Full_Initialization(void);
 void RCC_Initialization(void);
+void GPIO_Initialization(void);
+void NVIC_Initialization(void);
 void EXIT_Initialization(void);
 void Timer_Initialization(void);
 char* convertIntToString(int Number);

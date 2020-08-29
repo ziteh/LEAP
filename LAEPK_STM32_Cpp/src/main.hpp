@@ -114,6 +114,7 @@ void RCC_Initialization(void);
 void GPIO_Initialization(void);
 void NVIC_Initialization(void);
 void USART_Initialization(void)
+void ADC_Initialization(void)
 void EXIT_Initialization(void);
 void Timer_Initialization(void);
 char* convertIntToString(int Number);

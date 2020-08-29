@@ -422,7 +422,7 @@ void USART_Initialization(void)
 {
   USART_InitTypeDef USART_InitStructure;
 
-  // USART_DeInit(USART2);
+  //    USART_DeInit(USART2);
 
   /* Fills each USART_InitStruct member with its default value */
   USART_StructInit(&USART_InitStructure);
@@ -445,6 +445,48 @@ void USART_Initialization(void)
 
   /* Clear "Transmission Complete" flag, 否則第1位數據會丟失 */
   USART_ClearFlag(USART2, USART_FLAG_TC);
+}
+
+/**
+ * @brief  Initialize ADC.
+ * @attention   Please call "RCC_Initialization()" before this function.
+ */
+void ADC_Initialization(void)
+{
+  ADC_InitTypeDef ADC_InitStruct;
+
+  /* RCC config */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+  RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over than 14MHz
+
+  ADC_DeInit(ADC1);
+
+  /* ADC configuration */
+  ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
+  ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
+  ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+  ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;
+  ADC_InitStruct.ADC_NbrOfChannel = 1;
+  ADC_InitStruct.ADC_ScanConvMode = DISABLE;
+  ADC_Init(ADC1, &ADC_InitStruct);
+
+  /* Enable */
+  ADC_Cmd(ADC1, ENABLE);
+
+  /* ADC Calibration */
+  ADC_ResetCalibration(ADC1); // Reset calibration
+
+  // Wait until reset calibration complete
+  while (ADC_GetResetCalibrationStatus(ADC1) == 1)
+  {
+  }
+
+  ADC_StartCalibration(ADC1); // Start calibration
+
+  // Wait until calibration complete
+  while (ADC_GetCalibrationStatus(ADC1) == 1)
+  {
+  }
 }
 
 void EXIT_Initialization(void)

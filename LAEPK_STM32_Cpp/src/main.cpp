@@ -384,6 +384,40 @@ void GPIO_Initialization(void)
   // EXT
 }
 
+/**
+ * @brief  Initialize NVIC.
+ * @attention Please call "RCC_Initialization()" before this function.
+ */
+void NVIC_Initialization(void)
+{
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  /* Configures the priority grouping */
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+
+  /* Configure the NVIC */
+  // USART2
+  NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  // EXTI: Limit Switch
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  // Timer
+  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+}
+
 void EXIT_Initialization(void)
 {
   EXTI_InitTypeDef EXTI_InitStructure;

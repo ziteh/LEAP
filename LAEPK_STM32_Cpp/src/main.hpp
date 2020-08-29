@@ -25,7 +25,6 @@
 #include <cmath>
 #include "GPIO_Functions.hpp"
 #include "PWM_Functions.hpp"
-#include "NVIC_Functions.hpp"
 #include "USART_Functions.hpp"
 #include "ADC_Functions.hpp"
 

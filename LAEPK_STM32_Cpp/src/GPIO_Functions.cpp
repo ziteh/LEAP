@@ -20,42 +20,6 @@
 #include "GPIO_Functions.hpp"
 
 /**
- * @brief  Initialization GPIO.
- * @attention Please call "RCC_Initialization()" before this function.
- */
-void GPIO_Initialization(void)
-{
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-  /* Fills each GPIO_InitStruct member with its default value */
-  GPIO_StructInit(&GPIO_InitStructure);
-
-  /* Configure the GPIO pin */
-  // STM32 Nucleo-64 board
-  GPIO_SetMode(User_LED, GPIO_Mode_Out_PP, GPIO_Speed_2MHz);
-  GPIO_SetMode(User_Button, GPIO_Mode_IN_FLOATING);
-
-  // USART
-  GPIO_SetMode(PA2, GPIO_Mode_AF_PP, GPIO_Speed_50MHz); // USART2_TX
-  GPIO_SetMode(PA3, GPIO_Mode_IN_FLOATING); // USART2_RX
-
-  // Motor
-  GPIO_SetMode(PA7, GPIO_Mode_AF_PP, GPIO_Speed_50MHz); // PWM
-  GPIO_SetMode(D10, GPIO_Mode_Out_PP, GPIO_Speed_2MHz); // Direction
-  GPIO_SetMode(D9, GPIO_Mode_Out_PP, GPIO_Speed_2MHz); // Enable/Disable
-
-//    GPIO_PinRemapConfig(GPIO_PartialRemap_TIM3, ENABLE);
-
-  // ADC
-  GPIO_SetMode(PA1, GPIO_Mode_AIN);
-  GPIO_SetMode(PA4, GPIO_Mode_AIN);
-  GPIO_SetMode(PB0, GPIO_Mode_AIN);
-
-  // EXT
-  GPIO_SetMode(PA0, GPIO_Mode_IPD);
-}
-
-/**
  * @brief Config a pin mode and speed.
  * @param PortPin:  select a pin to set.
  *                  This parameter should be: 0 ~ 79.

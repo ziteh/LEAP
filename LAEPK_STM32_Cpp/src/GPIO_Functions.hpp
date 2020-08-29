@@ -28,7 +28,6 @@ extern "C"
 
 typedef enum { LOW = 0, HIGH = !LOW } GPIO_ValueTypeDef;
 
-void GPIO_Initialization(void);
 void GPIO_SetMode(GPIO_PortPinTypeDef PortPin,
                   GPIOMode_TypeDef Mode,
                   GPIOSpeed_TypeDef Speed);

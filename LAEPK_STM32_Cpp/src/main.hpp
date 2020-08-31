@@ -28,6 +28,7 @@
 #include "USART_Functions.hpp"
 #include "ADC_Functions.hpp"
 #include "EC90fl_Motor_Functions.hpp"
+#include "joint.hpp"
 
 extern "C"
 {
@@ -55,29 +56,6 @@ extern "C"
 #define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
 #define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
 
-typedef enum
-{
-  Extension = 1,
-  Flexion = 2
-} Joint_DirectionTypeDef;
-
-typedef enum
-{
-  Unlimited = 0,
-  FullExtension = 1,
-  FullFlexion = 2
-} Joint_LimitStateTypeDef;
-
-typedef struct
-{
-  Joint_LimitStateTypeDef Joint_LimitState;
-  uint16_t Joint_Angle;
-  Joint_DirectionTypeDef Joint_Direction;
-} Joint_StateTypeDef;
-
-void Joint_SetAbsoluteAngle(float TargetAngle);
-float Joint_GetAbsoluteAngle(void);
-Joint_LimitStateTypeDef Joint_GetLimitState(void);
 
 bool StartExtensionIsTriggered(void);
 bool StartFlexionIsTriggered(void);

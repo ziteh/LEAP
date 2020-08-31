@@ -16,10 +16,10 @@
  ******************************************************************************
  */
 
-#include "main.hpp"
-
-/* Uncomment it to run unit test program, Comment it to run main program. */
+/* Uncomment it to run unit test program, comment it to run main program. */
 #define ENABLE_UNIT_TEST
+
+#include "main.hpp"
 
 static __IO uint32_t TimingDelay;
 

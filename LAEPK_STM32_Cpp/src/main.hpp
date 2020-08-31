@@ -27,6 +27,7 @@
 #include "PWM_Functions.hpp"
 #include "USART_Functions.hpp"
 #include "ADC_Functions.hpp"
+#include "EC90fl_Motor_Functions.hpp"
 
 extern "C"
 {
@@ -35,58 +36,37 @@ extern "C"
 }
 
 /* GPIO mapping */
-#define RightMotor_DirectionPin ((GPIO_PortPinTypeDef) D10)
-#define RightMotor_FunctionStatePin ((GPIO_PortPinTypeDef) D9)
+#define RightMotor_DirectionPin ((GPIO_PortPinTypeDef)D10)
+#define RightMotor_FunctionStatePin ((GPIO_PortPinTypeDef)D9)
 
 /* Default PWM value */
-#define PWM_DefaultFrequncy   ((uint16_t) 5000)
-#define PWM_DefaultDutyCycle  ((uint8_t) 15)
+#define PWM_DefaultFrequncy ((uint16_t)5000)
+#define PWM_DefaultDutyCycle ((uint8_t)15)
 
 /* Default Joint ADC value */
-#define Joint_DefaultFullExtensionADCValue  ((uint16_t) 1400)
-#define Joint_DefaultFullFlexionADCValue    ((uint16_t) 2450)
+#define Joint_DefaultFullExtensionADCValue ((uint16_t)1400)
+#define Joint_DefaultFullFlexionADCValue ((uint16_t)2450)
 
 /* Default FSR start threshold */
-#define Joint_DefaultExtensionFSRStartThreshold ((uint8_t) 215)
-#define Joint_DefaultFlexionFSRStartThreshold   ((uint8_t) 180)
+#define Joint_DefaultExtensionFSRStartThreshold ((uint8_t)215)
+#define Joint_DefaultFlexionFSRStartThreshold ((uint8_t)180)
 
 /* Default FSR stop threshold */
-#define Joint_DefaultExtensionFSRStopThreshold ((uint16_t) 500)
-#define Joint_DefaultFlexionFSRStopThreshold   ((uint16_t) 500)
+#define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
+#define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
 
 typedef enum
 {
-  Disable = 0, Enable = 1, ToggleState = 2
-} Motor_FunctionStateTypeDef;
-
-typedef enum
-{
-  CW = 0, CCW = 1, ToggleDirection = 2
-} Motor_DirectionTypeDef;
-
-typedef enum
-{
-  Fault = 0, Ready = !Fault
-} Motor_ReadyStateTypeDef;
-
-typedef enum
-{
-  Extension = 1, Flexion = 2
+  Extension = 1,
+  Flexion = 2
 } Joint_DirectionTypeDef;
 
 typedef enum
 {
-  Unlimited = 0, FullExtension = 1, FullFlexion = 2
+  Unlimited = 0,
+  FullExtension = 1,
+  FullFlexion = 2
 } Joint_LimitStateTypeDef;
-
-typedef struct
-{
-  Motor_ReadyStateTypeDef Motor_ReadyState;
-  Motor_FunctionStateTypeDef Motor_FunctionState;
-  Motor_DirectionTypeDef Motor_Direction;
-  uint16_t Motor_PMW_DutyCycle;
-  uint16_t Motor_RPM;
-} Motor_StateTypeDef;
 
 typedef struct
 {
@@ -104,7 +84,6 @@ bool StartFlexionIsTriggered(void);
 bool StopExtensionIsTriggered(void);
 bool StopFlexionIsTriggered(void);
 
-
 float Convert_ADCValueToAngle(uint16_t ADCValue);
 uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec);
 
@@ -112,49 +91,21 @@ void CommunicationDecoder(uint8_t Command);
 
 void GPIO_Initialization(void);
 void NVIC_Initialization(void);
-void USART_Initialization(void)
-void ADC_Initialization(void)
-void PWM_Initialization(void)
+void USART_Initialization(void);
+void ADC_Initialization(void);
+void PWM_Initialization(void);
 void EXIT_Initialization(void);
 void Timer_Initialization(void);
-char* convertIntToString(int Number);
+
+char *convertIntToString(int Number);
 //std::string convertFloatToString(float FloatNumber); /* ERROE: region `flash' overflowed */
 void Delay_NonTimer(__IO uint32_t nTime);
 
 extern "C"
 {
-void Delay_ms(__IO uint32_t nTime);
-void TimingDelay_Decrement(void);
+  void Delay_ms(__IO uint32_t nTime);
+  void TimingDelay_Decrement(void);
 }
-
-
-class EC90Motor
-{
-public:
-  void setPWMTimerChannelPortPin(TIM_TypeDef* NewTimer,
-      PWM_TimerChannelTypeDef NewChannel, GPIO_PortPinTypeDef NewPWMPortPin);
-
-  void setOutputPinFunctionState(GPIO_PortPinTypeDef NewFSPortPin);
-  void setOutputPinDirection(GPIO_PortPinTypeDef NewDirPortPin);
-  void setInputPinReadyState(GPIO_PortPinTypeDef NewRSPortPin);
-  void setInputPinRPM(GPIO_PortPinTypeDef NewRPMPortPin);
-
-  void setFunctionState(Motor_FunctionStateTypeDef NewState);
-  void setDirection(Motor_DirectionTypeDef NewDirection);
-  void setDutyCycle(uint16_t NewDutyCycle);
-
-  Motor_ReadyStateTypeDef getReadyState(void);
-  Motor_FunctionStateTypeDef getFunctionState(void);
-  Motor_DirectionTypeDef getDirection(void);
-  uint16_t getDutyCycle(void);
-
-private:
-  PWM PWM_Speed;
-  GPIO GPIO_FunctionState;
-  GPIO GPIO_Direction;
-  GPIO GPIO_ReadyState;
-  GPIO GPIO_RPM;
-};
 
 //void Joint_setAngularSpeed(uint8_t NewAngularSpeed);
 //void Joint_setAngularAcceleration(uint8_t NewAngularAcceleration);

@@ -180,8 +180,7 @@ namespace UnitTest
     USART_Send(USART2, Convert::ToString(1));
     while (1)
     {
-      // USART_Send(USART2, Convert::ToString(adc.getValue()));
-      USART_Send(USART2, Convert::ToString(ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5)));
+      USART_Send(USART2, Convert::ToString(adc.getValue()));
       USART_Send(USART2, "\r\n");
     }
     /* -- End of ADC -- */

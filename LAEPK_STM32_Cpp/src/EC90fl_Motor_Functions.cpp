@@ -66,7 +66,7 @@ void EC90Motor::setFunctionState(Motor_FunctionStateTypeDef NewState)
   else if (NewState == Disable)
     GPIO_FunctionState.setValue(LOW); // LOW: Disable
   else if (NewState == ToggleState)
-    GPIO_FunctionState.setValueToggle();
+    GPIO_FunctionState.toggleValue();
 }
 
 void EC90Motor::setDirection(Motor_DirectionTypeDef NewDirection)
@@ -76,7 +76,7 @@ void EC90Motor::setDirection(Motor_DirectionTypeDef NewDirection)
   else if (NewDirection == CW)
     GPIO_Direction.setValue(LOW); // LOW: CW
   else if (NewDirection == ToggleDirection)
-    GPIO_Direction.setValueToggle();
+    GPIO_Direction.toggleValue();
 }
 
 void EC90Motor::setDutyCycle(uint16_t NewDutyCycle)

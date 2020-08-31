@@ -26,7 +26,11 @@ extern "C"
 #include "STM32F103RB_GPIO_Mapping.h"
 }
 
-typedef enum { LOW = 0, HIGH = !LOW } GPIO_ValueTypeDef;
+typedef enum
+{
+  LOW = 0,
+  HIGH = !LOW
+} GPIO_ValueTypeDef;
 
 void GPIO_SetMode(GPIO_PortPinTypeDef PortPin,
                   GPIOMode_TypeDef Mode,
@@ -43,40 +47,31 @@ GPIO_ValueTypeDef GPIO_GetValue(GPIO_PortPinTypeDef PortPin);
 GPIO_ValueTypeDef GPIO_GetInputValue(GPIO_PortPinTypeDef PortPin);
 GPIO_ValueTypeDef GPIO_GetOutputValue(GPIO_PortPinTypeDef PortPin);
 
-GPIO_TypeDef* GPIO_GetPort(GPIO_PortPinTypeDef PortPin);
+GPIO_TypeDef *GPIO_GetPort(GPIO_PortPinTypeDef PortPin);
 uint16_t GPIO_GetPin(GPIO_PortPinTypeDef PortPin);
 
 GPIO_ValueTypeDef uint8_t_to_GPIO_Value_TypeDef(uint8_t Value);
 
-
 class GPIO
 {
 public:
+  GPIO_PortPinTypeDef PortPin;
+  GPIOMode_TypeDef Mode;
+  GPIOSpeed_TypeDef Speed;
+
   GPIO(void);
-  GPIO(GPIO_PortPinTypeDef NewPortPin);
 
-  void setPortPin(GPIO_PortPinTypeDef NewPortPin);
-  void setMode(GPIOMode_TypeDef NewGPIOMode);
-  void setSpeed(GPIOSpeed_TypeDef NewGPIOSpeed);
-
+  void Init(void);
   void setValue(GPIO_ValueTypeDef NewValue);
-  void setValueToggle(void);
+  void toggleValue(void);
 
   GPIO_ValueTypeDef getValue();
 
 private:
-  GPIO_PortPinTypeDef PortPin;
-  GPIOMode_TypeDef GPIOMode;
-  GPIOSpeed_TypeDef GPIOSpeed;
-
-  bool GPIOPortPinSetted;
-  bool GPIOModeSetted;
-  bool GPIOSpeedSetted;
-
   void setInit(void);
   void setDefault(void);
 
-  GPIO_TypeDef* getPort(void);
+  GPIO_TypeDef *getPort(void);
   uint16_t getPin(void);
 
   bool isSetup(void);

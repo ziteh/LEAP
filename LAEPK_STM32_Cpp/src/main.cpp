@@ -144,7 +144,7 @@ int main(void)
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
-  UnitTest::USART_Send_Data();
+  UnitTest::ADC_Read_Analog_value();
 #endif /* ENABLE_UNIT_TEST */
 }
 
@@ -373,6 +373,8 @@ void ADC_Initialization(void)
 {
   /* ADC's clock con't over than 14MHz */
   RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 
   ADC_DeInit(ADC1);
 

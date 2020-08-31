@@ -1,13 +1,13 @@
 /**
  ******************************************************************************
- * @file    unit_test.hpp
- * @author  Huang Tzu-Fu
+ * @file    convert.hpp
+ * @author  Huang, Tzu-Fu
  *          National Formosa University
  *          Department of Electronic Engineering
  *          Intelligent Robot System Laboratory
  * @version V1.0.0
  * @date    31-August-2020
- * @brief   Header for unit_test.cpp module
+ * @brief   Header for convert.cpp module
  ******************************************************************************
  * @attention
  *
@@ -17,20 +17,22 @@
  */
 
 /* Define to prevent recursive inclusion */
-#ifndef __UNIT_TEST_HPP
-#define __UNIT_TEST_HPP
+#ifndef __CONVERT_HPP
+#define __CONVERT_HPP
 
-#include "main.hpp"
-#include "convert.hpp"
+#include <string>
+#include <sstream>
 
-namespace UnitTest
+extern "C"
 {
-  void GPIO_PA10_Output_HIGH(void);
-  void GPIO_UserButton_Input_UserLED_Output(void);
-  void USART_Send_Data(void);
-  void ADC_Read_Analog_value(void);
-} // namespace UnitTest
+#include <stdio.h>
+}
 
-#endif /* __UNIT_TEST_HPP */
+namespace Convert
+{
+  char *ToString(int intValue);
+}
 
-/********************************END OF FILE***********************************/
+#endif /* __CONVERT_HPP */
+
+/*********************************END OF FILE**********************************/

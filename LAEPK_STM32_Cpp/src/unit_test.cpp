@@ -119,5 +119,73 @@ namespace UnitTest
     }
   }
 
+  void ADC_Read_Analog_value(void)
+  {
+    /* -- USART2 -- */
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    GPIO USART2_TX;
+    USART2_TX.PortPin = PA2;
+    USART2_TX.Mode = GPIO_Mode_AF_PP;
+    USART2_TX.Speed = GPIO_Speed_50MHz;
+    USART2_TX.Init();
+
+    GPIO USART2_RX;
+    USART2_RX.PortPin = PA3;
+    USART2_RX.Mode = GPIO_Mode_IN_FLOATING;
+    USART2_RX.Init();
+
+    /* Configures the priority grouping */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    USART_InitTypeDef USART_InitStructure;
+    USART_StructInit(&USART_InitStructure);
+    USART_InitStructure.USART_BaudRate = 9600;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+    USART_Init(USART2, &USART_InitStructure);
+
+    /* Enable "Receive data register not empty" interrupt */
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+
+    /* Enable USART */
+    USART_Cmd(USART2, ENABLE);
+
+    /* Clear "Transmission Complete" flag, ���洵1雿����仃 */
+    USART_ClearFlag(USART2, USART_FLAG_TC);
+    /* -- End of USART2 -- */
+
+    /* -- ADC -- */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+
+    ADC adc;
+    adc.PortPin = PA1;
+    adc.ADCx = ADC1;
+    adc.ADC_Channel = ADC_Channel_1;
+    adc.Init();
+    adc.Enable();
+
+    USART_Send(USART2, "READY\r\n");
+    USART_Send(USART2, Convert::ToString(1));
+    while (1)
+    {
+      // USART_Send(USART2, Convert::ToString(adc.getValue()));
+      USART_Send(USART2, Convert::ToString(ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5)));
+      USART_Send(USART2, "\r\n");
+    }
+    /* -- End of ADC -- */
+  }
+
 } // namespace UnitTest
 /********************************END OF FILE***********************************/

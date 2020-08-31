@@ -35,14 +35,15 @@ uint16_t ADC_GetValue(ADC_TypeDef *ADCx,
 
 ADC::ADC(void)
 {
+  /* ADC's clock con't over than 14MHz. */
+  RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+
   this->ADC_Rank = 1;
   this->ADC_SampleTime = ADC_SampleTime_55Cycles5;
 }
 
 void ADC::Init(void)
 {
-  RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over than 14MHz.
-
   GPIO ADC_GPIO;
   ADC_GPIO.PortPin = this->PortPin;
   ADC_GPIO.Mode = GPIO_Mode_AIN;

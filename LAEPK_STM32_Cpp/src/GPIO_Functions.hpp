@@ -68,13 +68,8 @@ public:
   GPIO_ValueTypeDef getValue();
 
 private:
-  void setInit(void);
-  void setDefault(void);
-
   GPIO_TypeDef *getPort(void);
   uint16_t getPin(void);
-
-  bool isSetup(void);
 };
 
 #endif /* __GPIO_FUNCTIONS_H */

@@ -247,10 +247,16 @@ void GPIO::Init(void)
 
 void GPIO::setValue(GPIO_ValueTypeDef NewValue)
 {
-  if (NewValue == HIGH)
+  switch (NewValue)
+  {
+  case HIGH:
     (this->getPort())->BSRR |= (this->getPin()); // Set value HIGH
-  else if (NewValue == LOW)
+    break;
+
+  case LOW:
     (this->getPort())->BRR |= (this->getPin()); // Set value LOW
+    break;
+  }
 }
 
 void GPIO::toggleValue(void)

@@ -18,43 +18,7 @@
 
 #include "PWM_Functions.hpp"
 
-/**
- * @brief  Initialize PWM.
- * @param  None
- * @retval None
- */
-void PWM_Initialization(void)
-{
-  /**
-   * PWM_Duty_Cycle % = (TIM_Pulse / TIM_Period) * 100%
-   * PWM_Frequency = (System_Frequency / TIM_Prescaler) / (TIM_Period + 1)
-   */
-
-  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-  TIM_OCInitTypeDef TIM_OCInitStructure;
-
-  /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 14399; // Set the Auto-Reload value
-  TIM_TimeBaseStructure.TIM_Prescaler = 10; // Set the Prescaler value
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // Select the Counter Mode
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
-  /* PWM1 Mode configuration */
-  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_Pulse = 530;    // TIM_Pulse=CCRx
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-  TIM_OC2Init(TIM3, &TIM_OCInitStructure);    // TIM3_CH2
-
-  /* Enable */
-  // TIM3_CH2
-  TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable); // TIMx peripheral Preload register on CCR1
-  TIM_ARRPreloadConfig(TIM3, ENABLE); // TIMx peripheral Preload register on ARR
-  TIM_Cmd(TIM3, ENABLE); // The specified TIM peripheral
-}
-
-void PWM_SetFrequency(TIM_TypeDef* TIMx, uint16_t NewFrequency)
+void PWM_SetFrequency(TIM_TypeDef *TIMx, uint16_t NewFrequency)
 {
   /**
    *  TIM_Period = ((System_Core_Frequency / TIM_Prescaler) / PWM_Frequency) - 1
@@ -64,8 +28,7 @@ void PWM_SetFrequency(TIM_TypeDef* TIMx, uint16_t NewFrequency)
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
   TIM_TimeBaseStructure.TIM_Prescaler = 10;
-  TIM_TimeBaseStructure.TIM_Period = ((SystemCoreClock
-      / (TIM_TimeBaseStructure.TIM_Prescaler * 10)) / NewFrequency) - 1;
+  TIM_TimeBaseStructure.TIM_Period = ((SystemCoreClock / (TIM_TimeBaseStructure.TIM_Prescaler * 10)) / NewFrequency) - 1;
 
   TIM_TimeBaseInit(TIMx, &TIM_TimeBaseStructure);
 }
@@ -79,8 +42,8 @@ void PWM_SetFrequency(TIM_TypeDef* TIMx, uint16_t NewFrequency)
  * @param  DutyCycle: The Duty Cycle of PWM in %.
  * @retval None
  */
-void PWM_SetDutyCycle(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel,
-    uint8_t DutyCycle)
+void PWM_SetDutyCycle(TIM_TypeDef *TIMx, PWM_TimerChannelTypeDef Channel,
+                      uint8_t DutyCycle)
 {
   /**
    *  TIM_Pulse = (PWM-Duty Cycle % * TIM_Period)/100%
@@ -108,7 +71,7 @@ void PWM_SetDutyCycle(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel,
   }
 }
 
-uint16_t PWM_GetDutyCycle(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel)
+uint16_t PWM_GetDutyCycle(TIM_TypeDef *TIMx, PWM_TimerChannelTypeDef Channel)
 {
   /**
    *  PWM-Duty Cycle % = (TIM_Pulse / TIM_Period)*100%
@@ -136,14 +99,13 @@ uint16_t PWM_GetDutyCycle(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel)
   }
 }
 
-
 PWM::PWM(void)
 {
   this->setDefault();
 }
-PWM::PWM( TIM_TypeDef* NewTimer,
-          PWM_TimerChannelTypeDef NewChannel,
-          GPIO_PortPinTypeDef NewPortPinofPWM)
+PWM::PWM(TIM_TypeDef *NewTimer,
+         PWM_TimerChannelTypeDef NewChannel,
+         GPIO_PortPinTypeDef NewPortPinofPWM)
 {
   this->setDefault();
 
@@ -155,7 +117,7 @@ PWM::PWM( TIM_TypeDef* NewTimer,
   this->setDisable();
 }
 
-void PWM::setTimer(TIM_TypeDef* NewTimer)
+void PWM::setTimer(TIM_TypeDef *NewTimer)
 {
   Timer = NewTimer;
 }
@@ -165,9 +127,10 @@ void PWM::setChannel(PWM_TimerChannelTypeDef NewChannel)
 }
 void PWM::setPortPin(GPIO_PortPinTypeDef NewPortPinofPWM)
 {
-  GPIO_PWM.setPortPin(NewPortPinofPWM);
-//  GPIO_PWM.setMode(GPIO_Mode_AF_PP);
-//  GPIO_PWM.setSpeed(GPIO_Speed_50MHz);
+  GPIO_PWM.PortPin = NewPortPinofPWM;
+  //  GPIO_PWM.setMode(GPIO_Mode_AF_PP);
+  //  GPIO_PWM.setSpeed(GPIO_Speed_50MHz);
+  GPIO_PWM.Init();
 }
 
 void PWM::setEnable(void)
@@ -197,7 +160,7 @@ void PWM::setEnable(void)
     break;
   }
   TIM_ARRPreloadConfig(Timer, ENABLE); // TIMx peripheral Preload register on ARR
-  TIM_Cmd(Timer, ENABLE); // The specified TIM peripheral
+  TIM_Cmd(Timer, ENABLE);              // The specified TIM peripheral
 }
 
 void PWM::setDisable(void)
@@ -227,7 +190,7 @@ void PWM::setDisable(void)
     break;
   }
   TIM_ARRPreloadConfig(Timer, DISABLE); // TIMx peripheral Preload register on ARR
-  TIM_Cmd(Timer, DISABLE); // The specified TIM peripheral
+  TIM_Cmd(Timer, DISABLE);              // The specified TIM peripheral
 }
 
 void PWM::setFrequency(uint8_t NewFrequency)
@@ -239,7 +202,7 @@ void PWM::setFrequency(uint8_t NewFrequency)
    */
 
   TIM_TimeBaseStructure.TIM_Prescaler = 10; // !! or 100
-  TIM_TimeBaseStructure.TIM_Period = ((7200000/TIM_TimeBaseStructure.TIM_Prescaler)/NewFrequency)-1;
+  TIM_TimeBaseStructure.TIM_Period = ((7200000 / TIM_TimeBaseStructure.TIM_Prescaler) / NewFrequency) - 1;
 
   this->setInit();
 }
@@ -260,7 +223,7 @@ uint16_t PWM::getFrequency(void)
    * System_Frequency = 72MHz (STM32F103RB)
    */
 
-  return (72000000/TIM_TimeBaseStructure.TIM_Prescaler)/(TIM_TimeBaseStructure.TIM_Period +1);
+  return (72000000 / TIM_TimeBaseStructure.TIM_Prescaler) / (TIM_TimeBaseStructure.TIM_Period + 1);
 }
 
 uint16_t PWM::getDutyCycle(void)
@@ -324,8 +287,8 @@ void PWM::setDefault(void)
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-  GPIO_PWM.setMode(GPIO_Mode_AF_PP);
-  GPIO_PWM.setSpeed(GPIO_Speed_50MHz);
+  GPIO_PWM.Mode = GPIO_Mode_AF_PP;
+  GPIO_PWM.Speed = GPIO_Speed_50MHz;
 }
 
 uint16_t PWM::convertDutyCycleToPulse(uint16_t DutyCycle)

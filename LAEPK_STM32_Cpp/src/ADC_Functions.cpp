@@ -18,151 +18,100 @@
 
 #include "ADC_Functions.hpp"
 
-/**
- * @brief  Initialize ADC.
- * @param  None
- * @retval None
- */
-void ADC_Initialization(void)
+uint16_t ADC_GetValue(ADC_TypeDef *ADCx,
+                      uint8_t ADC_Channel,
+                      uint8_t Rank = 1,
+                      uint8_t ADC_SampleTime = ADC_SampleTime_55Cycles5)
 {
+  ADC_RegularChannelConfig(ADCx, ADC_Channel, Rank, ADC_SampleTime); // ADC Config
+  ADC_SoftwareStartConvCmd(ADCx, ENABLE);                            // Software start convert
+
+  // Wait until convert complete
+  while (ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC) == 0)
+  {
+  }
+  return (uint16_t)ADC_GetConversionValue(ADCx); // Get conversion value
+}
+
+ADC::ADC(void)
+{
+  /* ADC's clock con't over than 14MHz. */
+  RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+
+  this->ADC_Rank = 1;
+  this->ADC_SampleTime = ADC_SampleTime_55Cycles5;
+}
+
+void ADC::Init(void)
+{
+  GPIO ADC_GPIO;
+  ADC_GPIO.PortPin = this->PortPin;
+  ADC_GPIO.Mode = GPIO_Mode_AIN;
+  ADC_GPIO.Init();
+
+  ADC_DeInit(this->ADCx);
+
   ADC_InitTypeDef ADC_InitStruct;
-
-  /* RCC config */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-  RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over 14MHz
-
-  /* GPIO config */
-//    Pin_Mod(PA1, IN, AN, S50M);
-  /* Deinitializes the ADCx peripheral registers to their default reset values */
-  ADC_DeInit(ADC1);
-
-  /* ADC configuration */
   ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
   ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
   ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
   ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;
   ADC_InitStruct.ADC_NbrOfChannel = 1;
   ADC_InitStruct.ADC_ScanConvMode = DISABLE;
-  ADC_Init(ADC1, &ADC_InitStruct);
+  ADC_Init(this->ADCx, &ADC_InitStruct);
+}
 
-  /* Enable */
-  ADC_Cmd(ADC1, ENABLE);
+void ADC::Enable(void)
+{
+  ADC_Cmd(this->ADCx, ENABLE);
 
   /* ADC Calibration */
-  ADC_ResetCalibration(ADC1); // Reset calibration
-  while (ADC_GetResetCalibrationStatus(ADC1) == 1)
+  // Reset calibration
+  ADC_ResetCalibration(this->ADCx);
+
+  // Wait until reset calibration complete
+  while (ADC_GetResetCalibrationStatus(this->ADCx) == 1)
   {
-    // Wait until reset calibration complete
   }
 
-  ADC_StartCalibration(ADC1); // Start calibration
-  while (ADC_GetCalibrationStatus(ADC1) == 1)
+  // Start calibration
+  ADC_StartCalibration(this->ADCx);
+
+  // Wait until calibration complete
+  while (ADC_GetCalibrationStatus(this->ADCx) == 1)
   {
-    // Wait until calibration complete
-  }
-}
-
-/**
- * @brief  Get ADC converted value.
- * @param  ADCx: where x can be 1, 2 or 3 to select the ADC peripheral.
- * @param  ADC_Channel: the ADC channel to configure.
- * @param  Rank: The rank in the regular group sequencer. This parameter must be between 1 to 16.
- * @param  ADC_SampleTime: The sample time value to be set for the selected channel.
- * @retval Converted value
- */
-uint16_t ADC_GetValue(ADC_TypeDef* ADCx, uint8_t ADC_Channel, uint8_t Rank,
-    uint8_t ADC_SampleTime)
-{
-  ADC_RegularChannelConfig(ADCx, ADC_Channel, Rank, ADC_SampleTime); // ADC Config
-  ADC_SoftwareStartConvCmd(ADCx, ENABLE); // Software start convert
-  while (ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC) == 0)
-  {
-    // Wait until convert complete
-  }
-  return (uint16_t) ADC_GetConversionValue(ADCx); // Get conversion value
-}
-
-
-ADC::ADC(void)
-{
-  this->setDefault();
-}
-
-ADC::ADC( ADC_TypeDef* NewADCx,
-          uint8_t NewADC_Channel,
-          GPIO_PortPinTypeDef NewPortPinOfADC)
-{
-  this->setADCChannel(NewADCx, NewADC_Channel);
-  this->setPortPin(NewPortPinOfADC);
-
-  this->setDefault();
-}
-
-void ADC::setADCChannel(ADC_TypeDef* NewADCx, uint8_t NewADC_Channel)
-{
-  ADCx = NewADCx;
-  ADC_Channel = NewADC_Channel;
-}
-void ADC::setPortPin(GPIO_PortPinTypeDef NewPortPinOfADC)
-{
-  GPIO_ADC.setPortPin(NewPortPinOfADC);
-}
-void ADC::setEnable(void)
-{
-  this->setInit(ADC_InitStruct);
-
-  ADC_Cmd(ADCx, ENABLE);
-
-  /* ADC Calibration */
-  ADC_ResetCalibration (ADCx);  // Reset calibration
-  while (ADC_GetResetCalibrationStatus(ADCx) == 1)
-  {
-    // Wait until reset calibration complete
-  }
-  ADC_StartCalibration(ADCx); // Start calibration
-  while (ADC_GetCalibrationStatus(ADCx) == 1)
-  {
-    // Wait until calibration complete
   }
 }
 
-void ADC::setDisable(void)
+void ADC::Disable(void)
 {
   ADC_Cmd(ADCx, DISABLE);
 }
 
 uint16_t ADC::getValue(void)
 {
-  ADC_RegularChannelConfig(ADCx, ADC_Channel, 1, ADC_SampleTime_55Cycles5); // ADC Config
-  ADC_SoftwareStartConvCmd(ADCx, ENABLE);            // Software start convert
-  while (ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC) == 0)
+  ADC_RegularChannelConfig(this->ADCx, this->ADC_Channel, this->ADC_Rank, this->ADC_SampleTime);
+  ADC_SoftwareStartConvCmd(this->ADCx, ENABLE);
+
+  // Wait for convert complete
+  while (ADC_GetFlagStatus(this->ADCx, ADC_FLAG_EOC) == 0)
   {
-    // Wait until convert complete
   }
-  return (uint16_t) ADC_GetConversionValue(ADCx);    // Get conversion value
+
+  return (uint16_t)ADC_GetConversionValue(this->ADCx);
 }
 
-void ADC::setInit(ADC_InitTypeDef& ADC_InitStruct)
+uint16_t ADC::getValue(uint8_t NewRank, uint8_t NewSampleTime)
 {
-  ADC_Init(ADCx, &ADC_InitStruct);
-}
+  ADC_RegularChannelConfig(this->ADCx, this->ADC_Channel, NewRank, NewSampleTime);
+  ADC_SoftwareStartConvCmd(this->ADCx, ENABLE);
 
-void ADC::setDefault(void)
-{
-  RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over 14MHz
+  // Wait for convert complete
+  while (ADC_GetFlagStatus(this->ADCx, ADC_FLAG_EOC) == 0)
+  {
+  }
 
-//  ADC_DeInit(ADCx);
-
-  ADC_StructInit(&ADC_InitStruct);
-
-  ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;
-  ADC_InitStruct.ADC_ScanConvMode = DISABLE;
-  ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
-  ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
-  ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
-  ADC_InitStruct.ADC_NbrOfChannel = 1;
-
-  GPIO_ADC.setMode(GPIO_Mode_AIN);
+  return (uint16_t)ADC_GetConversionValue(this->ADCx);
 }
 
 /********************************END OF FILE***********************************/

@@ -38,8 +38,6 @@ typedef enum
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void PWM_Initialization(void);
-
 void PWM_SetFrequency(TIM_TypeDef* TIMx, uint16_t NewFrequency);
 void PWM_SetDutyCycle(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel,
     uint8_t DutyCycle);

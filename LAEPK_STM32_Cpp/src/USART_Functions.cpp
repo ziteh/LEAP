@@ -37,51 +37,6 @@ using namespace std;
 /* Private functions ---------------------------------------------------------*/
 
 /**
- * @brief       Initialize USART.
- * @param       None
- * @retval      None
- * @attention   Please run "RCC_Initialization()" before this function.
- */
-void USART_Initialization(void)
-{
-  /* Structure Declarations */
-  USART_InitTypeDef USART_InitStructure;
-
-//    USART_DeInit(USART2);
-
-  /* Fills each USART_InitStruct member with its default value */
-  USART_StructInit(&USART_InitStructure);
-
-  /* Configure the USART */
-  /**
-   * USART2 configured as follow:
-   * - BaudRate = 9600 baud
-   * - Word Length = 8 Bits
-   * - One Stop Bit
-   * - No parity
-   * - Hardware flow control disabled (RTS and CTS signals)
-   * - Receive and transmit enabled
-   */
-  USART_InitStructure.USART_BaudRate = 9600;
-  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-  USART_InitStructure.USART_StopBits = USART_StopBits_1;
-  USART_InitStructure.USART_Parity = USART_Parity_No;
-  USART_InitStructure.USART_HardwareFlowControl =
-      USART_HardwareFlowControl_None;
-  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-  USART_Init(USART2, &USART_InitStructure);
-
-  /* Enable "Receive data register not empty" interrupt */
-  USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
-
-  /* Enable USART */
-  USART_Cmd(USART2, ENABLE);
-
-  /* Clear "Transmission Complete" flag, 否則第1位數據會丟失 */
-  USART_ClearFlag(USART2, USART_FLAG_TC);
-}
-
-/**
  * @brief   USART send data.
  * @param   USARTx: Select the USART or the UART peripheral.
  *                  This parameter can be one of the following values:

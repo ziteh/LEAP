@@ -18,18 +18,10 @@
 
 #include "ADC_Functions.hpp"
 
-/**
- * @brief  Get ADC converted value.
- * @param  ADCx: where x can be 1, 2 or 3 to select the ADC peripheral.
- * @param  ADC_Channel: the ADC channel to configure.
- * @param  Rank: The rank in the regular group sequencer. This parameter must be between 1 to 16.
- * @param  ADC_SampleTime: The sample time value to be set for the selected channel.
- * @return Converted value
- */
 uint16_t ADC_GetValue(ADC_TypeDef *ADCx,
                       uint8_t ADC_Channel,
-                      uint8_t Rank,
-                      uint8_t ADC_SampleTime)
+                      uint8_t Rank = 1,
+                      uint8_t ADC_SampleTime = ADC_SampleTime_55Cycles5)
 {
   ADC_RegularChannelConfig(ADCx, ADC_Channel, Rank, ADC_SampleTime); // ADC Config
   ADC_SoftwareStartConvCmd(ADCx, ENABLE);                            // Software start convert
@@ -43,84 +35,93 @@ uint16_t ADC_GetValue(ADC_TypeDef *ADCx,
 
 ADC::ADC(void)
 {
-  this->setDefault();
+  this->ADC_Rank = 1;
+  this->ADC_SampleTime = ADC_SampleTime_55Cycles5;
 }
 
-ADC::ADC(ADC_TypeDef *NewADCx,
-         uint8_t NewADC_Channel,
-         GPIO_PortPinTypeDef NewPortPinOfADC)
+void ADC::Init(void)
 {
-  this->setADCChannel(NewADCx, NewADC_Channel);
-  this->setPortPin(NewPortPinOfADC);
+  RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over than 14MHz.
 
-  this->setDefault();
+  GPIO ADC_GPIO;
+  ADC_GPIO.setMode(this->PortPin, GPIO_Mode_AIN);
+
+  ADC_DeInit(this->ADCx);
+
+  ADC_InitTypeDef ADC_InitStruct;
+  ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
+  ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
+  ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+  ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;
+  ADC_InitStruct.ADC_NbrOfChannel = 1;
+  ADC_InitStruct.ADC_ScanConvMode = DISABLE;
+  ADC_Init(this->ADCx, &ADC_InitStruct);
 }
 
-void ADC::setADCChannel(ADC_TypeDef *NewADCx, uint8_t NewADC_Channel)
+void ADC::Enable(void)
 {
-  ADCx = NewADCx;
-  ADC_Channel = NewADC_Channel;
-}
-void ADC::setPortPin(GPIO_PortPinTypeDef NewPortPinOfADC)
-{
-  GPIO_ADC.setPortPin(NewPortPinOfADC);
-}
-void ADC::setEnable(void)
-{
-  this->setInit(ADC_InitStruct);
-
-  ADC_Cmd(ADCx, ENABLE);
+  ADC_Cmd(this->ADCx, ENABLE);
 
   /* ADC Calibration */
-  ADC_ResetCalibration(ADCx); // Reset calibration
-  while (ADC_GetResetCalibrationStatus(ADCx) == 1)
+  // Reset calibration
+  ADC_ResetCalibration(this->ADCx);
+
+  // Wait until reset calibration complete
+  while (ADC_GetResetCalibrationStatus(this->ADCx) == 1)
   {
-    // Wait until reset calibration complete
   }
-  ADC_StartCalibration(ADCx); // Start calibration
-  while (ADC_GetCalibrationStatus(ADCx) == 1)
+
+  // Start calibration
+  ADC_StartCalibration(this->ADCx);
+
+  // Wait until calibration complete
+  while (ADC_GetCalibrationStatus(this->ADCx) == 1)
   {
-    // Wait until calibration complete
   }
 }
 
-void ADC::setDisable(void)
+void ADC::Disable(void)
 {
   ADC_Cmd(ADCx, DISABLE);
 }
 
 uint16_t ADC::getValue(void)
 {
-  ADC_RegularChannelConfig(ADCx, ADC_Channel, 1, ADC_SampleTime_55Cycles5); // ADC Config
-  ADC_SoftwareStartConvCmd(ADCx, ENABLE);                                   // Software start convert
+  ADC_RegularChannelConfig(ADCx, ADC_Channel, ADC_Rank, ADC_SampleTime);
+  ADC_SoftwareStartConvCmd(ADCx, ENABLE);
+
+  /* Wait for convert complete. */
   while (ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC) == 0)
   {
-    // Wait until convert complete
   }
-  return (uint16_t)ADC_GetConversionValue(ADCx); // Get conversion value
+
+  return (uint16_t)ADC_GetConversionValue(ADCx);
 }
 
-void ADC::setInit(ADC_InitTypeDef &ADC_InitStruct)
+uint16_t ADC::getValue(void)
 {
-  ADC_Init(ADCx, &ADC_InitStruct);
+  ADC_RegularChannelConfig(this->ADCx, this->ADC_Channel, this->ADC_Rank, this->ADC_SampleTime);
+  ADC_SoftwareStartConvCmd(this->ADCx, ENABLE);
+
+  // Wait for convert complete
+  while (ADC_GetFlagStatus(this->ADCx, ADC_FLAG_EOC) == 0)
+  {
+  }
+
+  return (uint16_t)ADC_GetConversionValue(this->ADCx);
 }
 
-void ADC::setDefault(void)
+uint16_t ADC::getValue(uint8_t NewRank, uint8_t NewSampleTime);
 {
-  RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over 14MHz
+  ADC_RegularChannelConfig(this->ADCx, this->ADC_Channel, NewRank, NewSampleTime);
+  ADC_SoftwareStartConvCmd(this->ADCx, ENABLE);
 
-  //  ADC_DeInit(ADCx);
+  // Wait for convert complete
+  while (ADC_GetFlagStatus(this->ADCx, ADC_FLAG_EOC) == 0)
+  {
+  }
 
-  ADC_StructInit(&ADC_InitStruct);
-
-  ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;
-  ADC_InitStruct.ADC_ScanConvMode = DISABLE;
-  ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
-  ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
-  ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
-  ADC_InitStruct.ADC_NbrOfChannel = 1;
-
-  GPIO_ADC.setMode(GPIO_Mode_AIN);
+  return (uint16_t)ADC_GetConversionValue(this->ADCx);
 }
 
 /********************************END OF FILE***********************************/

@@ -18,34 +18,49 @@
 
 #include "EC90fl_Motor_Functions.hpp"
 
-/* The dircetion type of joint. */
-typedef enum
+/**
+ * @brief The class of joint.
+ */
+class Joint
 {
-  Extension = 1,
-  Flexion = 2
-} Joint_DirectionTypeDef;
+public:
+  /* The dircetion type of joint. */
+  typedef enum
+  {
+    Extension,
+    Flexion
+  } DirectionTypeDef;
 
-/* The limit state type of joint. */
-typedef enum
-{
-  Unlimited = 0,
-  FullExtension = 1,
-  FullFlexion = 2
-} Joint_LimitStateTypeDef;
+  /* The limit state type of joint. */
+  typedef enum
+  {
+    Unlimited,
+    FullExtension,
+    FullFlexion
+  } LimitStateTypeDef;
 
-/* The state struct of joint. */
-typedef struct
-{
-  Joint_LimitStateTypeDef Joint_LimitState;
-  uint16_t Joint_Angle;
-  Joint_DirectionTypeDef Joint_Direction;
-} Joint_StateTypeDef;
+  /* The state struct of joint. */
+  typedef struct
+  {
+    DirectionTypeDef Direction;
+    LimitStateTypeDef LimitState;
+    uint16_t Angle;
+  } State;
+
+  LimitStateTypeDef Extension(void);
+  LimitStateTypeDef Flexion(void);
+  LimitStateTypeDef Stop(void);
+
+private:
+  EC90Motor Motor;
+}
 
 /**
  * @brief Set absolute angle of joint.
  * @param TargetAngle Target angle(degree).
  */
-void Joint_SetAbsoluteAngle(float TargetAngle);
+void
+Joint_SetAbsoluteAngle(float TargetAngle);
 
 /**
  * @brief Get absolute angle of joint.
@@ -57,6 +72,6 @@ float Joint_GetAbsoluteAngle(void);
  * @brief Get limit state of joint.
  * @return Limit state of joint. 
  */
-Joint_LimitStateTypeDef Joint_GetLimitState(void);
+LimitStateTypeDef Joint_GetLimitState(void);
 
 /*********************************END OF FILE**********************************/

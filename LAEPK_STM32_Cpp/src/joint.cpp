@@ -18,6 +18,35 @@
 
 #include "joint.hpp"
 
+Joint::LimitStateTypeDef Joint::Extension(void)
+{
+  /*
+   * If FSR-Start-Extension is triggered,
+   * and knee joint didn't exceed the Full-Extension angle limit,
+   * then start extension.
+   */
+  if (StartExtensionIsTriggered() && (Joint_GetLimitState() != FullExtension))
+  {
+    USART_Send(USART2, "Start Ext\r\n");
+
+    GPIO_SetValue(RightMotor_DirectionPin, HIGH);     // CW(0) = Flexion; CCW(1) = Extension
+    GPIO_SetValue(RightMotor_FunctionStatePin, HIGH); // LOW(0) = Disable; HIGH(1) = Enbale
+    PWM_SetDutyCycle(TIM3, CH2, PWM_DefaultDutyCycle);
+
+    /*
+     * Wait until FSR-Stop-Extension is triggered
+     * or knee joint exceed the Full-Extension angle limit
+     */
+    while (!(StopExtensionIsTriggered() || (Joint_GetLimitState() == FullExtension)))
+    {
+    }
+
+    USART_Send(USART2, "Stop Ext\r\n");
+    GPIO_SetValue(RightMotor_FunctionStatePin, LOW); // LOW(0) = Disable; HIGH(1) = Enbale
+    PWM_SetDutyCycle(TIM3, CH2, 0);
+  }
+}
+
 void Joint_SetAbsoluteAngle(float TargetAngle)
 {
   float NowAngle = Joint_GetAbsoluteAngle();

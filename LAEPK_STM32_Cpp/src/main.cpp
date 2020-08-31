@@ -18,6 +18,9 @@
 
 #include "main.hpp"
 
+/* Uncomment it to run unit test program, Comment it to run main program. */
+#define UNIT_TEST
+
 static __IO uint32_t TimingDelay;
 
 uint16_t Joint_FullExtensionADCValue = Joint_DefaultFullExtensionADCValue;
@@ -33,6 +36,7 @@ RCC_ClocksTypeDef RCC_Clocks;
 
 int main(void)
 {
+#ifndef UNIT_TEST
   /* SysTick end of count event each 1ms */
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
@@ -138,8 +142,12 @@ int main(void)
 
     Delay_ms(200);
   }
-}
+#else /* UNIT_TEST */
+  /* Unit Test Region */
+  UnitTest::GPIO_D0_Output_HIGH();
 
+#endif /* UNIT_TEST */
+}
 
 inline bool StartExtensionIsTriggered(void)
 {

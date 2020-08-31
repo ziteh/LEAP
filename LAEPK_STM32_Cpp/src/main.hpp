@@ -29,6 +29,7 @@
 #include "ADC_Functions.hpp"
 #include "EC90fl_Motor_Functions.hpp"
 #include "joint.hpp"
+#include "unit_test.hpp"
 
 extern "C"
 {
@@ -55,7 +56,6 @@ extern "C"
 /* Default FSR stop threshold */
 #define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
 #define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
-
 
 bool StartExtensionIsTriggered(void);
 bool StartFlexionIsTriggered(void);

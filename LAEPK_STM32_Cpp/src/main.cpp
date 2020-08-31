@@ -143,29 +143,8 @@ int main(void)
     Delay_ms(200);
   }
 #else  /* ENABLE_UNIT_TEST */
-  /* Unit Test Region */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
-                             RCC_APB2Periph_GPIOC,
-                         ENABLE);
-
-  GPIO button;
-  button.PortPin = B1;
-  button.Mode = GPIO_Mode_IN_FLOATING;
-  button.Init();
-
-  GPIO LED;
-  LED.PortPin = LD2;
-  LED.Mode = GPIO_Mode_Out_PP;
-  LED.Speed = GPIO_Speed_2MHz;
-  LED.Init();
-
-  while (1)
-  {
-    if (button.getValue() == HIGH)
-      LED.setValue(HIGH);
-    else
-      LED.setValue(LOW);
-  }
+  /* Region of Unit Test Code */
+  UnitTest::USART_Send_Data();
 #endif /* ENABLE_UNIT_TEST */
 }
 

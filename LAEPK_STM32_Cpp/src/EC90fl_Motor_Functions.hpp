@@ -16,6 +16,10 @@
  ******************************************************************************
  */
 
+/* Define to prevent recursive inclusion */
+#ifndef __EC90FL_MOTOR_FUNCTIONS_HPP
+#define __EC90FL_MOTOR_FUNCTIONS_HPP
+
 #include "PWM_Functions.hpp"
 #include "GPIO_Functions.hpp"
 
@@ -90,5 +94,7 @@ private:
   /* Analog input pin used for read motor RPM. */
   GPIO GPIO_RPM;
 };
+
+#endif /* __EC90FL_MOTOR_FUNCTIONS_HPP */
 
 /*********************************END OF FILE**********************************/

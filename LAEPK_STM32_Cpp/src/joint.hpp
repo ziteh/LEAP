@@ -16,6 +16,10 @@
  ******************************************************************************
  */
 
+/* Define to prevent recursive inclusion */
+#ifndef __JOINT_HPP
+#define __JOINT_HPP
+
 #include "EC90fl_Motor_Functions.hpp"
 
 /**
@@ -73,5 +77,7 @@ float Joint_GetAbsoluteAngle(void);
  * @return Limit state of joint. 
  */
 LimitStateTypeDef Joint_GetLimitState(void);
+
+#endif /* __JOINT_HPP */
 
 /*********************************END OF FILE**********************************/

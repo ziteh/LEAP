@@ -22,10 +22,10 @@
 
 #include "main.hpp"
 
-namespace UnitTest
-{
+// namespace UnitTest
+// {
   void GPIO_D0_Output_HIGH(void);
-} // namespace UnitTest
+// } // namespace UnitTest
 
 #endif /* __UNIT_TEST_HPP */
 

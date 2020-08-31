@@ -144,8 +144,16 @@ int main(void)
   }
 #else /* ENABLE_UNIT_TEST */
   /* Unit Test Region */
-  UnitTest::GPIO_D0_Output_HIGH();
+//  UnitTest::GPIO_PA3_Output_HIGH();
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
+  GPIO pin;
+  pin.PortPin = PA3;
+  pin.Mode = GPIO_Mode_Out_PP;
+  pin.Speed = GPIO_Speed_2MHz;
+  pin.Init();
+
+  pin.setValue(HIGH);
 #endif /* ENABLE_UNIT_TEST */
 }
 
@@ -258,7 +266,7 @@ uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
 
 void CommunicationDecoder(uint8_t Command)
 {
-  Joint_SetAbsoluteAngle(Command - 5);
+//  Joint_SetAbsoluteAngle(Command - 5);
 }
 
 /**

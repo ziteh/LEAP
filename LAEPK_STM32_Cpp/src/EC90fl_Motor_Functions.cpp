@@ -33,30 +33,36 @@ void EC90Motor::setPWMTimerChannelPortPin(TIM_TypeDef *NewTimer,
 
 void EC90Motor::setOutputPinFunctionState(GPIO_PortPinTypeDef NewFSPortPin)
 {
-  GPIO_FunctionState.setPortPin(NewFSPortPin);
-  GPIO_FunctionState.setMode(GPIO_Mode_Out_PP);
-  GPIO_FunctionState.setSpeed(GPIO_Speed_2MHz);
-  GPIO_FunctionState.setValue(LOW); // Disable
+  GPIO_FunctionState.PortPin = NewFSPortPin;
+  GPIO_FunctionState.Mode = GPIO_Mode_Out_PP;
+  GPIO_FunctionState.Speed = GPIO_Speed_2MHz;
+  GPIO_FunctionState.Init();
+
+  GPIO_FunctionState.setValue(LOW); // Disable.
 }
 
 void EC90Motor::setOutputPinDirection(GPIO_PortPinTypeDef NewDirPortPin)
 {
-  GPIO_Direction.setPortPin(NewDirPortPin);
-  GPIO_Direction.setMode(GPIO_Mode_Out_PP);
-  GPIO_Direction.setSpeed(GPIO_Speed_2MHz);
+  GPIO_Direction.PortPin = NewDirPortPin;
+  GPIO_Direction.Mode = GPIO_Mode_Out_PP;
+  GPIO_Direction.Speed = GPIO_Speed_2MHz;
+  GPIO_Direction.Init();
+
   GPIO_Direction.setValue(LOW);
 }
 
 void EC90Motor::setInputPinReadyState(GPIO_PortPinTypeDef NewRSPortPin)
 {
-  GPIO_ReadyState.setPortPin(NewRSPortPin);
-  GPIO_ReadyState.setMode(GPIO_Mode_IPD);
+  GPIO_ReadyState.PortPin = NewRSPortPin;
+  GPIO_ReadyState.Mode = GPIO_Mode_IPD;
+  GPIO_ReadyState.Init();
 }
 
 void EC90Motor::setInputPinRPM(GPIO_PortPinTypeDef NewRPMPortPin)
 {
-  GPIO_RPM.setPortPin(NewRPMPortPin);
-  GPIO_RPM.setMode(GPIO_Mode_AIN);
+  GPIO_RPM.PortPin = NewRPMPortPin;
+  GPIO_RPM.Mode = GPIO_Mode_AIN;
+  GPIO_RPM.Init();
 }
 
 void EC90Motor::setFunctionState(Motor_FunctionStateTypeDef NewState)

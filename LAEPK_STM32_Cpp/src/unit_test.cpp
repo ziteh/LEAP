@@ -18,7 +18,7 @@
 
 #include "unit_test.hpp"
 
-using namespace UnitTest;
+// using namespace UnitTest;
 
 /**
  * @brief GPIO-PA3(D0) will output HIGH.

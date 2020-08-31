@@ -51,13 +51,13 @@ public:
     uint16_t Angle;
   } State;
 
-  LimitStateTypeDef Extension(void);
-  LimitStateTypeDef Flexion(void);
+  LimitStateTypeDef MotionExtension(void);
+  LimitStateTypeDef MotionFlexion(void);
   LimitStateTypeDef Stop(void);
 
 private:
   EC90Motor Motor;
-}
+};
 
 /**
  * @brief Set absolute angle of joint.
@@ -76,7 +76,7 @@ float Joint_GetAbsoluteAngle(void);
  * @brief Get limit state of joint.
  * @return Limit state of joint. 
  */
-LimitStateTypeDef Joint_GetLimitState(void);
+// LimitStateTypeDef Joint_GetLimitState(void);
 
 #endif /* __JOINT_HPP */
 

@@ -44,7 +44,9 @@ void ADC::Init(void)
   RCC_ADCCLKConfig(RCC_PCLK2_Div6); // ADC's clock con't over than 14MHz.
 
   GPIO ADC_GPIO;
-  ADC_GPIO.setMode(this->PortPin, GPIO_Mode_AIN);
+  ADC_GPIO.PortPin = this->PortPin;
+  ADC_GPIO.Mode = GPIO_Mode_AIN;
+  ADC_GPIO.Init();
 
   ADC_DeInit(this->ADCx);
 
@@ -87,19 +89,6 @@ void ADC::Disable(void)
 
 uint16_t ADC::getValue(void)
 {
-  ADC_RegularChannelConfig(ADCx, ADC_Channel, ADC_Rank, ADC_SampleTime);
-  ADC_SoftwareStartConvCmd(ADCx, ENABLE);
-
-  /* Wait for convert complete. */
-  while (ADC_GetFlagStatus(ADCx, ADC_FLAG_EOC) == 0)
-  {
-  }
-
-  return (uint16_t)ADC_GetConversionValue(ADCx);
-}
-
-uint16_t ADC::getValue(void)
-{
   ADC_RegularChannelConfig(this->ADCx, this->ADC_Channel, this->ADC_Rank, this->ADC_SampleTime);
   ADC_SoftwareStartConvCmd(this->ADCx, ENABLE);
 
@@ -111,7 +100,7 @@ uint16_t ADC::getValue(void)
   return (uint16_t)ADC_GetConversionValue(this->ADCx);
 }
 
-uint16_t ADC::getValue(uint8_t NewRank, uint8_t NewSampleTime);
+uint16_t ADC::getValue(uint8_t NewRank, uint8_t NewSampleTime)
 {
   ADC_RegularChannelConfig(this->ADCx, this->ADC_Channel, NewRank, NewSampleTime);
   ADC_SoftwareStartConvCmd(this->ADCx, ENABLE);

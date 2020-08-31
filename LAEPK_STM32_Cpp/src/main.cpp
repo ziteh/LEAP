@@ -142,18 +142,30 @@ int main(void)
 
     Delay_ms(200);
   }
-#else /* ENABLE_UNIT_TEST */
+#else  /* ENABLE_UNIT_TEST */
   /* Unit Test Region */
-//  UnitTest::GPIO_PA3_Output_HIGH();
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
+                             RCC_APB2Periph_GPIOC,
+                         ENABLE);
 
-  GPIO pin;
-  pin.PortPin = PA3;
-  pin.Mode = GPIO_Mode_Out_PP;
-  pin.Speed = GPIO_Speed_2MHz;
-  pin.Init();
+  GPIO button;
+  button.PortPin = B1;
+  button.Mode = GPIO_Mode_IN_FLOATING;
+  button.Init();
 
-  pin.setValue(HIGH);
+  GPIO LED;
+  LED.PortPin = LD2;
+  LED.Mode = GPIO_Mode_Out_PP;
+  LED.Speed = GPIO_Speed_2MHz;
+  LED.Init();
+
+  while (1)
+  {
+    if (button.getValue() == HIGH)
+      LED.setValue(HIGH);
+    else
+      LED.setValue(LOW);
+  }
 #endif /* ENABLE_UNIT_TEST */
 }
 
@@ -266,7 +278,7 @@ uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
 
 void CommunicationDecoder(uint8_t Command)
 {
-//  Joint_SetAbsoluteAngle(Command - 5);
+  //  Joint_SetAbsoluteAngle(Command - 5);
 }
 
 /**

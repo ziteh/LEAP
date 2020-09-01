@@ -57,16 +57,6 @@ extern "C"
 #define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
 #define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
 
-bool StartExtensionIsTriggered(void);
-bool StartFlexionIsTriggered(void);
-bool StopExtensionIsTriggered(void);
-bool StopFlexionIsTriggered(void);
-
-float Convert_ADCValueToAngle(uint16_t ADCValue);
-uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec);
-
-void CommunicationDecoder(uint8_t Command);
-
 void GPIO_Initialization(void);
 void NVIC_Initialization(void);
 void USART_Initialization(void);
@@ -75,8 +65,7 @@ void PWM_Initialization(void);
 void EXIT_Initialization(void);
 void Timer_Initialization(void);
 
-char *convertIntToString(int Number);
-//std::string convertFloatToString(float FloatNumber); /* ERROE: region `flash' overflowed */
+void CommunicationDecoder(uint8_t Command);
 void Delay_NonTimer(__IO uint32_t nTime);
 
 extern "C"
@@ -84,19 +73,6 @@ extern "C"
   void Delay_ms(__IO uint32_t nTime);
   void TimingDelay_Decrement(void);
 }
-
-//void Joint_setAngularSpeed(uint8_t NewAngularSpeed);
-//void Joint_setAngularAcceleration(uint8_t NewAngularAcceleration);
-//
-//void Joint_setAbsoluteAngle(float TargetAngle);
-//void Joint_setAbsoluteAngle(Joint_LimitStateTypeDef TargetPosition);
-//void Joint_setRelativelyAngle(Joint_DirectionTypeDef Direction,
-//    float IncreaseAngle);
-//
-//float Joint_getAbsoluteAngle(void);
-//
-//float Joint_convertADCValueToAngle(uint16_t ADCValue);
-//Joint_LimitStateTypeDef Joint_getLimitState(void);
 
 #endif /* __MAIN_H */
 

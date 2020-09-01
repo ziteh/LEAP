@@ -17,26 +17,18 @@
  */
 
 /* Uncomment it to run unit test program, comment it to run main program. */
-#define ENABLE_UNIT_TEST
+// #define ENABLE_UNIT_TEST
 
 #include "main.hpp"
 
 static __IO uint32_t TimingDelay;
-
-//uint16_t joint_fullextensionadcvalue = joint_defaultfullextensionadcvalue;
-//uint16_t joint_fullflexionadcvalue = joint_defaultfullflexionadcvalue;
-//
-//uint8_t joint_extensionfsrstartthreshold = joint_defaultextensionfsrstartthreshold;
-//uint8_t joint_flexionfsrstartthreshold = joint_defaultflexionfsrstartthreshold;
-//
-//uint16_t joint_extensionfsrstopthreshold = joint_defaultextensionfsrstopthreshold;
-//uint16_t joint_flexionfsrstopthreshold = joint_defaultflexionfsrstopthreshold;
-
 RCC_ClocksTypeDef RCC_Clocks;
 
 int main(void)
 {
 #ifndef ENABLE_UNIT_TEST
+  /* Region of Main Code */
+
   /* SysTick end of count event each 1ms */
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
@@ -66,58 +58,6 @@ int main(void)
 
   while (1)
   {
-    /*
-     * If FSR-Start-Extension is triggered,
-     * and knee joint didn't exceed the Full-Extension angle limit,
-     * then start extension.
-     */
-    if (StartExtensionIsTriggered() && (Joint_GetLimitState() != FullExtension))
-    {
-      USART_Send(USART2, "Start Ext\r\n");
-
-      GPIO_SetValue(RightMotor_DirectionPin, HIGH);     // CW(0) = Flexion; CCW(1) = Extension
-      GPIO_SetValue(RightMotor_FunctionStatePin, HIGH); // LOW(0) = Disable; HIGH(1) = Enbale
-      PWM_SetDutyCycle(TIM3, CH2, PWM_DefaultDutyCycle);
-
-      /*
-       * Wait until FSR-Stop-Extension is triggered
-       * or knee joint exceed the Full-Extension angle limit
-       */
-      while (!(StopExtensionIsTriggered() || (Joint_GetLimitState() == FullExtension)))
-      {
-      }
-
-      USART_Send(USART2, "Stop Ext\r\n");
-      GPIO_SetValue(RightMotor_FunctionStatePin, LOW); // LOW(0) = Disable; HIGH(1) = Enbale
-      PWM_SetDutyCycle(TIM3, CH2, 0);
-    }
-
-    /*
-     * If FSR-Start-Flexion is triggered,
-     * and knee joint didn't exceed the Full-Flexion angle limit,
-     * then start flexion.
-     */
-    else if (StartFlexionIsTriggered() && (Joint_GetLimitState() != FullFlexion))
-    {
-      USART_Send(USART2, "Start Fle\r\n");
-
-      GPIO_SetValue(RightMotor_DirectionPin, LOW);      // CW(0) = Flexion; CCW(1) = Extension
-      GPIO_SetValue(RightMotor_FunctionStatePin, HIGH); // LOW(0) = Disable; HIGH(1) = Enbale
-      PWM_SetDutyCycle(TIM3, CH2, PWM_DefaultDutyCycle);
-
-      /*
-       * Wait until FSR-Stop-Flexion is triggered
-       * or knee joint exceed the Full-Flexion angle limit
-       */
-      while (!(StopFlexionIsTriggered() || (Joint_GetLimitState() == FullFlexion)))
-      {
-      }
-
-      USART_Send(USART2, "Stop Fle\r\n");
-      GPIO_SetValue(RightMotor_FunctionStatePin, LOW); // LOW(0) = Disable; HIGH(1) = Enbale
-      PWM_SetDutyCycle(TIM3, CH2, 0);
-    }
-
     /* Get value */
     ADC_FrontFSRValue = ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5);
     ADC_BackFSRValue = ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5);
@@ -145,120 +85,7 @@ int main(void)
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
   UnitTest::Joint_Extenstion();
-//  UnitTest::ADC_Read_Analog_value();
 #endif /* ENABLE_UNIT_TEST */
-}
-
-//inline bool StartExtensionIsTriggered(void)
-//{
-//  /*
-//   * If Start-Extension is triggered,
-//   * that is if Front FSR ADC Value > Extension Start Threshold,
-//   * then return TRUE, else return FALSE.
-//   */
-//  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStartThreshold);
-//}
-//
-//inline bool StartFlexionIsTriggered(void)
-//{
-//  /*
-//   * If Start-Flexion is triggered,
-//   * that is if Back FSR ADC Value > Flexion Start Threshold,
-//   * then return TRUE, else return FALSE.
-//   */
-//  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStartThreshold);
-//}
-//
-//inline bool StopExtensionIsTriggered(void)
-//{
-//  /*
-//   * If Stop-Extension is triggered,
-//   * that is if Back FSR ADC Value > Extension Stop Threshold,
-//   * then return TRUE, else return FALSE.
-//   */
-//  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStopThreshold);
-//}
-//
-//inline bool StopFlexionIsTriggered(void)
-//{
-//  /*
-//   * If Stop-Flexion is triggered,
-//   *
-//   *
-//   * that is if Front FSR ADC Value > Flexion Stop Threshold,
-//   * then return TRUE, else return FALSE.
-//   */
-//  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStopThreshold);
-//}
-//
-//float Convert_ADCValueToAngle(uint16_t ADCValue)
-//{
-//  /**
-//   * The POT_Gear is 20 teeth, Joint_Gear is 250 teeth.
-//   * The Gear Ratio = 250/20 = 12.5:1
-//   *
-//   * ADC resolution is 12bits = 4096 quantization levels (0 ~ 4095).
-//   * POT Maximum degree = 3600 degrees = 10 turn.
-//   *
-//   * The POT_Angle per ADC_Quantization levels = 3600/4096
-//   *                                           = 225/256
-//   *                                           = 0.878 906 25
-//   *                                           (unit in deg/ADC_Lv)
-//   *
-//   * That,
-//   * The Joint_Angle per ADC_Quantization levels = POT_deg per ADC_lv / 12.5
-//   *                                             = (3600/4096)/12.5
-//   *                                             = 9/128
-//   *                                             = 0.070 312 5
-//   *                                             (unit in deg/ADC_Lv)
-//   *
-//   * And,
-//   * Knee joint full extension is defined as -5 deg.
-//   * So,
-//   * Joint_Angle = [(ADC_Value - Full_Extension_ADC_Value)*(9/128)]-5
-//   */
-//
-//  return ((float)((ADCValue - Joint_FullExtensionADCValue) * (0.0703125) - 5));
-//}
-//
-//uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
-//{
-//  /**
-//   * The nominal speed of Maxon EC90 flat brushless motor(515458) is 2720rpm.
-//   * The gear ratio of Harmoinc Drive SHD-25-100-2SH is 100:1.
-//   *
-//   * So, the max speed of joint is 2720/100 = 27.2rpm(ideal).
-//   *
-//   * Mode of motor controller is open loop speed control,
-//   * 0...95 % PWM depending on the «Set value speed» input voltage.
-//   *
-//   * Minimum speed: Nmin (rpm)
-//   * Maximum speed: Nmax (rpm)
-//   * Set respectively speed: N (rpm)
-//   * Set value voltage: Vset (V)
-//   * Vset = {[(N-Nmin)/(Nmax-Nmin)]*4.9}+0.1
-//   *
-//   * 1 Degree Per Second = 1/6 rpm
-//   */
-//
-//  /* gear ration * RespectivelySpeed in rpm */
-//  float RespectivelySpeed = 100 * (DegPerSec / 6.0);
-//
-//  /* Vset = {[(N-Nmin)/(Nmax-Nmin)]*4.9}+0.1 */
-//  float Vset = ((RespectivelySpeed / 2720.0) * 4.9) + 0.1;
-//
-//  /* PWM Dutu Cucly = (Vset/Vp)*100% */
-//  float PWMDutyCycle = (Vset / 3.3) * 100;
-//
-//  if (PWMDutyCycle >= 100)
-//    return ((uint8_t)100);
-//  else
-//    return ((uint8_t)PWMDutyCycle);
-//}
-
-void CommunicationDecoder(uint8_t Command)
-{
-  //  Joint_SetAbsoluteAngle(Command - 5);
 }
 
 /**
@@ -469,159 +296,10 @@ void Timer_Initialization(void)
   TIM_Cmd(TIM2, ENABLE);
 }
 
-//Joint_Joint(void)
-//{
-//  Full_Extension_ADC_Value = Default_Full_Extension_ADC_Value;
-//  Full_Flexion_ADC_Value = Default_Full_Flexion_ADC_Value;
-//
-//  Motor_1.setPWMTimerChannelPortPin(TIM3, CH2, PA7);
-//  Motor_1.setDutyCycle(0);
-//
-//  ADC_POT.setADCChannel(ADC1, ADC_Channel_1);
-//  ADC_POT.setPortPin(A1);
-//  ADC_POT.setEnable();
-//}
-
-//void Joint_setAngularSpeed(uint8_t NewAngularSpeed)
-//{
-//}
-//
-//void Joint_Joint_setAngularAcceleration(uint8_t NewAngularAcceleration)
-//{
-//}
-//
-//void Joint_setAbsoluteAngle(float TargetAngle)
-//{
-//  float NowAngle = Joint_getAbsoluteAngle();
-////  EC90Motor Motor_R;
-////  Motor_R.setPWMTimerChannelPortPin(TIM3, CH2, PA7);
-////  Motor_R.setDutyCycle(0);
-//
-//  /* Extension */
-//  if (NowAngle > TargetAngle)
-//  {
-////    Motor_R.setDirection(CW);
-////    Motor_R.setDutyCycle(10);
-////    Motor_R.setFunctionState(Enable);
-//
-////    setPWMDutyCycle(TIM3, CH2, 10);
-//
-//    while (NowAngle > TargetAngle)
-//    {
-//      NowAngle = Joint_getAbsoluteAngle(); // Update angle.
-//    }
-////    Motor_R.setFunctionState(Disable);
-////    Motor_R.setDutyCycle(0);
-//
-////    setPWMDutyCycle(TIM3, CH2, 0);
-//  }
-//  /* Flexion */
-//  else if (NowAngle < TargetAngle)
-//  {
-////    Motor_R.setDirection(CCW);
-////    Motor_R.setDutyCycle(10);
-////    Motor_R.setFunctionState(Enable);
-//
-////    setPWMDutyCycle(TIM3, CH2, 10);
-//
-//    while (NowAngle < TargetAngle)
-//    {
-//      NowAngle = Joint_getAbsoluteAngle(); // Update angle.
-//    }
-////    Motor_R.setFunctionState(Disable);
-////    Motor_R.setDutyCycle(0);
-//
-////    setPWMDutyCycle(TIM3, CH2, 0);
-//  }
-//}
-//
-//void Joint_setAbsoluteAngle(Joint_LimitStateTypeDef TargetPosition)
-//{
-//}
-//
-//void Joint_setRelativelyAngle(Joint_DirectionTypeDef Direction, float IncreaseAngle)
-//{
-// if (Direction == Extension)
-// {
-//
-// }
-//
-//
-//}
-//
-//float Joint_getAbsoluteAngle(void)
-//{
-//  /* POT */
-////  ADC ADC_POT_R(ADC1, ADC_Channel_1, A1);
-////  ADC_POT_R.setEnable();
-//
-//  uint16_t ADC_Value = ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5);
-//  return Joint_convertADCValueToAngle(ADC_Value);
-//}
-//
-//float Joint_convertADCValueToAngle(uint16_t ADCValue)
-//{
-//  /**
-//   * The POT_Gear is 20 teeth, Joint_Gear is 250 teeth.
-//   * The Gear Ratio = 250/20 = 12.5:1
-//   *
-//   * ADC resolution is 12bits = 4096 quantization levels (0 ~ 4095).
-//   * POT Maximum degree = 3600 degrees = 10 turn.
-//   *
-//   * The POT_Angle per ADC_Quantization levels = 3600/4096
-//   *                                           = 225/256
-//   *                                           = 0.878 906 25
-//   *                                           (unit in deg/ADC_Lv)
-//   *
-//   * That,
-//   * The Joint_Angle per ADC_Quantization levels = POT_deg per ADC_lv / 12.5
-//   *                                             = (3600/4096)/12.5
-//   *                                             = 9/128
-//   *                                             = 0.070 312 5
-//   *                                             (unit in deg/ADC_Lv)
-//   *
-//   * And,
-//   * Knee joint full extension is defined as -5 deg.
-//   * So,
-//   * Joint_Angle = [(ADC_Value - Full_Extension_ADC_Value)*(9/128)]-5
-//   */
-//
-//  return ((float) ((ADCValue - Full_Extension_ADC_Value)*(0.0703125) -5));
-//}
-//
-//Joint_LimitStateTypeDef Joint_getLimitState(void)
-//{
-//  /* POT */
-////  ADC ADC_POT_R(ADC1, ADC_Channel_1, A1);
-////  ADC_POT_R.setEnable();
-//
-//  uint16_t ADC_Value = ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5);
-//
-//  /* Full_Extension_ADC_Value is the minimum ADC value */
-//  if (ADC_Value <= Full_Extension_ADC_Value)
-//    return FullExtension;
-//  /* Full_Flexion_ADC_Value is the maximum ADC value */
-//  else if (ADC_Value >= Full_Flexion_ADC_Value)
-//    return FullFlexion;
-//  else
-//    return Unlimited;
-//}
-
-char *convertIntToString(int IntNumber)
+void CommunicationDecoder(uint8_t Command)
 {
-  static char string[3];
-  sprintf(string, "%d", IntNumber);
-  return string;
+  //  Joint_SetAbsoluteAngle(Command - 5);
 }
-
-/* ERROE: region `flash' overflowed */
-//std::string convertFloatToString(float FloatNumber)
-//{
-//  std::ostringstream ss;
-//  ss << FloatNumber;
-//  std::string s(ss.str());
-//  return ((std::string) s);
-//}
 
 void Delay_NonTimer(__IO uint32_t nTime)
 {

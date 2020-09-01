@@ -144,7 +144,7 @@ int main(void)
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
-  UnitTest::ADC_Read_Analog_value();
+  UnitTest::PWM_Output_1kHz_50DutyCycle();
 #endif /* ENABLE_UNIT_TEST */
 }
 

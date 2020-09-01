@@ -186,5 +186,22 @@ namespace UnitTest
     /* -- End of ADC -- */
   }
 
+  void PWM_Output_1kHz_50DutyCycle(void)
+  {
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+    PWM pwm;
+    pwm.PortPin = PA7;
+    pwm.Timer = TIM3;
+    pwm.Channel = CH2;
+    pwm.Init();
+
+    pwm.setFrequency(1000);
+    pwm.setDutyCycle(50);
+
+    pwm.Enable();
+  }
+
 } // namespace UnitTest
 /********************************END OF FILE***********************************/

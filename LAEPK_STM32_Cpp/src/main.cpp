@@ -33,52 +33,48 @@ int main(void)
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
 
-  uint16_t ADC_JointAnglePOTValue;
-  uint16_t ADC_FrontFSRValue;
-  uint16_t ADC_BackFSRValue;
+  /* Configures the priority grouping */
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
-  float Joint_Angle;
+  // uint16_t ADC_JointAnglePOTValue;
+  // uint16_t ADC_FrontFSRValue;
+  // uint16_t ADC_BackFSRValue;
+
+  // float Joint_Angle;
 
   /* Initialization Functions */
-  GPIO_Initialization();
-  //  Timer_Initialization();
-  EXIT_Initialization();
-  NVIC_Initialization();
+  Joint RightJoint;
+  Joint_Initialization(&RightJoint);
+  LimitSwitch_Initialization();
   USART_Initialization();
-  ADC_Initialization();
-  PWM_Initialization();
-
-  PWM_SetFrequency(TIM3, PWM_DefaultFrequncy);
-  PWM_SetDutyCycle(TIM3, CH2, 0);
-  GPIO_SetValue(RightMotor_FunctionStatePin, LOW); // Disable motor
-
-  GPIO_SetLow(User_LED);
 
   USART_Send(USART2, "[READY]\r\n");
 
   while (1)
   {
-    /* Get value */
-    ADC_FrontFSRValue = ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5);
-    ADC_BackFSRValue = ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5);
-    ADC_JointAnglePOTValue = ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5);
-    Joint_Angle = Convert_ADCValueToAngle(ADC_JointAnglePOTValue);
+    RightJoint.MotionHandler();
 
-    USART_Send(USART2, "ANG:");
-    USART_Send(USART2, convertIntToString(round(Joint_Angle)));
-    USART_Send(USART2, "\r\n");
+    // /* Get value */
+    // ADC_FrontFSRValue = ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5);
+    // ADC_BackFSRValue = ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5);
+    // ADC_JointAnglePOTValue = ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5);
+    // Joint_Angle = Convert_ADCValueToAngle(ADC_JointAnglePOTValue);
 
-    USART_Send(USART2, "POT:");
-    USART_Send(USART2, convertIntToString(ADC_JointAnglePOTValue));
-    USART_Send(USART2, "\r\n");
+    // USART_Send(USART2, "ANG:");
+    // USART_Send(USART2, convertIntToString(round(Joint_Angle)));
+    // USART_Send(USART2, "\r\n");
 
-    USART_Send(USART2, "EXT:");
-    USART_Send(USART2, convertIntToString(ADC_FrontFSRValue));
-    USART_Send(USART2, "\r\n");
+    // USART_Send(USART2, "POT:");
+    // USART_Send(USART2, convertIntToString(ADC_JointAnglePOTValue));
+    // USART_Send(USART2, "\r\n");
 
-    USART_Send(USART2, "FLE:");
-    USART_Send(USART2, convertIntToString(ADC_BackFSRValue));
-    USART_Send(USART2, "\r\n----------\r\n");
+    // USART_Send(USART2, "EXT:");
+    // USART_Send(USART2, convertIntToString(ADC_FrontFSRValue));
+    // USART_Send(USART2, "\r\n");
+
+    // USART_Send(USART2, "FLE:");
+    // USART_Send(USART2, convertIntToString(ADC_BackFSRValue));
+    // USART_Send(USART2, "\r\n----------\r\n");
 
     Delay_ms(200);
   }
@@ -88,80 +84,75 @@ int main(void)
 #endif /* ENABLE_UNIT_TEST */
 }
 
-/**
- * @brief  Initialization GPIO.
- */
-void GPIO_Initialization(void)
+void Joint_Initialization(Joint *joint)
 {
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
                              RCC_APB2Periph_GPIOB |
                              RCC_APB2Periph_GPIOC |
-                             RCC_APB2Periph_GPIOD |
-                             RCC_APB2Periph_GPIOE,
+                             RCC_APB2Periph_ADC1,
                          ENABLE);
 
-  GPIO_InitTypeDef GPIO_InitStructure;
-  GPIO_StructInit(&GPIO_InitStructure);
-
-  // STM32 Nucleo-64 board
-  GPIO_SetMode(User_LED, GPIO_Mode_Out_PP, GPIO_Speed_2MHz);
-  GPIO_SetMode(User_Button, GPIO_Mode_IN_FLOATING);
-
-  // USART
-  GPIO_SetMode(PA2, GPIO_Mode_AF_PP, GPIO_Speed_50MHz); // USART2_TX
-  GPIO_SetMode(PA3, GPIO_Mode_IN_FLOATING);             // USART2_RX
-
-  /* Right leg */
   // Motor
-  GPIO_SetMode(PA7, GPIO_Mode_AF_PP, GPIO_Speed_50MHz); // PWM
-  GPIO_SetMode(D10, GPIO_Mode_Out_PP, GPIO_Speed_2MHz); // Direction
-  GPIO_SetMode(D9, GPIO_Mode_Out_PP, GPIO_Speed_2MHz);  // Enable/Disable
+  joint->PortPin_SpeedPWM = PA7; // D11
+  joint->Timer_SpeedPWM = TIM3;
+  joint->Channel_SpeedPWM = CH2;
+
+  joint->PortPin_FunctionState = D10;
+  joint->PortPin_Direction = D9;
+  joint->PortPin_ReadyState = D8;
 
   // ADC
-  GPIO_SetMode(PA1, GPIO_Mode_AIN);
-  GPIO_SetMode(PA4, GPIO_Mode_AIN);
-  GPIO_SetMode(PB0, GPIO_Mode_AIN);
+  joint->PortPin_AnglePOT = PA1; // A1
+  joint->ADCx_AnglePOT = ADC1;
+  joint->ADC_Channel_AnglePOT = ADC_Channel_1;
 
-  // EXT
-  GPIO_SetMode(PA0, GPIO_Mode_IPD); // Limit switch
+  joint->PortPin_FrontFSR = PA4; // A2
+  joint->ADCx_FrontFSR = ADC1;
+  joint->ADC_Channel_FrontFSR = ADC_Channel_4;
 
-  /* Left leg */
-  // Motor
-  // ADC
-  // EXT
+  joint->PortPin_BackFSR = PB0; // A3
+  joint->ADCx_BackFSR = ADC1;
+  joint->ADC_Channel_BackFSR = ADC_Channel_8;
+
+  // Value & Threshold
+  joint->FullExtensionPOTValue = 1400;
+  joint->FullFlexionPOTValue = 2450;
+
+  joint->ExtensionFSRStartThreshold = 215;
+  joint->FlexionFSRStartThreshold = 180;
+
+  joint->ExtensionFSRStopThreshold = 500;
+  joint->FlexionFSRStopThreshold = 500;
+
+  joint->Init();
+  joint->MotionStop();
 }
 
-/**
- * @brief  Initialize NVIC.
- */
-void NVIC_Initialization(void)
+void LimitSwitch_Initialization(void)
 {
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+  GPIO limitSwitch;
+  limitSwitch.PortPin = PA0;
+  limitSwitch.Mode = GPIO_Mode_IPD;
+  limitSwitch.Init();
+
   NVIC_InitTypeDef NVIC_InitStructure;
-
-  /* Configures the priority grouping */
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-
-  /* Configure the NVIC */
-  // USART2
-  NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
-  // EXTI: Limit Switch
   NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
-  // Timer
-  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0);
+
+  EXTI_InitTypeDef EXTI_InitStructure;
+  EXTI_InitStructure.EXTI_Line = EXTI_Line0;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
 }
 
 /**
@@ -170,12 +161,28 @@ void NVIC_Initialization(void)
 void USART_Initialization(void)
 {
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+  GPIO USART2_TX;
+  USART2_TX.PortPin = PA2;
+  USART2_TX.Mode = GPIO_Mode_AF_PP;
+  USART2_TX.Speed = GPIO_Speed_50MHz;
+  USART2_TX.Init();
+
+  GPIO USART2_RX;
+  USART2_RX.PortPin = PA3;
+  USART2_RX.Mode = GPIO_Mode_IN_FLOATING;
+  USART2_RX.Init();
+
+  NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
 
   USART_InitTypeDef USART_InitStructure;
   USART_StructInit(&USART_InitStructure);
-
-  //    USART_DeInit(USART2);
-
   USART_InitStructure.USART_BaudRate = 9600;
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
@@ -192,108 +199,6 @@ void USART_Initialization(void)
 
   /* Clear "Transmission Complete" flag, 否則第1位數據會丟失 */
   USART_ClearFlag(USART2, USART_FLAG_TC);
-}
-
-/**
- * @brief  Initialize ADC.
- */
-void ADC_Initialization(void)
-{
-  /* ADC's clock con't over than 14MHz */
-  RCC_ADCCLKConfig(RCC_PCLK2_Div6);
-
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-
-  ADC_DeInit(ADC1);
-
-  ADC_InitTypeDef ADC_InitStruct;
-
-  ADC_InitStruct.ADC_ContinuousConvMode = DISABLE;
-  ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
-  ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
-  ADC_InitStruct.ADC_Mode = ADC_Mode_Independent;
-  ADC_InitStruct.ADC_NbrOfChannel = 1;
-  ADC_InitStruct.ADC_ScanConvMode = DISABLE;
-  ADC_Init(ADC1, &ADC_InitStruct);
-
-  ADC_Cmd(ADC1, ENABLE);
-
-  /* ADC Calibration */
-  // Reset calibration
-  ADC_ResetCalibration(ADC1);
-
-  // Wait until reset calibration complete
-  while (ADC_GetResetCalibrationStatus(ADC1) == 1)
-  {
-  }
-
-  // Start calibration
-  ADC_StartCalibration(ADC1);
-
-  // Wait until calibration complete
-  while (ADC_GetCalibrationStatus(ADC1) == 1)
-  {
-  }
-}
-
-/**
- * @brief  Initialize PWM.
- */
-void PWM_Initialization(void)
-{
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-
-  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-  TIM_OCInitTypeDef TIM_OCInitStructure;
-
-  /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 14399; // Set the Auto-Reload value
-  TIM_TimeBaseStructure.TIM_Prescaler = 10; // Set the Prescaler value
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; // Select the Counter Mode
-  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
-
-  /* PWM1 Mode configuration */
-  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_Pulse = 530; // TIM_Pulse=CCRx
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-  TIM_OC2Init(TIM3, &TIM_OCInitStructure);
-
-  /* Enable */
-  TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
-  TIM_ARRPreloadConfig(TIM3, ENABLE);
-  TIM_Cmd(TIM3, ENABLE);
-}
-
-void EXIT_Initialization(void)
-{
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0);
-
-  EXTI_InitTypeDef EXTI_InitStructure;
-
-  EXTI_InitStructure.EXTI_Line = EXTI_Line0;
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&EXTI_InitStructure);
-}
-
-void Timer_Initialization(void)
-{
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-
-  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-
-  TIM_TimeBaseStructure.TIM_Period = 72 - 1;
-  TIM_TimeBaseStructure.TIM_Prescaler = 1000;
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
-  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
-
-  TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-  TIM_Cmd(TIM2, ENABLE);
 }
 
 void CommunicationDecoder(uint8_t Command)

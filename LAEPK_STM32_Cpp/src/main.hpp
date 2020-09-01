@@ -50,20 +50,16 @@ extern "C"
 #define Joint_DefaultFullFlexionADCValue ((uint16_t)2450)
 
 /* Default FSR start threshold */
-#define Joint_DefaultExtensionFSRStartThreshold ((uint8_t)215)
-#define Joint_DefaultFlexionFSRStartThreshold ((uint8_t)180)
+#define Joint_DefaultExtensionFSRStartThreshold ((uint16_t)215)
+#define Joint_DefaultFlexionFSRStartThreshold ((uint16_t)180)
 
 /* Default FSR stop threshold */
 #define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
 #define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
 
-void GPIO_Initialization(void);
-void NVIC_Initialization(void);
+void Joint_Initialization(Joint *joint);
+void LimitSwitch_Initialization(void);
 void USART_Initialization(void);
-void ADC_Initialization(void);
-void PWM_Initialization(void);
-void EXIT_Initialization(void);
-void Timer_Initialization(void);
 
 void CommunicationDecoder(uint8_t Command);
 void Delay_NonTimer(__IO uint32_t nTime);

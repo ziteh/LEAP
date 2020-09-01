@@ -38,8 +38,8 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-uint16_t nInst = 0;            // The number of instruction
-uint8_t selMotor = 0xFF;    // The motor which be selected
+uint16_t nInst = 0;      // The number of instruction
+uint8_t selMotor = 0xFF; // The motor which be selected
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -200,36 +200,14 @@ void EXTI0_IRQHandler(void)
 {
   if (EXTI_GetITStatus(EXTI_Line0) != RESET)
   {
-    GPIO_SetValue(RightMotor_FunctionStatePin, LOW); // Disable motor
-    TIM_Cmd(TIM3, DISABLE);    // Disable PWM
-    USART_Send(USART2, "[STOP]\n");
+    // GPIO_SetValue(RightMotor_FunctionStatePin, LOW); // Disable motor
+    // TIM_Cmd(TIM3, DISABLE);    // Disable PWM
+    USART_Send(USART2, "[EXTI STOP]\n");
     while (1)
     {
     }
 
     EXTI_ClearITPendingBit(EXTI_Line0);
-  }
-}
-
-void TIM2_IRQHandler(void)
-{
-  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
-  {
-    uint16_t ADC_Value;
-    float Joint_Angle;
-
-    ADC_Value = ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5);
-    USART_Send(USART2, convertIntToString(ADC_Value));
-
-    USART_Send(USART2, "\r\n");
-
-    Joint_Angle = Convert_ADCValueToAngle(ADC_Value);
-    USART_Send(USART2, convertIntToString(round(Joint_Angle)));
-
-    USART_Send(USART2, "\r\n");
-
-    // Clear TIM2
-    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
   }
 }
 

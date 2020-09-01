@@ -181,12 +181,9 @@ void PWM::Disable(void)
   TIM_Cmd(Timer, DISABLE);              // The specified TIM peripheral
 }
 
+// FIXME Value of frequency error.
 void PWM::setFrequency(uint8_t NewFrequency)
 {
-  /**
-   * ERROR:  Value of frequency error.
-   */
-
   /**
    *  TIM_Period = ((System_Frequency / TIM_Prescaler) / PWM_Frequency) - 1
    *

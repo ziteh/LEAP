@@ -182,7 +182,7 @@ void PWM::Disable(void)
 }
 
 // FIXME Value of frequency error.
-void PWM::setFrequency(uint8_t NewFrequency)
+void PWM::setFrequency(uint16_t NewFrequency)
 {
   /**
    *  TIM_Period = ((System_Frequency / TIM_Prescaler) / PWM_Frequency) - 1

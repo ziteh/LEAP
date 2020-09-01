@@ -203,5 +203,29 @@ namespace UnitTest
     pwm.Enable();
   }
 
+  void EC90_CW(void)
+  {
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
+                               RCC_APB2Periph_GPIOB |
+                               RCC_APB2Periph_GPIOC,
+                           ENABLE);
+
+    EC90Motor motor;
+    motor.PortPin_SpeedPWM = PA7;
+    motor.Timer_SpeedPWM = TIM3;
+    motor.Channel_SpeedPWM = CH2;
+    motor.PortPin_FunctionState = D10;
+    motor.PortPin_Direction = D9;
+    motor.PortPin_ReadyState = D8;
+
+    motor.Init();
+
+    motor.setDirection(EC90Motor::CW);
+    motor.setSpeed(20);
+
+    motor.Enable();
+  }
+
 } // namespace UnitTest
 /********************************END OF FILE***********************************/

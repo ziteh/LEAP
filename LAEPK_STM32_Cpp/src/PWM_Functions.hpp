@@ -60,7 +60,7 @@ public:
   void Enable(void);
   void Disable(void);
 
-  void setFrequency(uint8_t NewFrequency);
+  void setFrequency(uint16_t NewFrequency);
   void setDutyCycle(uint16_t NewDutyCycle);
 
   uint16_t getFrequency(void);

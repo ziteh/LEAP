@@ -51,7 +51,7 @@ public:
     CW = 0,
     CCW = 1,
     ToggleDirection = 2
-  } DirectionTypeDef;
+  } RotationDirectionTypeDef;
 
   /* The ready state type of motor */
   typedef enum
@@ -60,36 +60,36 @@ public:
     Ready = !Fault
   } ReadyStateTypeDef;
 
-    /* PWM timer used for motor speed control. */
-    TIM_TypeDef *Timer_SpeedPWM;
+  /* PWM timer used for motor speed control. */
+  TIM_TypeDef *Timer_SpeedPWM;
 
-    /* PWM timer-chammel used for motor speed control. */
-    PWM_TimerChannelTypeDef Channel_SpeedPWM;
+  /* PWM timer-chammel used for motor speed control. */
+  PWM_TimerChannelTypeDef Channel_SpeedPWM;
 
-    /* PWM output pin used for motor speed control. */
-    GPIO_PortPinTypeDef PortPin_SpeedPWM;
+  /* PWM output pin used for motor speed control. */
+  GPIO_PortPinTypeDef PortPin_SpeedPWM;
 
-    /* Output pin used for motor functino state control. */
-    GPIO_PortPinTypeDef PortPin_FunctionState;
+  /* Output pin used for motor functino state control. */
+  GPIO_PortPinTypeDef PortPin_FunctionState;
 
-    /* Output pin used for motor direction control. */
-    GPIO_PortPinTypeDef PortPin_Direction;
+  /* Output pin used for motor direction control. */
+  GPIO_PortPinTypeDef PortPin_Direction;
 
-    /* Input pin used for read motor ready state. */
-    GPIO_PortPinTypeDef PortPin_ReadyState;
+  /* Input pin used for read motor ready state. */
+  GPIO_PortPinTypeDef PortPin_ReadyState;
 
-    /* Analog input pin used for read motor RPM. */
-    GPIO_PortPinTypeDef PortPin_RPM;
+  /* Analog input pin used for read motor RPM. */
+  GPIO_PortPinTypeDef PortPin_RPM;
 
-    EC90Motor(void);
+  EC90Motor(void);
   void Init(void);
   void Enable(void);
   void Disable(void);
-  void setDirection(EC90Motor::DirectionTypeDef NewDirection);
+  void setDirection(EC90Motor::RotationDirectionTypeDef NewDirection);
   void setSpeed(uint16_t NewSpeed);
 
   ReadyStateTypeDef getReadyState(void);
-  DirectionTypeDef getDirection(void);
+  RotationDirectionTypeDef getDirection(void);
   uint16_t getSpeed(void);
 
 private:

@@ -227,5 +227,100 @@ namespace UnitTest
     motor.Enable();
   }
 
+  void Joint_Extenstion(void)
+  {
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
+                               RCC_APB2Periph_GPIOB |
+                               RCC_APB2Periph_GPIOC |
+                               RCC_APB2Periph_ADC1,
+                           ENABLE);
+
+    GPIO USART2_TX;
+    USART2_TX.PortPin = PA2;
+    USART2_TX.Mode = GPIO_Mode_AF_PP;
+    USART2_TX.Speed = GPIO_Speed_50MHz;
+    USART2_TX.Init();
+
+    GPIO USART2_RX;
+    USART2_RX.PortPin = PA3;
+    USART2_RX.Mode = GPIO_Mode_IN_FLOATING;
+    USART2_RX.Init();
+
+    /* Configures the priority grouping */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+
+    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    USART_InitTypeDef USART_InitStructure;
+    USART_StructInit(&USART_InitStructure);
+    USART_InitStructure.USART_BaudRate = 9600;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+    USART_Init(USART2, &USART_InitStructure);
+
+    /* Enable "Receive data register not empty" interrupt */
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+
+    /* Enable USART */
+    USART_Cmd(USART2, ENABLE);
+
+    /* Clear "Transmission Complete" flag, ���洵1雿����仃 */
+    USART_ClearFlag(USART2, USART_FLAG_TC);
+
+    Joint joint;
+
+    // Motor
+    joint.PortPin_SpeedPWM = PA7; // D11
+    joint.Timer_SpeedPWM = TIM3;
+    joint.Channel_SpeedPWM = CH2;
+
+    joint.PortPin_FunctionState = D10;
+    joint.PortPin_Direction = D9;
+    joint.PortPin_ReadyState = D8;
+
+    // ADC
+    joint.PortPin_AnglePOT = PA1; // A1
+    joint.ADCx_AnglePOT = ADC1;
+    joint.ADC_Channel_AnglePOT = ADC_Channel_1;
+
+    joint.PortPin_FrontFSR = PA4; // A2
+    joint.ADCx_FrontFSR = ADC1;
+    joint.ADC_Channel_FrontFSR = ADC_Channel_4;
+
+    joint.PortPin_BackFSR = PB0; // A3
+    joint.ADCx_BackFSR = ADC1;
+    joint.ADC_Channel_BackFSR = ADC_Channel_8;
+
+    // Value & Threshold
+    joint.FullExtensionPOTValue = 1400;
+    joint.FullFlexionPOTValue = 2450;
+
+    joint.ExtensionFSRStartThreshold = 215;
+    joint.FlexionFSRStartThreshold = 180;
+
+    joint.ExtensionFSRStopThreshold = 500;
+    joint.FlexionFSRStopThreshold = 500;
+
+    joint.Init();
+    joint.MotionStop();
+
+    USART_Send(USART2, "READY\r\n");
+
+    while (1)
+    {
+      joint.MotionHandler();
+    }
+  }
+
 } // namespace UnitTest
 /********************************END OF FILE***********************************/

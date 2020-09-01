@@ -67,7 +67,7 @@ void EC90Motor::Disable(void)
   Speed.Disable();
 }
 
-void EC90Motor::setDirection(EC90Motor::DirectionTypeDef NewDirection)
+void EC90Motor::setDirection(EC90Motor::RotationDirectionTypeDef NewDirection)
 {
   switch (NewDirection)
   {
@@ -96,7 +96,7 @@ EC90Motor::ReadyStateTypeDef EC90Motor::getReadyState(void)
     return Fault; // LOW: Fault
 }
 
-EC90Motor::DirectionTypeDef EC90Motor::getDirection(void)
+EC90Motor::RotationDirectionTypeDef EC90Motor::getDirection(void)
 {
   if (Direction.getValue() == HIGH)
     return CCW; // HIGH: CCW

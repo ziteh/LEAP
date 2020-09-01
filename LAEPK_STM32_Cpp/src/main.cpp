@@ -23,14 +23,14 @@
 
 static __IO uint32_t TimingDelay;
 
-uint16_t Joint_FullExtensionADCValue = Joint_DefaultFullExtensionADCValue;
-uint16_t Joint_FullFlexionADCValue = Joint_DefaultFullFlexionADCValue;
-
-uint8_t Joint_ExtensionFSRStartThreshold = Joint_DefaultExtensionFSRStartThreshold;
-uint8_t Joint_FlexionFSRStartThreshold = Joint_DefaultFlexionFSRStartThreshold;
-
-uint16_t Joint_ExtensionFSRStopThreshold = Joint_DefaultExtensionFSRStopThreshold;
-uint16_t Joint_FlexionFSRStopThreshold = Joint_DefaultFlexionFSRStopThreshold;
+//uint16_t joint_fullextensionadcvalue = joint_defaultfullextensionadcvalue;
+//uint16_t joint_fullflexionadcvalue = joint_defaultfullflexionadcvalue;
+//
+//uint8_t joint_extensionfsrstartthreshold = joint_defaultextensionfsrstartthreshold;
+//uint8_t joint_flexionfsrstartthreshold = joint_defaultflexionfsrstartthreshold;
+//
+//uint16_t joint_extensionfsrstopthreshold = joint_defaultextensionfsrstopthreshold;
+//uint16_t joint_flexionfsrstopthreshold = joint_defaultflexionfsrstopthreshold;
 
 RCC_ClocksTypeDef RCC_Clocks;
 
@@ -144,116 +144,117 @@ int main(void)
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
-  UnitTest::EC90_CW();
+  UnitTest::Joint_Extenstion();
+//  UnitTest::ADC_Read_Analog_value();
 #endif /* ENABLE_UNIT_TEST */
 }
 
-inline bool StartExtensionIsTriggered(void)
-{
-  /*
-   * If Start-Extension is triggered,
-   * that is if Front FSR ADC Value > Extension Start Threshold,
-   * then return TRUE, else return FALSE.
-   */
-  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStartThreshold);
-}
-
-inline bool StartFlexionIsTriggered(void)
-{
-  /*
-   * If Start-Flexion is triggered,
-   * that is if Back FSR ADC Value > Flexion Start Threshold,
-   * then return TRUE, else return FALSE.
-   */
-  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStartThreshold);
-}
-
-inline bool StopExtensionIsTriggered(void)
-{
-  /*
-   * If Stop-Extension is triggered,
-   * that is if Back FSR ADC Value > Extension Stop Threshold,
-   * then return TRUE, else return FALSE.
-   */
-  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStopThreshold);
-}
-
-inline bool StopFlexionIsTriggered(void)
-{
-  /*
-   * If Stop-Flexion is triggered,
-   *
-   *
-   * that is if Front FSR ADC Value > Flexion Stop Threshold,
-   * then return TRUE, else return FALSE.
-   */
-  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStopThreshold);
-}
-
-float Convert_ADCValueToAngle(uint16_t ADCValue)
-{
-  /**
-   * The POT_Gear is 20 teeth, Joint_Gear is 250 teeth.
-   * The Gear Ratio = 250/20 = 12.5:1
-   *
-   * ADC resolution is 12bits = 4096 quantization levels (0 ~ 4095).
-   * POT Maximum degree = 3600 degrees = 10 turn.
-   *
-   * The POT_Angle per ADC_Quantization levels = 3600/4096
-   *                                           = 225/256
-   *                                           = 0.878 906 25
-   *                                           (unit in deg/ADC_Lv)
-   *
-   * That,
-   * The Joint_Angle per ADC_Quantization levels = POT_deg per ADC_lv / 12.5
-   *                                             = (3600/4096)/12.5
-   *                                             = 9/128
-   *                                             = 0.070 312 5
-   *                                             (unit in deg/ADC_Lv)
-   *
-   * And,
-   * Knee joint full extension is defined as -5 deg.
-   * So,
-   * Joint_Angle = [(ADC_Value - Full_Extension_ADC_Value)*(9/128)]-5
-   */
-
-  return ((float)((ADCValue - Joint_FullExtensionADCValue) * (0.0703125) - 5));
-}
-
-uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
-{
-  /**
-   * The nominal speed of Maxon EC90 flat brushless motor(515458) is 2720rpm.
-   * The gear ratio of Harmoinc Drive SHD-25-100-2SH is 100:1.
-   *
-   * So, the max speed of joint is 2720/100 = 27.2rpm(ideal).
-   *
-   * Mode of motor controller is open loop speed control,
-   * 0...95 % PWM depending on the «Set value speed» input voltage.
-   *
-   * Minimum speed: Nmin (rpm)
-   * Maximum speed: Nmax (rpm)
-   * Set respectively speed: N (rpm)
-   * Set value voltage: Vset (V)
-   * Vset = {[(N-Nmin)/(Nmax-Nmin)]*4.9}+0.1
-   *
-   * 1 Degree Per Second = 1/6 rpm
-   */
-
-  /* gear ration * RespectivelySpeed in rpm */
-  float RespectivelySpeed = 100 * (DegPerSec / 6.0);
-
-  /* Vset = {[(N-Nmin)/(Nmax-Nmin)]*4.9}+0.1 */
-  float Vset = ((RespectivelySpeed / 2720.0) * 4.9) + 0.1;
-
-  /* PWM Dutu Cucly = (Vset/Vp)*100% */
-  float PWMDutyCycle = (Vset / 3.3) * 100;
-
-  if (PWMDutyCycle >= 100)
-    return ((uint8_t)100);
-  else
-    return ((uint8_t)PWMDutyCycle);
-}
+//inline bool StartExtensionIsTriggered(void)
+//{
+//  /*
+//   * If Start-Extension is triggered,
+//   * that is if Front FSR ADC Value > Extension Start Threshold,
+//   * then return TRUE, else return FALSE.
+//   */
+//  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStartThreshold);
+//}
+//
+//inline bool StartFlexionIsTriggered(void)
+//{
+//  /*
+//   * If Start-Flexion is triggered,
+//   * that is if Back FSR ADC Value > Flexion Start Threshold,
+//   * then return TRUE, else return FALSE.
+//   */
+//  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStartThreshold);
+//}
+//
+//inline bool StopExtensionIsTriggered(void)
+//{
+//  /*
+//   * If Stop-Extension is triggered,
+//   * that is if Back FSR ADC Value > Extension Stop Threshold,
+//   * then return TRUE, else return FALSE.
+//   */
+//  return (ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5) > Joint_ExtensionFSRStopThreshold);
+//}
+//
+//inline bool StopFlexionIsTriggered(void)
+//{
+//  /*
+//   * If Stop-Flexion is triggered,
+//   *
+//   *
+//   * that is if Front FSR ADC Value > Flexion Stop Threshold,
+//   * then return TRUE, else return FALSE.
+//   */
+//  return (ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5) > Joint_FlexionFSRStopThreshold);
+//}
+//
+//float Convert_ADCValueToAngle(uint16_t ADCValue)
+//{
+//  /**
+//   * The POT_Gear is 20 teeth, Joint_Gear is 250 teeth.
+//   * The Gear Ratio = 250/20 = 12.5:1
+//   *
+//   * ADC resolution is 12bits = 4096 quantization levels (0 ~ 4095).
+//   * POT Maximum degree = 3600 degrees = 10 turn.
+//   *
+//   * The POT_Angle per ADC_Quantization levels = 3600/4096
+//   *                                           = 225/256
+//   *                                           = 0.878 906 25
+//   *                                           (unit in deg/ADC_Lv)
+//   *
+//   * That,
+//   * The Joint_Angle per ADC_Quantization levels = POT_deg per ADC_lv / 12.5
+//   *                                             = (3600/4096)/12.5
+//   *                                             = 9/128
+//   *                                             = 0.070 312 5
+//   *                                             (unit in deg/ADC_Lv)
+//   *
+//   * And,
+//   * Knee joint full extension is defined as -5 deg.
+//   * So,
+//   * Joint_Angle = [(ADC_Value - Full_Extension_ADC_Value)*(9/128)]-5
+//   */
+//
+//  return ((float)((ADCValue - Joint_FullExtensionADCValue) * (0.0703125) - 5));
+//}
+//
+//uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
+//{
+//  /**
+//   * The nominal speed of Maxon EC90 flat brushless motor(515458) is 2720rpm.
+//   * The gear ratio of Harmoinc Drive SHD-25-100-2SH is 100:1.
+//   *
+//   * So, the max speed of joint is 2720/100 = 27.2rpm(ideal).
+//   *
+//   * Mode of motor controller is open loop speed control,
+//   * 0...95 % PWM depending on the «Set value speed» input voltage.
+//   *
+//   * Minimum speed: Nmin (rpm)
+//   * Maximum speed: Nmax (rpm)
+//   * Set respectively speed: N (rpm)
+//   * Set value voltage: Vset (V)
+//   * Vset = {[(N-Nmin)/(Nmax-Nmin)]*4.9}+0.1
+//   *
+//   * 1 Degree Per Second = 1/6 rpm
+//   */
+//
+//  /* gear ration * RespectivelySpeed in rpm */
+//  float RespectivelySpeed = 100 * (DegPerSec / 6.0);
+//
+//  /* Vset = {[(N-Nmin)/(Nmax-Nmin)]*4.9}+0.1 */
+//  float Vset = ((RespectivelySpeed / 2720.0) * 4.9) + 0.1;
+//
+//  /* PWM Dutu Cucly = (Vset/Vp)*100% */
+//  float PWMDutyCycle = (Vset / 3.3) * 100;
+//
+//  if (PWMDutyCycle >= 100)
+//    return ((uint8_t)100);
+//  else
+//    return ((uint8_t)PWMDutyCycle);
+//}
 
 void CommunicationDecoder(uint8_t Command)
 {

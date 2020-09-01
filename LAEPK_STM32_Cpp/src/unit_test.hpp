@@ -31,6 +31,7 @@ namespace UnitTest
   void ADC_Read_Analog_value(void);
   void PWM_Output_1kHz_50DutyCycle(void);
   void EC90_CW(void);
+  void Joint_Extenstion(void);
 } // namespace UnitTest
 
 #endif /* __UNIT_TEST_HPP */

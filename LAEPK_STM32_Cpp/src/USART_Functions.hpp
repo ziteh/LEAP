@@ -21,6 +21,7 @@
 #define __USART_FUNCTIONS_H
 
 #include <string>
+#include "convert.hpp"
 
 #ifdef __cplusplus
 extern "C"
@@ -37,10 +38,9 @@ extern "C"
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void USART_Send(USART_TypeDef* USARTx, uint8_t *Data);
-void USART_Send(USART_TypeDef* USARTx, std::string Data);
+void USART_Send(USART_TypeDef *USARTx, uint8_t *Data);
+void USART_Send(USART_TypeDef *USARTx, std::string Data);
 
 #endif /* __USART_FUNCTIONS_H */
 
 /********************************END OF FILE***********************************/
-

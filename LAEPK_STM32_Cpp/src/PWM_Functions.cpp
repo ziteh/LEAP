@@ -101,44 +101,32 @@ uint16_t PWM_GetDutyCycle(TIM_TypeDef *TIMx, PWM_TimerChannelTypeDef Channel)
 
 PWM::PWM(void)
 {
-  this->setDefault();
-}
-PWM::PWM(TIM_TypeDef *NewTimer,
-         PWM_TimerChannelTypeDef NewChannel,
-         GPIO_PortPinTypeDef NewPortPinofPWM)
-{
-  this->setDefault();
+  TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
-  this->setTimer(NewTimer);
-  this->setChannel(NewChannel);
-  this->setPortPin(NewPortPinofPWM);
+  TIM_OCStructInit(&TIM_OCInitStructure);
+  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
-  this->setInit();
-  this->setDisable();
+  GPIO_PWM.Mode = GPIO_Mode_AF_PP;
+  GPIO_PWM.Speed = GPIO_Speed_50MHz;
 }
 
-void PWM::setTimer(TIM_TypeDef *NewTimer)
+void PWM::Init(void)
 {
-  Timer = NewTimer;
-}
-void PWM::setChannel(PWM_TimerChannelTypeDef NewChannel)
-{
-  Channel = NewChannel;
-}
-void PWM::setPortPin(GPIO_PortPinTypeDef NewPortPinofPWM)
-{
-  GPIO_PWM.PortPin = NewPortPinofPWM;
-  //  GPIO_PWM.setMode(GPIO_Mode_AF_PP);
-  //  GPIO_PWM.setSpeed(GPIO_Speed_50MHz);
+  GPIO_PWM.PortPin = PortPin;
   GPIO_PWM.Init();
+  this->setup();
 }
 
-void PWM::setEnable(void)
+void PWM::Enable(void)
 {
   if (TIM_OCInitStructure.TIM_OutputState != TIM_OutputState_Enable)
   {
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    this->setInit();
+    this->setup();
   }
 
   // TIMx peripheral Preload register on CCRx
@@ -163,12 +151,12 @@ void PWM::setEnable(void)
   TIM_Cmd(Timer, ENABLE);              // The specified TIM peripheral
 }
 
-void PWM::setDisable(void)
+void PWM::Disable(void)
 {
   if (TIM_OCInitStructure.TIM_OutputState != TIM_OutputState_Disable)
   {
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
-    this->setInit();
+    this->setup();
   }
 
   // TIMx peripheral Preload register on CCRx
@@ -196,15 +184,19 @@ void PWM::setDisable(void)
 void PWM::setFrequency(uint8_t NewFrequency)
 {
   /**
+   * ERROR:  Value of frequency error.
+   */
+
+  /**
    *  TIM_Period = ((System_Frequency / TIM_Prescaler) / PWM_Frequency) - 1
    *
    *  System_Frequency = 72MHz (STM32F103RB)
    */
 
   TIM_TimeBaseStructure.TIM_Prescaler = 10; // !! or 100
-  TIM_TimeBaseStructure.TIM_Period = ((7200000 / TIM_TimeBaseStructure.TIM_Prescaler) / NewFrequency) - 1;
+  TIM_TimeBaseStructure.TIM_Period = ((7200000.0 / TIM_TimeBaseStructure.TIM_Prescaler) / NewFrequency) - 1;
 
-  this->setInit();
+  this->setup();
 }
 
 void PWM::setDutyCycle(uint16_t NewDutyCycle)
@@ -212,7 +204,7 @@ void PWM::setDutyCycle(uint16_t NewDutyCycle)
   if (TIM_OCInitStructure.TIM_Pulse != this->convertDutyCycleToPulse(NewDutyCycle))
   {
     TIM_OCInitStructure.TIM_Pulse = this->convertDutyCycleToPulse(NewDutyCycle);
-    this->setInit();
+    this->setup();
   }
 }
 uint16_t PWM::getFrequency(void)
@@ -223,7 +215,7 @@ uint16_t PWM::getFrequency(void)
    * System_Frequency = 72MHz (STM32F103RB)
    */
 
-  return (72000000 / TIM_TimeBaseStructure.TIM_Prescaler) / (TIM_TimeBaseStructure.TIM_Period + 1);
+  return (72000000.0 / TIM_TimeBaseStructure.TIM_Prescaler) / (TIM_TimeBaseStructure.TIM_Period + 1);
 }
 
 uint16_t PWM::getDutyCycle(void)
@@ -238,23 +230,23 @@ uint16_t PWM::getDutyCycle(void)
   switch (Channel)
   {
   case CH1:
-    return ((Timer->CCR1) * 100) / (Timer->ARR);
+    return ((Timer->CCR1) * 100.0) / (Timer->ARR);
     break;
   case CH2:
-    return ((Timer->CCR2) * 100) / (Timer->ARR);
+    return ((Timer->CCR2) * 100.0) / (Timer->ARR);
     break;
   case CH3:
-    return ((Timer->CCR3) * 100) / (Timer->ARR);
+    return ((Timer->CCR3) * 100.0) / (Timer->ARR);
     break;
   case CH4:
-    return ((Timer->CCR4) * 100) / (Timer->ARR);
+    return ((Timer->CCR4) * 100.0) / (Timer->ARR);
     break;
   default:
     break;
   }
 }
 
-void PWM::setInit(void)
+void PWM::setup(void)
 {
   TIM_TimeBaseInit(Timer, &TIM_TimeBaseStructure);
   switch (Channel)
@@ -276,25 +268,10 @@ void PWM::setInit(void)
   }
 }
 
-void PWM::setDefault(void)
-{
-  TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-
-  TIM_OCStructInit(&TIM_OCInitStructure);
-  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Disable;
-  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-
-  GPIO_PWM.Mode = GPIO_Mode_AF_PP;
-  GPIO_PWM.Speed = GPIO_Speed_50MHz;
-}
-
 uint16_t PWM::convertDutyCycleToPulse(uint16_t DutyCycle)
 {
   /* TIM_Pulse = (PWM_Duty Cycle % * TIM_Period) / 100% */
-  return (DutyCycle * (TIM_TimeBaseStructure.TIM_Period) / 100);
+  return (DutyCycle * (TIM_TimeBaseStructure.TIM_Period) / 100.0);
 }
 
 /********************************END OF FILE***********************************/

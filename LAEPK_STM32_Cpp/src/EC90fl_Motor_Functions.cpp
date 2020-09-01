@@ -22,13 +22,13 @@ void EC90Motor::setPWMTimerChannelPortPin(TIM_TypeDef *NewTimer,
                                           PWM_TimerChannelTypeDef NewChannel,
                                           GPIO_PortPinTypeDef NewPWMPortPin)
 {
-  PWM_Speed.setTimer(NewTimer);
-  PWM_Speed.setChannel(NewChannel);
-  PWM_Speed.setPortPin(NewPWMPortPin);
-
-  PWM_Speed.setFrequency(50);
-  PWM_Speed.setDutyCycle(0);
-  PWM_Speed.setEnable();
+//  PWM_Speed.setTimer(NewTimer);
+//  PWM_Speed.setChannel(NewChannel);
+//  PWM_Speed.setPortPin(NewPWMPortPin);
+//
+//  PWM_Speed.setFrequency(50);
+//  PWM_Speed.setDutyCycle(0);
+//  PWM_Speed.setEnable();
 }
 
 void EC90Motor::setOutputPinFunctionState(GPIO_PortPinTypeDef NewFSPortPin)

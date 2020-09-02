@@ -88,6 +88,8 @@ void ADC::Disable(void)
   ADC_Cmd(ADCx, DISABLE);
 }
 
+// FIXME This function have chance into a infinite loop and can't exit,
+// becauce ADC_GetFlagStatus(this->ADCx, ADC_FLAG_EOC) can't return SET(1).
 uint16_t ADC::getValue(void)
 {
   ADC_RegularChannelConfig(this->ADCx, this->ADC_Channel, this->ADC_Rank, this->ADC_SampleTime);

@@ -61,6 +61,7 @@ void Joint_Initialization(Joint *joint);
 void LimitSwitch_Initialization(void);
 void USART_Initialization(void);
 void Timer_Initialization(void);
+void Board_Initialization(void);
 
 void CommunicationDecoder(uint8_t Command);
 void Delay_NonTimer(__IO uint32_t nTime);

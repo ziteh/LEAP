@@ -48,6 +48,7 @@ int main(void)
   LimitSwitch_Initialization();
   USART_Initialization();
   Timer_Initialization();
+  Board_Initialization();
 
   USART_Send(USART2, "[READY]\r\n");
 
@@ -223,6 +224,25 @@ void Timer_Initialization(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
+}
+
+void Board_Initialization(void)
+{
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
+                             RCC_APB2Periph_GPIOC,
+                         ENABLE);
+
+  GPIO Button;
+  Button.PortPin = User_Button;
+  Button.Mode = GPIO_Mode_IN_FLOATING;
+  Button.Init();
+
+  GPIO LED;
+  LED.PortPin = User_LED;
+  LED.Mode = GPIO_Mode_Out_PP;
+  LED.Speed = GPIO_Speed_2MHz;
+  LED.Init();
+  LED.setValue(LOW);
 }
 
 void CommunicationDecoder(uint8_t Command)

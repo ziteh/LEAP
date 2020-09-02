@@ -17,7 +17,7 @@
  */
 
 /* Uncomment it to run unit test program, comment it to run main program. */
-// #define ENABLE_UNIT_TEST
+ #define ENABLE_UNIT_TEST
 
 #include "main.hpp"
 
@@ -80,7 +80,7 @@ int main(void)
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
-  UnitTest::Joint_Extenstion();
+  UnitTest::Timer_1sec();
 #endif /* ENABLE_UNIT_TEST */
 }
 

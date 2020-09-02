@@ -13,9 +13,6 @@
       "${workspaceFolder}/Utilities/STM32F103_Nucleo"
     ],
     "C_Cpp.default.systemIncludePath": [
-      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include/*",
-      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include/sys",
-
       "C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ARMTools/arm-atollic-eabi/include",
       "C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ARMTools/arm-atollic-eabi/include/sys",
       "C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ARMTools/arm-atollic-eabi/include/c++/6.3.1",

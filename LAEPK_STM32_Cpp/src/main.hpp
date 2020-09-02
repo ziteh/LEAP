@@ -57,14 +57,15 @@ extern "C"
 #define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
 #define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
 
+void MotionHandler(void);
+void CommunicationDecoder(uint8_t Command);
+void Delay_NonTimer(__IO uint32_t nTime);
+
 void Joint_Initialization(Joint *joint);
 void LimitSwitch_Initialization(void);
 void USART_Initialization(void);
 void Timer_Initialization(void);
 void Board_Initialization(void);
-
-void CommunicationDecoder(uint8_t Command);
-void Delay_NonTimer(__IO uint32_t nTime);
 
 extern "C"
 {

@@ -20,6 +20,7 @@
 
 Joint::Joint(void)
 {
+  MotionState = NoInMotion;
 }
 
 void Joint::Init(void)
@@ -53,6 +54,68 @@ void Joint::Init(void)
   BackFSR.ADC_Channel = ADC_Channel_BackFSR;
   BackFSR.Init();
   BackFSR.Enable();
+}
+
+bool Joint::ExtensionStartTriggered(void)
+{
+  return ((FrontFSR.getValue() > ExtensionFSRStartThreshold) && (getLimitState() != FullExtension));
+}
+
+bool Joint::FlexionStartTriggered(void)
+{
+  return ((BackFSR.getValue() > FlexionFSRStartThreshold) && (getLimitState() != FullFlexion));
+}
+
+bool Joint::ExtensionStopTriggered(void)
+{
+  return ((BackFSR.getValue() > ExtensionFSRStopThreshold) || (getLimitState() == FullExtension));
+}
+
+bool Joint::FlexionStopTriggered(void)
+{
+  return ((FrontFSR.getValue() > FlexionFSRStopThreshold) || (getLimitState() == FullFlexion));
+}
+
+void Joint::MotionExtensionStart(void)
+{
+  MotionState = Extensioning;
+  USART_Send(USART2, "Ex-Start\r\n");
+
+  Motor.setDirection(EC90Motor::CCW);
+  Motor.setSpeed(15);
+  Motor.Enable();
+}
+
+void Joint::MotionFlexionStart(void)
+{
+  MotionState = Flexioning;
+  USART_Send(USART2, "Fl-Start\r\n");
+
+  Motor.setDirection(EC90Motor::CW);
+  Motor.setSpeed(15);
+  Motor.Enable();
+}
+
+Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
+{
+  Motor.Disable();
+  Motor.setSpeed(0);
+
+  MotionState = NoInMotion;
+  USART_Send(USART2, "Ex-Stop\r\n");
+
+  return getLimitState();
+}
+
+Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
+{
+  Motor.Disable();
+  Motor.setSpeed(0);
+
+  MotionState = NoInMotion;
+  USART_Send(USART2, "Fl-Stop\r\n");
+
+  return getLimitState();
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionHandler(void)

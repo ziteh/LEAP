@@ -24,6 +24,8 @@
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
 
+Joint RightJoint;
+
 int main(void)
 {
 #ifndef ENABLE_UNIT_TEST
@@ -36,14 +38,7 @@ int main(void)
   /* Configures the priority grouping */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
-  // uint16_t ADC_JointAnglePOTValue;
-  // uint16_t ADC_FrontFSRValue;
-  // uint16_t ADC_BackFSRValue;
-
-  // float Joint_Angle;
-
   /* Initialization Functions */
-  Joint RightJoint;
   Joint_Initialization(&RightJoint);
   LimitSwitch_Initialization();
   USART_Initialization();
@@ -54,36 +49,49 @@ int main(void)
 
   while (1)
   {
-    RightJoint.MotionHandler();
-
-    // /* Get value */
-    // ADC_FrontFSRValue = ADC_GetValue(ADC1, ADC_Channel_4, 1, ADC_SampleTime_55Cycles5);
-    // ADC_BackFSRValue = ADC_GetValue(ADC1, ADC_Channel_8, 1, ADC_SampleTime_55Cycles5);
-    // ADC_JointAnglePOTValue = ADC_GetValue(ADC1, ADC_Channel_1, 1, ADC_SampleTime_55Cycles5);
-    // Joint_Angle = Convert_ADCValueToAngle(ADC_JointAnglePOTValue);
-
-    // USART_Send(USART2, "ANG:");
-    // USART_Send(USART2, convertIntToString(round(Joint_Angle)));
-    // USART_Send(USART2, "\r\n");
-
-    // USART_Send(USART2, "POT:");
-    // USART_Send(USART2, convertIntToString(ADC_JointAnglePOTValue));
-    // USART_Send(USART2, "\r\n");
-
-    // USART_Send(USART2, "EXT:");
-    // USART_Send(USART2, convertIntToString(ADC_FrontFSRValue));
-    // USART_Send(USART2, "\r\n");
-
-    // USART_Send(USART2, "FLE:");
-    // USART_Send(USART2, convertIntToString(ADC_BackFSRValue));
-    // USART_Send(USART2, "\r\n----------\r\n");
-
-    Delay_ms(200);
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
   UnitTest::Timer_1sec();
 #endif /* ENABLE_UNIT_TEST */
+}
+
+void MotionHandler(void)
+{
+  if (RightJoint.MotionState == Joint::NoInMotion)
+  {
+    if (RightJoint.ExtensionStartTriggered())
+    {
+      RightJoint.MotionExtensionStart();
+    }
+    else if (RightJoint.FlexionStartTriggered())
+    {
+      RightJoint.MotionFlexionStart();
+    }
+  }
+  else
+  {
+    if ((RightJoint.MotionState == Joint::Extensioning) && RightJoint.ExtensionStopTriggered())
+    {
+      RightJoint.MotionExtensionStop();
+    }
+    else if ((RightJoint.MotionState == Joint::Flexioning) && RightJoint.FlexionStopTriggered())
+    {
+      RightJoint.MotionFlexionStop();
+    }
+  }
+}
+
+void CommunicationDecoder(uint8_t Command)
+{
+  //  Joint_SetAbsoluteAngle(Command - 5);
+}
+
+void Delay_NonTimer(__IO uint32_t nTime)
+{
+  for (; nTime != 0; nTime--)
+  {
+  }
 }
 
 void Joint_Initialization(Joint *joint)
@@ -158,7 +166,7 @@ void LimitSwitch_Initialization(void)
 }
 
 /**
- * @brief       Initialize USART.
+ * @brief Initialize USART.
  */
 void USART_Initialization(void)
 {
@@ -243,18 +251,6 @@ void Board_Initialization(void)
   LED.Speed = GPIO_Speed_2MHz;
   LED.Init();
   LED.setValue(LOW);
-}
-
-void CommunicationDecoder(uint8_t Command)
-{
-  //  Joint_SetAbsoluteAngle(Command - 5);
-}
-
-void Delay_NonTimer(__IO uint32_t nTime)
-{
-  for (; nTime != 0; nTime--)
-  {
-  }
 }
 
 extern "C"

@@ -45,6 +45,15 @@ public:
     FullFlexion
   } SoftwareLimitStateTypeDef;
 
+  typedef enum
+  {
+    NoInMotion,
+    Extensioning,
+    Flexioning
+  } MotionStateTypeDef;
+
+  MotionStateTypeDef MotionState;
+
   /* The state struct of joint. */
   typedef struct
   {
@@ -97,6 +106,17 @@ public:
 
   Joint(void);
   void Init(void);
+
+  bool ExtensionStartTriggered(void);
+  bool FlexionStartTriggered(void);
+  bool ExtensionStopTriggered(void);
+  bool FlexionStopTriggered(void);
+
+  void MotionExtensionStart(void);
+  void MotionFlexionStart(void);
+
+  SoftwareLimitStateTypeDef MotionExtensionStop(void);
+  SoftwareLimitStateTypeDef MotionFlexionStop(void);
 
   SoftwareLimitStateTypeDef MotionHandler(void);
   SoftwareLimitStateTypeDef MotionStop(void);

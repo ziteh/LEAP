@@ -225,6 +225,8 @@ void TIM2_IRQHandler(void)
     GPIO LED;
     LED.PortPin = User_LED;
     LED.toggleValue();
+
+    MotionHandler();
   }
 }
 

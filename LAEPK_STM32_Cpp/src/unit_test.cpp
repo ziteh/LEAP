@@ -327,7 +327,7 @@ namespace UnitTest
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-    TIM_TimeBaseS
+    TIM_TimeBaseStructure.
 
   }
 

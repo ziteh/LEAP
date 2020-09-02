@@ -6,8 +6,6 @@
   ],
   "settings": {
     "C_Cpp.default.includePath": [
-      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include",
-
       "${workspaceFolder}/src",
       "${workspaceFolder}/Libraries/CMSIS/Include",
       "${workspaceFolder}/Libraries/CMSIS/Device/ST/STM32F10x/Include",
@@ -16,7 +14,18 @@
     ],
     "C_Cpp.default.systemIncludePath": [
       "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include/*",
-      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include/sys"
+      "C:/STM31Toolchain/gcc-arm/arm-none-eabi/include/sys",
+
+      "C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ARMTools/arm-atollic-eabi/include",
+      "C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ARMTools/arm-atollic-eabi/include/c++/6.3.1",
+      "C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ARMTools/arm-atollic-eabi/include/c++/6.3.1/arm-atollic-eabi",
+      "C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ARMTools/lib/gcc/arm-atollic-eabi/6.3.1/include"
+    ],
+    "C_Cpp.default.defines": [
+      "HSI_VALUE=8000000",
+      "STM32F10X_MD",
+      "USE_NUCLEO_F103RB",
+      "USE_STDPERIPH_DRIVER"
     ],
     "cortex-debug.openocdPath": "C:/STM32Toolchain/openocd/bin/openocd.exe",
     "cortex-debug.armToolchainPath": "C:/STM32Toolchain/gcc-arm/bin/",

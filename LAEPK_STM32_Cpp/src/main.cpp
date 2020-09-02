@@ -24,7 +24,10 @@
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
 
+// Joint NowJoint;
+Joint *NowJoint;
 Joint RightJoint;
+JointWithoutHallSensor LeftJoint;
 
 int main(void)
 {
@@ -39,7 +42,10 @@ int main(void)
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
   /* Initialization Functions */
-  Joint_Initialization(&RightJoint);
+  NowJoint = &RightJoint;
+  Joint_Initialization(NowJoint);
+  NowJoint = &LeftJoint;
+  Joint_Initialization(NowJoint);
   LimitSwitch_Initialization();
   USART_Initialization();
   Timer_Initialization();
@@ -58,26 +64,51 @@ int main(void)
 
 void MotionHandler(void)
 {
-  if (RightJoint.MotionState == Joint::NoInMotion)
+  NowJoint = &RightJoint;
+  if (NowJoint->MotionState == Joint::NoInMotion)
   {
-    if (RightJoint.ExtensionStartTriggered())
+    if (NowJoint->ExtensionStartTriggered())
     {
-      RightJoint.MotionExtensionStart();
+      NowJoint->MotionExtensionStart();
     }
-    else if (RightJoint.FlexionStartTriggered())
+    else if (NowJoint->FlexionStartTriggered())
     {
-      RightJoint.MotionFlexionStart();
+      NowJoint->MotionFlexionStart();
     }
   }
   else
   {
-    if ((RightJoint.MotionState == Joint::Extensioning) && RightJoint.ExtensionStopTriggered())
+    if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
     {
-      RightJoint.MotionExtensionStop();
+      NowJoint->MotionExtensionStop();
     }
-    else if ((RightJoint.MotionState == Joint::Flexioning) && RightJoint.FlexionStopTriggered())
+    else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
     {
-      RightJoint.MotionFlexionStop();
+      NowJoint->MotionFlexionStop();
+    }
+  }
+
+  NowJoint = &LeftJoint;
+  if (NowJoint->MotionState == Joint::NoInMotion)
+  {
+    if (NowJoint->ExtensionStartTriggered())
+    {
+      NowJoint->MotionExtensionStart();
+    }
+    else if (NowJoint->FlexionStartTriggered())
+    {
+      NowJoint->MotionFlexionStart();
+    }
+  }
+  else
+  {
+    if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
+    {
+      NowJoint->MotionExtensionStop();
+    }
+    else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
+    {
+      NowJoint->MotionFlexionStop();
     }
   }
 }

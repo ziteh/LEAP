@@ -323,6 +323,34 @@ uint8_t Joint::Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
     return ((uint8_t)PWMDutyCycle);
 }
 
+void JointWithoutHallSensor::MotionExtensionStart(void)
+{
+  WaitStop = false;
+  MotionState = Extensioning;
+  USART_Send(USART2, "JWHS: Ex-Start\r\n");
+}
+
+void JointWithoutHallSensor::MotionFlexionStart(void)
+{
+  WaitStop = false;
+  MotionState = Flexioning;
+  USART_Send(USART2, "JWHS: Fl-Start\r\n");
+}
+
+JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
+{
+  WaitStop = true;
+  MotionState = NoInMotion;
+  USART_Send(USART2, "JWHS: Ex-Stop\r\n");
+}
+
+JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
+{
+  WaitStop = true;
+  MotionState = NoInMotion;
+  USART_Send(USART2, "JWHS: Fl-Stop\r\n");
+}
+
 // void Joint_SetAbsoluteAngle(float TargetAngle)
 // {
 //   float NowAngle = Joint_GetAbsoluteAngle();

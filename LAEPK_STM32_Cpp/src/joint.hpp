@@ -114,11 +114,11 @@ public:
   bool ExtensionStopTriggered(void);
   bool FlexionStopTriggered(void);
 
-  void MotionExtensionStart(void);
-  void MotionFlexionStart(void);
+  virtual void MotionExtensionStart(void);
+  virtual void MotionFlexionStart(void);
 
-  SoftwareLimitStateTypeDef MotionExtensionStop(void);
-  SoftwareLimitStateTypeDef MotionFlexionStop(void);
+  virtual SoftwareLimitStateTypeDef MotionExtensionStop(void);
+  virtual SoftwareLimitStateTypeDef MotionFlexionStop(void);
 
   SoftwareLimitStateTypeDef MotionHandler(void);
   SoftwareLimitStateTypeDef MotionStop(void);
@@ -138,6 +138,16 @@ private:
 
   float Convert_ADCValueToAngle(uint16_t ADCValue);
   uint8_t Convert_DegPerSecToPWMDutyCycle(float DegPerSec);
+};
+
+class JointWithoutHallSensor : public Joint
+{
+public:
+  void MotionExtensionStart(void);
+  void MotionFlexionStart(void);
+
+  SoftwareLimitStateTypeDef MotionExtensionStop(void);
+  SoftwareLimitStateTypeDef MotionFlexionStop(void);
 };
 
 /**

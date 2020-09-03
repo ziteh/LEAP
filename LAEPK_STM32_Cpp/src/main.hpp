@@ -37,31 +37,85 @@ extern "C"
 #include "stm32f10x.h"
 }
 
+/* Right leg define */
 #define RightJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
-#define LeftJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
+#define RightJoint_Timer_SpeedPWM (TIM3)
+#define RightJoint_Channel_SpeedPWM (CH2)
 
 #define RightJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)D10)
+#define RightJoint_PortPin_Direction ((GPIO_PortPinTypeDef)D9)
+#define RightJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)D8)
+
+#define RightJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PA1)
+#define RightJoint_ADCx_AnglePOT (ADC1)
+#define RightJoint_ADC_Channel_AnglePOT (ADC_Channel_1)
+
+#define RightJoint_PortPin_FrontFSR ((GPIO_PortPinTypeDef)PA4)
+#define RightJoint_ADCx_FrontFSR (ADC1)
+#define RightJoint_ADC_Channel_FrontFSR (ADC_Channel_4)
+
+#define RightJoint_PortPin_BackFSR ((GPIO_PortPinTypeDef)PB0)
+#define RightJoint_ADCx_BackFSR (ADC1)
+#define RightJoint_ADC_Channel_BackFSR (ADC_Channel_8)
+
+#define RightJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
+#define RightJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
+
+#define RightJoint_DefaultValue_FSRStartExtension ((uint16_t)215)
+#define RightJoint_DefaultValue_FSRStartFlexion ((uint16_t)180)
+
+#define RightJoint_DefaultValue_FSRStopExtension ((uint16_t)500)
+#define RightJoint_DefaultValue_FSRStopFlexion ((uint16_t)500)
+
+/* Left leg define */
+#define LeftJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
+#define LeftJoint_Timer_SpeedPWM (TIM3)
+#define LeftJoint_Channel_SpeedPWM (CH2)
+
 #define LeftJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)D7)
+#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)D9)
+#define LeftJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)D8)
+
+#define LeftJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PA1)
+#define LeftJoint_ADCx_AnglePOT (ADC1)
+#define LeftJoint_ADC_Channel_AnglePOT (ADC_Channel_1)
+
+#define LeftJoint_PortPin_FrontFSR ((GPIO_PortPinTypeDef)PA4)
+#define LeftJoint_ADCx_FrontFSR (ADC1)
+#define LeftJoint_ADC_Channel_FrontFSR (ADC_Channel_4)
+
+#define LeftJoint_PortPin_BackFSR ((GPIO_PortPinTypeDef)PB0)
+#define LeftJoint_ADCx_BackFSR (ADC1)
+#define LeftJoint_ADC_Channel_BackFSR (ADC_Channel_8)
+
+#define LeftJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
+#define LeftJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
+
+#define LeftJoint_DefaultValue_FSRStartExtension ((uint16_t)215)
+#define LeftJoint_DefaultValue_FSRStartFlexion ((uint16_t)180)
+
+#define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)500)
+#define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)500)
 
 /* GPIO mapping */
-#define RightMotor_DirectionPin ((GPIO_PortPinTypeDef)D10)
-#define RightMotor_FunctionStatePin ((GPIO_PortPinTypeDef)D9)
+// #define RightMotor_DirectionPin ((GPIO_PortPinTypeDef)D10)
+// #define RightMotor_FunctionStatePin ((GPIO_PortPinTypeDef)D9)
 
-/* Default PWM value */
-#define PWM_DefaultFrequncy ((uint16_t)5000)
-#define PWM_DefaultDutyCycle ((uint8_t)15)
+// /* Default PWM value */
+// #define PWM_DefaultFrequncy ((uint16_t)5000)
+// #define PWM_DefaultDutyCycle ((uint8_t)15)
 
-/* Default Joint ADC value */
-#define Joint_DefaultFullExtensionADCValue ((uint16_t)1400)
-#define Joint_DefaultFullFlexionADCValue ((uint16_t)2450)
+// /* Default Joint ADC value */
+// #define Joint_DefaultFullExtensionADCValue ((uint16_t)1400)
+// #define Joint_DefaultFullFlexionADCValue ((uint16_t)2450)
 
-/* Default FSR start threshold */
-#define Joint_DefaultExtensionFSRStartThreshold ((uint16_t)215)
-#define Joint_DefaultFlexionFSRStartThreshold ((uint16_t)180)
+// /* Default FSR start threshold */
+// #define Joint_DefaultExtensionFSRStartThreshold ((uint16_t)215)
+// #define Joint_DefaultFlexionFSRStartThreshold ((uint16_t)180)
 
-/* Default FSR stop threshold */
-#define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
-#define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
+// /* Default FSR stop threshold */
+// #define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
+// #define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
 
 /**
  * @brief Initializing RCC.
@@ -79,6 +133,7 @@ extern "C"
                            ENABLE);                   \
   }
 
+// FIXME EXIT will auto trigged.
 /**
  * @brief Initializing limit switch.
  * @remark RCC_APB2: GPIOA
@@ -206,6 +261,11 @@ void MotionHandler(void);
 void CommunicationDecoder(uint8_t Command);
 void Delay_NonTimer(__IO uint32_t nTime);
 
+/**
+ * @brief Initializing joint.
+ * @remark RCC_APB1: TIM3
+ *         RCC_APB2: GPIOA, GPIOB, GPIOC, ADC1
+ */
 void Joint_Initialization(Joint *joint, JointTypeDef jointType);
 
 extern "C"

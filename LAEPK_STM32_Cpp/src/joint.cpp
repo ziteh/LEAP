@@ -328,6 +328,8 @@ void JointWithoutHallSensor::MotionExtensionStart(void)
   WaitStop = false;
   MotionState = Extensioning;
   USART_Send(USART2, "JWHS: Ex-Start\r\n");
+
+  Motor.Enable();
 }
 
 void JointWithoutHallSensor::MotionFlexionStart(void)
@@ -335,6 +337,8 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
   WaitStop = false;
   MotionState = Flexioning;
   USART_Send(USART2, "JWHS: Fl-Start\r\n");
+
+  Motor.Enable();
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
@@ -342,6 +346,8 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   WaitStop = true;
   MotionState = NoInMotion;
   USART_Send(USART2, "JWHS: Ex-Stop\r\n");
+
+  Motor.Disable();
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
@@ -349,6 +355,8 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   WaitStop = true;
   MotionState = NoInMotion;
   USART_Send(USART2, "JWHS: Fl-Stop\r\n");
+
+  Motor.Disable();
 }
 
 // void Joint_SetAbsoluteAngle(float TargetAngle)

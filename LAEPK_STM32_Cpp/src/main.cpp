@@ -24,7 +24,6 @@
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
 
-// Joint NowJoint;
 Joint *NowJoint;
 Joint RightJoint;
 JointWithoutHallSensor LeftJoint;
@@ -42,18 +41,15 @@ int main(void)
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
   /* Initialization */
-  NowJoint = &RightJoint;
-  Joint_Initialization(NowJoint, Right);
-  NowJoint = &LeftJoint;
-  Joint_Initialization(NowJoint, Left);
-
   RCC_Initialization;
-  LimitSwitch_Initialization;
   USART_Initialization;
   Timer_Initialization;
   Board_Initialization;
+//  LimitSwitch_Initialization;
+  Joint_Initialization(&RightJoint, Right);
+  Joint_Initialization(&LeftJoint, Left);
 
-  USART_Send(USART2, "[READY]\r\n");
+  USART_Send(USART2, "[L.A.E.P.K. READY]\r\n");
 
   while (1)
   {
@@ -129,45 +125,37 @@ void Delay_NonTimer(__IO uint32_t nTime)
 
 void Joint_Initialization(Joint *joint, JointTypeDef jointType)
 {
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
-                             RCC_APB2Periph_GPIOB |
-                             RCC_APB2Periph_GPIOC |
-                             RCC_APB2Periph_ADC1,
-                         ENABLE);
-
   // Motor
-  joint->PortPin_SpeedPWM = PA7; // D11
-  joint->Timer_SpeedPWM = TIM3;
-  joint->Channel_SpeedPWM = CH2;
+  joint->PortPin_SpeedPWM = ((jointType == Right) ? RightJoint_PortPin_SpeedPWM : LeftJoint_PortPin_SpeedPWM);
+  joint->Timer_SpeedPWM = ((jointType == Right) ? RightJoint_Timer_SpeedPWM : LeftJoint_Timer_SpeedPWM);
+  joint->Channel_SpeedPWM = ((jointType == Right) ? RightJoint_Channel_SpeedPWM : LeftJoint_Channel_SpeedPWM);
 
-  //  joint->PortPin_FunctionState = Joint_PortPin_FunctionState(jointType);
-  joint->PortPin_FunctionState = (jointType == Right) ? RightJoint_PortPin_FunctionState : LeftJoint_PortPin_FunctionState;
-  joint->PortPin_Direction = D9;
-  joint->PortPin_ReadyState = D8;
+  joint->PortPin_FunctionState = ((jointType == Right) ? RightJoint_PortPin_FunctionState : LeftJoint_PortPin_FunctionState);
+  joint->PortPin_Direction = ((jointType == Right) ? RightJoint_PortPin_Direction : LeftJoint_PortPin_Direction);
+  joint->PortPin_ReadyState = ((jointType == Right) ? RightJoint_PortPin_ReadyState : LeftJoint_PortPin_ReadyState);
 
   // ADC
-  joint->PortPin_AnglePOT = PA1; // A1
-  joint->ADCx_AnglePOT = ADC1;
-  joint->ADC_Channel_AnglePOT = ADC_Channel_1;
+  joint->PortPin_AnglePOT = ((jointType == Right) ? RightJoint_PortPin_AnglePOT : LeftJoint_PortPin_AnglePOT);
+  joint->ADCx_AnglePOT = ((jointType == Right) ? RightJoint_ADCx_AnglePOT : LeftJoint_ADCx_AnglePOT);
+  joint->ADC_Channel_AnglePOT = ((jointType == Right) ? RightJoint_ADC_Channel_AnglePOT : LeftJoint_ADC_Channel_AnglePOT);
 
-  joint->PortPin_FrontFSR = PA4; // A2
-  joint->ADCx_FrontFSR = ADC1;
-  joint->ADC_Channel_FrontFSR = ADC_Channel_4;
+  joint->PortPin_FrontFSR = ((jointType == Right) ? RightJoint_PortPin_FrontFSR : LeftJoint_PortPin_FrontFSR);
+  joint->ADCx_FrontFSR = ((jointType == Right) ? RightJoint_ADCx_FrontFSR : LeftJoint_ADCx_FrontFSR);
+  joint->ADC_Channel_FrontFSR = ((jointType == Right) ? RightJoint_ADC_Channel_FrontFSR : LeftJoint_ADC_Channel_FrontFSR);
 
-  joint->PortPin_BackFSR = PB0; // A3
-  joint->ADCx_BackFSR = ADC1;
-  joint->ADC_Channel_BackFSR = ADC_Channel_8;
+  joint->PortPin_BackFSR = ((jointType == Right) ? RightJoint_PortPin_BackFSR : LeftJoint_PortPin_BackFSR);
+  joint->ADCx_BackFSR = ((jointType == Right) ? RightJoint_ADCx_BackFSR : LeftJoint_ADCx_BackFSR);
+  joint->ADC_Channel_BackFSR = ((jointType == Right) ? RightJoint_ADC_Channel_BackFSR : LeftJoint_ADC_Channel_BackFSR);
 
-  // Value & Threshold
-  joint->FullExtensionPOTValue = 1400;
-  joint->FullFlexionPOTValue = 2450;
+  // Value
+  joint->FullExtensionPOTValue = ((jointType == Right) ? RightJoint_DefaultValue_POTFullExtension : LeftJoint_DefaultValue_POTFullExtension);
+  joint->FullFlexionPOTValue = ((jointType == Right) ? RightJoint_DefaultValue_POTFullFlexion : LeftJoint_DefaultValue_POTFullFlexion);
 
-  joint->ExtensionFSRStartThreshold = 215;
-  joint->FlexionFSRStartThreshold = 180;
+  joint->ExtensionFSRStartThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStartExtension : LeftJoint_DefaultValue_FSRStartExtension);
+  joint->FlexionFSRStartThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStartFlexion : LeftJoint_DefaultValue_FSRStartFlexion);
 
-  joint->ExtensionFSRStopThreshold = 500;
-  joint->FlexionFSRStopThreshold = 500;
+  joint->ExtensionFSRStopThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStopExtension : LeftJoint_DefaultValue_FSRStopExtension);
+  joint->FlexionFSRStopThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStopFlexion : LeftJoint_DefaultValue_FSRStopFlexion);
 
   joint->Init();
   joint->MotionStop();

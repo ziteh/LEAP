@@ -123,7 +123,8 @@ public:
   SoftwareLimitStateTypeDef MotionHandler(void);
   SoftwareLimitStateTypeDef MotionStop(void);
 
-private:
+//private:
+protected:
   EC90Motor Motor;
   ADC AnglePOT;
   ADC FrontFSR;

@@ -198,7 +198,7 @@ extern "C"
   {                                                             \
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;              \
     TIM_TimeBaseStructure.TIM_Period = 2000;                    \
-    TIM_TimeBaseStructure.TIM_Prescaler = 7200 - 1;             \
+    TIM_TimeBaseStructure.TIM_Prescaler = 720 - 1;             \
     TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;     \
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; \
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);             \

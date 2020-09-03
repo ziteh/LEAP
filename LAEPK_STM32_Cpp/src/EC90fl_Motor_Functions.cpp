@@ -18,117 +18,95 @@
 
 #include "EC90fl_Motor_Functions.hpp"
 
-void EC90Motor::setPWMTimerChannelPortPin(TIM_TypeDef *NewTimer,
-                                          PWM_TimerChannelTypeDef NewChannel,
-                                          GPIO_PortPinTypeDef NewPWMPortPin)
+EC90Motor::EC90Motor(void)
 {
-  PWM_Speed.setTimer(NewTimer);
-  PWM_Speed.setChannel(NewChannel);
-  PWM_Speed.setPortPin(NewPWMPortPin);
+  FunctionState.Mode = GPIO_Mode_Out_PP;
+  FunctionState.Speed = GPIO_Speed_2MHz;
 
-  PWM_Speed.setFrequency(50);
-  PWM_Speed.setDutyCycle(0);
-  PWM_Speed.setEnable();
+  Direction.Mode = GPIO_Mode_Out_PP;
+  Direction.Speed = GPIO_Speed_2MHz;
+
+  ReadyState.Mode = GPIO_Mode_IPD;
+
+  RPM.Mode = GPIO_Mode_AIN;
 }
 
-void EC90Motor::setOutputPinFunctionState(GPIO_PortPinTypeDef NewFSPortPin)
+void EC90Motor::Init(void)
 {
-  GPIO_FunctionState.PortPin = NewFSPortPin;
-  GPIO_FunctionState.Mode = GPIO_Mode_Out_PP;
-  GPIO_FunctionState.Speed = GPIO_Speed_2MHz;
-  GPIO_FunctionState.Init();
+  Speed.PortPin = PortPin_SpeedPWM;
+  Speed.Timer = Timer_SpeedPWM;
+  Speed.Channel = Channel_SpeedPWM;
+  Speed.setFrequency(500); // 500Hz.
+  Speed.setDutyCycle(0);   // 0%.
+  Speed.Init();
+  Speed.Disable();
 
-  GPIO_FunctionState.setValue(LOW); // Disable.
+  FunctionState.PortPin = PortPin_FunctionState;
+  FunctionState.Init();
+  FunctionState.setValue(LOW); // Disable.
+
+  Direction.PortPin = PortPin_Direction;
+  Direction.Init();
+
+  ReadyState.PortPin = PortPin_ReadyState;
+  ReadyState.Init();
+
+  RPM.PortPin = PortPin_RPM;
+  RPM.Init();
 }
 
-void EC90Motor::setOutputPinDirection(GPIO_PortPinTypeDef NewDirPortPin)
+void EC90Motor::Enable(void)
 {
-  GPIO_Direction.PortPin = NewDirPortPin;
-  GPIO_Direction.Mode = GPIO_Mode_Out_PP;
-  GPIO_Direction.Speed = GPIO_Speed_2MHz;
-  GPIO_Direction.Init();
-
-  GPIO_Direction.setValue(LOW);
+  Speed.Enable();
+  FunctionState.setValue(HIGH);
 }
 
-void EC90Motor::setInputPinReadyState(GPIO_PortPinTypeDef NewRSPortPin)
+void EC90Motor::Disable(void)
 {
-  GPIO_ReadyState.PortPin = NewRSPortPin;
-  GPIO_ReadyState.Mode = GPIO_Mode_IPD;
-  GPIO_ReadyState.Init();
+  FunctionState.setValue(LOW);
+  Speed.Disable();
 }
 
-void EC90Motor::setInputPinRPM(GPIO_PortPinTypeDef NewRPMPortPin)
+void EC90Motor::setDirection(EC90Motor::RotationDirectionTypeDef NewDirection)
 {
-  GPIO_RPM.PortPin = NewRPMPortPin;
-  GPIO_RPM.Mode = GPIO_Mode_AIN;
-  GPIO_RPM.Init();
+  switch (NewDirection)
+  {
+  case CCW:
+    Direction.setValue(HIGH); // HIGH: CCW
+    break;
+  case CW:
+    Direction.setValue(LOW); // LOW: CW
+    break;
+  case ToggleDirection:
+    Direction.toggleValue();
+    break;
+  }
 }
 
-void EC90Motor::setFunctionState(Motor_FunctionStateTypeDef NewState)
+void EC90Motor::setSpeed(uint16_t NewSpeed)
 {
-  if (NewState == Enable)
-    GPIO_FunctionState.setValue(HIGH); // HIGH: Enable
-  else if (NewState == Disable)
-    GPIO_FunctionState.setValue(LOW); // LOW: Disable
-  else if (NewState == ToggleState)
-    GPIO_FunctionState.toggleValue();
+  Speed.setDutyCycle(NewSpeed);
 }
 
-void EC90Motor::setDirection(Motor_DirectionTypeDef NewDirection)
+EC90Motor::ReadyStateTypeDef EC90Motor::getReadyState(void)
 {
-  if (NewDirection == CCW)
-    GPIO_Direction.setValue(HIGH); // HIGH: CCW
-  else if (NewDirection == CW)
-    GPIO_Direction.setValue(LOW); // LOW: CW
-  else if (NewDirection == ToggleDirection)
-    GPIO_Direction.toggleValue();
+  if (ReadyState.getValue() == HIGH)
+    return Ready; // HIGH: Ready
+  else
+    return Fault; // LOW: Fault
 }
 
-void EC90Motor::setDutyCycle(uint16_t NewDutyCycle)
+EC90Motor::RotationDirectionTypeDef EC90Motor::getDirection(void)
 {
-  PWM_Speed.setDutyCycle(NewDutyCycle);
+  if (Direction.getValue() == HIGH)
+    return CCW; // HIGH: CCW
+  else
+    return CW; // LOW: CW
 }
 
-Motor_ReadyStateTypeDef EC90Motor::getReadyState(void)
+uint16_t EC90Motor::getSpeed(void)
 {
-  Motor_ReadyStateTypeDef ReadyState;
-
-  if (GPIO_ReadyState.getValue() == HIGH) // HIGH: Ready
-    ReadyState = Ready;
-  else // LOW: Fault
-    ReadyState = Fault;
-
-  return ReadyState;
-}
-
-Motor_FunctionStateTypeDef EC90Motor::getFunctionState(void)
-{
-  Motor_FunctionStateTypeDef FunctionState;
-
-  if (GPIO_FunctionState.getValue() == HIGH) // HIGH: Enable
-    FunctionState = Enable;
-  else if (GPIO_FunctionState.getValue() == LOW) // LOW: Disable
-    FunctionState = Disable;
-
-  return FunctionState;
-}
-
-Motor_DirectionTypeDef EC90Motor::getDirection(void)
-{
-  Motor_DirectionTypeDef Direction;
-
-  if (GPIO_Direction.getValue() == HIGH) // HIGH: CCW
-    Direction = CCW;
-  else if (GPIO_Direction.getValue() == LOW) // LOW: CW
-    Direction = CW;
-
-  return Direction;
-}
-
-uint16_t EC90Motor::getDutyCycle(void)
-{
-  return PWM_Speed.getDutyCycle();
+  return Speed.getDutyCycle();
 }
 
 /*********************************END OF FILE**********************************/

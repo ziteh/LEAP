@@ -29,6 +29,10 @@ namespace UnitTest
   void GPIO_UserButton_Input_UserLED_Output(void);
   void USART_Send_Data(void);
   void ADC_Read_Analog_value(void);
+  void PWM_Output_1kHz_50DutyCycle(void);
+  void EC90_CW(void);
+  void Joint_Extenstion(void);
+  void Timer_1sec(void);
 } // namespace UnitTest
 
 #endif /* __UNIT_TEST_HPP */

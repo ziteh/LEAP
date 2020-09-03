@@ -28,40 +28,39 @@ extern "C"
 #include "stm32f10x.h"
 } /* extern "C" { */
 
-
 /* Exported types ------------------------------------------------------------*/
 typedef enum
 {
-  CH1 = 1, CH2, CH3, CH4
+  CH1 = 1,
+  CH2,
+  CH3,
+  CH4
 } PWM_TimerChannelTypeDef;
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-void PWM_SetFrequency(TIM_TypeDef* TIMx, uint16_t NewFrequency);
-void PWM_SetDutyCycle(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel,
-    uint8_t DutyCycle);
+void PWM_SetFrequency(TIM_TypeDef *TIMx, uint16_t NewFrequency);
+void PWM_SetDutyCycle(TIM_TypeDef *TIMx, PWM_TimerChannelTypeDef Channel,
+                      uint8_t DutyCycle);
 
-uint16_t PWM_GetFrequency(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel);
-uint16_t PWM_GetDutyCycle(TIM_TypeDef* TIMx, PWM_TimerChannelTypeDef Channel);
-
+uint16_t PWM_GetFrequency(TIM_TypeDef *TIMx, PWM_TimerChannelTypeDef Channel);
+uint16_t PWM_GetDutyCycle(TIM_TypeDef *TIMx, PWM_TimerChannelTypeDef Channel);
 
 class PWM
 {
 public:
+  GPIO_PortPinTypeDef PortPin;
+  TIM_TypeDef *Timer;
+  PWM_TimerChannelTypeDef Channel;
+
   PWM(void);
-  PWM(TIM_TypeDef* NewTimer,
-      PWM_TimerChannelTypeDef NewChannel,
-      GPIO_PortPinTypeDef NewPortPinofPWM);
 
-  void setTimer(TIM_TypeDef* NewTimer);
-  void setChannel(PWM_TimerChannelTypeDef NewChannel);
-  void setPortPin(GPIO_PortPinTypeDef NewPortPinofPWM);
+  void Init(void);
+  void Enable(void);
+  void Disable(void);
 
-  void setEnable(void);
-  void setDisable(void);
-
-  void setFrequency(uint8_t NewFrequency);
+  void setFrequency(uint16_t NewFrequency);
   void setDutyCycle(uint16_t NewDutyCycle);
 
   uint16_t getFrequency(void);
@@ -69,14 +68,10 @@ public:
 
 private:
   GPIO GPIO_PWM;
-  TIM_TypeDef* Timer;
-  PWM_TimerChannelTypeDef Channel;
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
   TIM_OCInitTypeDef TIM_OCInitStructure;
 
-  void setInit(void);
-  void setDefault(void);
-
+  void setup(void);
   uint16_t convertDutyCycleToPulse(uint16_t DutyCycle);
 };
 

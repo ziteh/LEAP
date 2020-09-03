@@ -264,6 +264,7 @@ void GPIO::toggleValue(void)
   (this->getPort())->ODR ^= (this->getPin());
 }
 
+// TODO Use register to replace function.
 GPIO_ValueTypeDef GPIO::getValue()
 {
   uint8_t value;

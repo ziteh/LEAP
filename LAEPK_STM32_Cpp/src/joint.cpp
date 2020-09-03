@@ -84,9 +84,8 @@ void Joint::MotionExtensionStart(void)
   //     (WaitStop == true && (FrontFSR.getValue() < ExtensionFSRStartThreshold / 5.0)))
   {
     WaitStop = false;
-
     MotionState = Extensioning;
-    USART_Send(USART2, "Ex-Start\r\n");
+    // USART_Send(USART2, "Ex-Start\r\n");
 
     Motor.setDirection(EC90Motor::CCW);
     Motor.setSpeed(15);
@@ -101,9 +100,8 @@ void Joint::MotionFlexionStart(void)
   //     (WaitStop == true && (BackFSR.getValue() < FlexionFSRStartThreshold / 5.0)))
   {
     WaitStop = false;
-
     MotionState = Flexioning;
-    USART_Send(USART2, "Fl-Start\r\n");
+    // USART_Send(USART2, "Fl-Start\r\n");
 
     Motor.setDirection(EC90Motor::CW);
     Motor.setSpeed(15);
@@ -118,7 +116,7 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
 
   MotionState = NoInMotion;
   WaitStop = true;
-  USART_Send(USART2, "Ex-Stop\r\n");
+  // USART_Send(USART2, "Ex-Stop\r\n");
 
   return getLimitState();
 }
@@ -130,7 +128,7 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
 
   MotionState = NoInMotion;
   WaitStop = true;
-  USART_Send(USART2, "Fl-Stop\r\n");
+  // USART_Send(USART2, "Fl-Stop\r\n");
 
   return getLimitState();
 }
@@ -389,7 +387,7 @@ void JointWithoutHallSensor::MotionExtensionStart(void)
 {
   WaitStop = false;
   MotionState = Extensioning;
-  USART_Send(USART2, "JWHS: Ex-Start\r\n");
+  // USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
   VirtualHallHandler(EC90Motor::CW);
   // Motor.setDirection(EC90Motor::CW);
@@ -401,7 +399,7 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
 {
   WaitStop = false;
   MotionState = Flexioning;
-  USART_Send(USART2, "JWHS: Fl-Start\r\n");
+  // USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
   VirtualHallHandler(EC90Motor::CCW);
   // Motor.setDirection(EC90Motor::CCW);
@@ -413,7 +411,7 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 {
   WaitStop = true;
   MotionState = NoInMotion;
-  USART_Send(USART2, "JWHS: Ex-Stop\r\n");
+  // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
   Motor.Disable();
   Motor.setSpeed(0);
@@ -423,7 +421,7 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 {
   WaitStop = true;
   MotionState = NoInMotion;
-  USART_Send(USART2, "JWHS: Fl-Stop\r\n");
+  // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
   Motor.Disable();
   Motor.setSpeed(0);

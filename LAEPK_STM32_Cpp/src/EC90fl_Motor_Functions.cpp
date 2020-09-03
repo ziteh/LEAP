@@ -37,7 +37,7 @@ void EC90Motor::Init(void)
   Speed.Timer = Timer_SpeedPWM;
   Speed.Channel = Channel_SpeedPWM;
   Speed.setFrequency(500); // 500Hz.
-  Speed.setDutyCycle(0);    // 0%.
+  Speed.setDutyCycle(0);   // 0%.
   Speed.Init();
   Speed.Disable();
 

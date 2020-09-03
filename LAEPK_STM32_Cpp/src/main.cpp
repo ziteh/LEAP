@@ -68,10 +68,12 @@ void MotionHandler(void)
     if (NowJoint->ExtensionStartTriggered())
     {
       NowJoint->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
     }
     else if (NowJoint->FlexionStartTriggered())
     {
       NowJoint->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
     }
   }
   else
@@ -79,10 +81,12 @@ void MotionHandler(void)
     if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
     {
       NowJoint->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
     }
     else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
     {
       NowJoint->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
     }
   }
 
@@ -92,10 +96,12 @@ void MotionHandler(void)
     if (NowJoint->ExtensionStartTriggered())
     {
       NowJoint->MotionExtensionStart();
+      USART_Send(USART2, "L: Ex-Start\r\n");
     }
     else if (NowJoint->FlexionStartTriggered())
     {
       NowJoint->MotionFlexionStart();
+      USART_Send(USART2, "L: Fl-Start\r\n");
     }
   }
   else
@@ -103,10 +109,12 @@ void MotionHandler(void)
     if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
     {
       NowJoint->MotionExtensionStop();
+      USART_Send(USART2, "L: Ex-Stop\r\n");
     }
     else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
     {
       NowJoint->MotionFlexionStop();
+      USART_Send(USART2, "L: Fl-Stop\r\n");
     }
     else if (NowJoint->MotionState == Joint::Extensioning)
     {

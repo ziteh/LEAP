@@ -42,9 +42,9 @@ extern "C"
 #define RightJoint_Timer_SpeedPWM (TIM3)
 #define RightJoint_Channel_SpeedPWM (CH2)
 
-#define RightJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)D10)
-#define RightJoint_PortPin_Direction ((GPIO_PortPinTypeDef)D9)
-#define RightJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)D8)
+#define RightJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PB6)
+#define RightJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PC7)
+#define RightJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)PA9)
 
 #define RightJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PA1)
 #define RightJoint_ADCx_AnglePOT (ADC1)
@@ -72,21 +72,21 @@ extern "C"
 #define LeftJoint_Timer_SpeedPWM (TIM4)
 #define LeftJoint_Channel_SpeedPWM (CH1)
 
-#define LeftJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)D7)
-#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)D9)
-#define LeftJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)D8)
+#define LeftJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PA8)
+#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PC7)
+#define LeftJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)PA9)
 
-#define LeftJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PA1)
+#define LeftJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PC3)
 #define LeftJoint_ADCx_AnglePOT (ADC1)
-#define LeftJoint_ADC_Channel_AnglePOT (ADC_Channel_1)
+#define LeftJoint_ADC_Channel_AnglePOT (ADC_Channel_13)
 
-#define LeftJoint_PortPin_FrontFSR ((GPIO_PortPinTypeDef)PA4)
+#define LeftJoint_PortPin_FrontFSR ((GPIO_PortPinTypeDef)PC1)
 #define LeftJoint_ADCx_FrontFSR (ADC1)
-#define LeftJoint_ADC_Channel_FrontFSR (ADC_Channel_4)
+#define LeftJoint_ADC_Channel_FrontFSR (ADC_Channel_11)
 
-#define LeftJoint_PortPin_BackFSR ((GPIO_PortPinTypeDef)PB0)
+#define LeftJoint_PortPin_BackFSR ((GPIO_PortPinTypeDef)PC0)
 #define LeftJoint_ADCx_BackFSR (ADC1)
-#define LeftJoint_ADC_Channel_BackFSR (ADC_Channel_8)
+#define LeftJoint_ADC_Channel_BackFSR (ADC_Channel_10)
 
 #define LeftJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
 #define LeftJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
@@ -97,9 +97,9 @@ extern "C"
 #define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)500)
 #define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)500)
 
-#define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)D12)
-#define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)D14)
-#define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)D15)
+#define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)PA6)
+#define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)PB9)
+#define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)PB8)
 
 /**
  * @brief Initializing RCC.

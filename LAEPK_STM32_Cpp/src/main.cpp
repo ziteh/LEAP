@@ -42,12 +42,12 @@ int main(void)
 
   /* Initialization */
   RCC_Initialization;
+  Joint_Initialization(&RightJoint, Right);
+  Joint_Initialization(&LeftJoint, Left);
   USART_Initialization;
   Timer_Initialization;
   Board_Initialization;
-  //  LimitSwitch_Initialization;
-  Joint_Initialization(&RightJoint, Right);
-  Joint_Initialization(&LeftJoint, Left);
+  LimitSwitch_Initialization;
 
   USART_Send(USART2, "[L.A.E.P.K. READY]\r\n");
 
@@ -108,6 +108,14 @@ void MotionHandler(void)
     {
       NowJoint->MotionFlexionStop();
     }
+    else if (NowJoint->MotionState == Joint::Extensioning)
+    {
+      NowJoint->MotionExtensionStart();
+    }
+    else if (NowJoint->MotionState == Joint::Flexioning)
+    {
+      NowJoint->MotionFlexionStart();
+    }
   }
 }
 
@@ -126,6 +134,52 @@ void Delay_NonTimer(__IO uint32_t nTime)
 // TODO Clean it.
 void Joint_Initialization(Joint *joint, JointTypeDef jointType)
 {
+  // Motor
+  joint->PortPin_SpeedPWM = ((jointType == Right) ? RightJoint_PortPin_SpeedPWM : LeftJoint_PortPin_SpeedPWM);
+  joint->Timer_SpeedPWM = ((jointType == Right) ? RightJoint_Timer_SpeedPWM : LeftJoint_Timer_SpeedPWM);
+  joint->Channel_SpeedPWM = ((jointType == Right) ? RightJoint_Channel_SpeedPWM : LeftJoint_Channel_SpeedPWM);
+
+  joint->PortPin_FunctionState = ((jointType == Right) ? RightJoint_PortPin_FunctionState : LeftJoint_PortPin_FunctionState);
+  joint->PortPin_Direction = ((jointType == Right) ? RightJoint_PortPin_Direction : LeftJoint_PortPin_Direction);
+  joint->PortPin_ReadyState = ((jointType == Right) ? RightJoint_PortPin_ReadyState : LeftJoint_PortPin_ReadyState);
+
+  // ADC
+  joint->PortPin_AnglePOT = ((jointType == Right) ? RightJoint_PortPin_AnglePOT : LeftJoint_PortPin_AnglePOT);
+  joint->ADCx_AnglePOT = ((jointType == Right) ? RightJoint_ADCx_AnglePOT : LeftJoint_ADCx_AnglePOT);
+  joint->ADC_Channel_AnglePOT = ((jointType == Right) ? RightJoint_ADC_Channel_AnglePOT : LeftJoint_ADC_Channel_AnglePOT);
+
+  joint->PortPin_FrontFSR = ((jointType == Right) ? RightJoint_PortPin_FrontFSR : LeftJoint_PortPin_FrontFSR);
+  joint->ADCx_FrontFSR = ((jointType == Right) ? RightJoint_ADCx_FrontFSR : LeftJoint_ADCx_FrontFSR);
+  joint->ADC_Channel_FrontFSR = ((jointType == Right) ? RightJoint_ADC_Channel_FrontFSR : LeftJoint_ADC_Channel_FrontFSR);
+
+  joint->PortPin_BackFSR = ((jointType == Right) ? RightJoint_PortPin_BackFSR : LeftJoint_PortPin_BackFSR);
+  joint->ADCx_BackFSR = ((jointType == Right) ? RightJoint_ADCx_BackFSR : LeftJoint_ADCx_BackFSR);
+  joint->ADC_Channel_BackFSR = ((jointType == Right) ? RightJoint_ADC_Channel_BackFSR : LeftJoint_ADC_Channel_BackFSR);
+
+  // Value
+  joint->FullExtensionPOTValue = ((jointType == Right) ? RightJoint_DefaultValue_POTFullExtension : LeftJoint_DefaultValue_POTFullExtension);
+  joint->FullFlexionPOTValue = ((jointType == Right) ? RightJoint_DefaultValue_POTFullFlexion : LeftJoint_DefaultValue_POTFullFlexion);
+
+  joint->ExtensionFSRStartThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStartExtension : LeftJoint_DefaultValue_FSRStartExtension);
+  joint->FlexionFSRStartThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStartFlexion : LeftJoint_DefaultValue_FSRStartFlexion);
+
+  joint->ExtensionFSRStopThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStopExtension : LeftJoint_DefaultValue_FSRStopExtension);
+  joint->FlexionFSRStopThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStopFlexion : LeftJoint_DefaultValue_FSRStopFlexion);
+
+  joint->Init();
+  joint->MotionStop();
+}
+
+// TODO Clean it.
+void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType)
+{
+  if (jointType == Left)
+  {
+    joint->PortPin_VirtualHall1 = LeftJoint_PortPin_VirtualHall1;
+    joint->PortPin_VirtualHall2 = LeftJoint_PortPin_VirtualHall2;
+    joint->PortPin_VirtualHall3 = LeftJoint_PortPin_VirtualHall3;
+  }
+
   // Motor
   joint->PortPin_SpeedPWM = ((jointType == Right) ? RightJoint_PortPin_SpeedPWM : LeftJoint_PortPin_SpeedPWM);
   joint->Timer_SpeedPWM = ((jointType == Right) ? RightJoint_Timer_SpeedPWM : LeftJoint_Timer_SpeedPWM);

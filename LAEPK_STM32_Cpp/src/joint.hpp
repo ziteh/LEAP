@@ -107,7 +107,7 @@ public:
   bool WaitStop;
 
   Joint(void);
-  void Init(void);
+  virtual void Init(void);
 
   bool ExtensionStartTriggered(void);
   bool FlexionStartTriggered(void);
@@ -123,7 +123,6 @@ public:
   SoftwareLimitStateTypeDef MotionHandler(void);
   SoftwareLimitStateTypeDef MotionStop(void);
 
-//private:
 protected:
   EC90Motor Motor;
   ADC AnglePOT;
@@ -144,11 +143,27 @@ protected:
 class JointWithoutHallSensor : public Joint
 {
 public:
+  GPIO_PortPinTypeDef PortPin_VirtualHall1;
+  GPIO_PortPinTypeDef PortPin_VirtualHall2;
+  GPIO_PortPinTypeDef PortPin_VirtualHall3;
+
+  JointWithoutHallSensor(void);
+  void Init(void);
+
   void MotionExtensionStart(void);
   void MotionFlexionStart(void);
 
   SoftwareLimitStateTypeDef MotionExtensionStop(void);
   SoftwareLimitStateTypeDef MotionFlexionStop(void);
+
+private:
+  uint8_t VirtualHallStep;
+
+  GPIO VirtualHall1;
+  GPIO VirtualHall2;
+  GPIO VirtualHall3;
+
+  void VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction);
 };
 
 /**

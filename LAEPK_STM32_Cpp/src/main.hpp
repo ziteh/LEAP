@@ -69,8 +69,8 @@ extern "C"
 
 /* Left leg define */
 #define LeftJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
-#define LeftJoint_Timer_SpeedPWM (TIM3)
-#define LeftJoint_Channel_SpeedPWM (CH2)
+#define LeftJoint_Timer_SpeedPWM (TIM4)
+#define LeftJoint_Channel_SpeedPWM (CH1)
 
 #define LeftJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)D7)
 #define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)D9)
@@ -97,25 +97,9 @@ extern "C"
 #define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)500)
 #define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)500)
 
-/* GPIO mapping */
-// #define RightMotor_DirectionPin ((GPIO_PortPinTypeDef)D10)
-// #define RightMotor_FunctionStatePin ((GPIO_PortPinTypeDef)D9)
-
-// /* Default PWM value */
-// #define PWM_DefaultFrequncy ((uint16_t)5000)
-// #define PWM_DefaultDutyCycle ((uint8_t)15)
-
-// /* Default Joint ADC value */
-// #define Joint_DefaultFullExtensionADCValue ((uint16_t)1400)
-// #define Joint_DefaultFullFlexionADCValue ((uint16_t)2450)
-
-// /* Default FSR start threshold */
-// #define Joint_DefaultExtensionFSRStartThreshold ((uint16_t)215)
-// #define Joint_DefaultFlexionFSRStartThreshold ((uint16_t)180)
-
-// /* Default FSR stop threshold */
-// #define Joint_DefaultExtensionFSRStopThreshold ((uint16_t)500)
-// #define Joint_DefaultFlexionFSRStopThreshold ((uint16_t)500)
+#define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)D12)
+#define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)D14)
+#define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)D15)
 
 /**
  * @brief Initializing RCC.
@@ -133,7 +117,6 @@ extern "C"
                            ENABLE);                   \
   }
 
-// FIXME EXIT will auto trigged.
 /**
  * @brief Initializing limit switch.
  * @remark RCC_APB2: GPIOA
@@ -267,6 +250,7 @@ void Delay_NonTimer(__IO uint32_t nTime);
  *         RCC_APB2: GPIOA, GPIOB, GPIOC, ADC1
  */
 void Joint_Initialization(Joint *joint, JointTypeDef jointType);
+void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType);
 
 extern "C"
 {

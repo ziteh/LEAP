@@ -323,12 +323,77 @@ uint8_t Joint::Convert_DegPerSecToPWMDutyCycle(float DegPerSec)
     return ((uint8_t)PWMDutyCycle);
 }
 
+JointWithoutHallSensor::JointWithoutHallSensor(void)
+{
+  VirtualHall1.Mode = GPIO_Mode_Out_PP;
+  VirtualHall1.Speed = GPIO_Speed_50MHz;
+
+  VirtualHall2.Mode = GPIO_Mode_Out_PP;
+  VirtualHall2.Speed = GPIO_Speed_50MHz;
+
+  VirtualHall3.Mode = GPIO_Mode_Out_PP;
+  VirtualHall3.Speed = GPIO_Speed_50MHz;
+
+  VirtualHallStep = 0;
+
+  MotionState = NoInMotion;
+  WaitStop = false;
+}
+
+void JointWithoutHallSensor::Init(void)
+{
+  VirtualHall1.PortPin = PortPin_VirtualHall1;
+  VirtualHall1.Init();
+  VirtualHall1.setValue(HIGH);
+
+  VirtualHall2.PortPin = PortPin_VirtualHall2;
+  VirtualHall2.Init();
+  VirtualHall2.setValue(LOW);
+
+  VirtualHall3.PortPin = PortPin_VirtualHall3;
+  VirtualHall3.Init();
+  VirtualHall3.setValue(LOW);
+
+  Motor.PortPin_SpeedPWM = PortPin_SpeedPWM;
+  Motor.Timer_SpeedPWM = Timer_SpeedPWM;
+  Motor.Channel_SpeedPWM = Channel_SpeedPWM;
+  Motor.PortPin_FunctionState = PortPin_FunctionState;
+  Motor.PortPin_Direction = PortPin_Direction;
+  Motor.PortPin_ReadyState = PortPin_ReadyState;
+  Motor.PortPin_RPM = PortPin_RPM;
+  Motor.Init();
+  Motor.setSpeed(15);
+  Motor.setDirection(EC90Motor::CW);
+  Motor.Disable();
+
+  AnglePOT.PortPin = PortPin_AnglePOT;
+  AnglePOT.ADCx = ADCx_AnglePOT;
+  AnglePOT.ADC_Channel = ADC_Channel_AnglePOT;
+  AnglePOT.Init();
+  AnglePOT.Enable();
+
+  FrontFSR.PortPin = PortPin_FrontFSR;
+  FrontFSR.ADCx = ADCx_FrontFSR;
+  FrontFSR.ADC_Channel = ADC_Channel_FrontFSR;
+  FrontFSR.Init();
+  FrontFSR.Enable();
+
+  BackFSR.PortPin = PortPin_BackFSR;
+  BackFSR.ADCx = ADCx_BackFSR;
+  BackFSR.ADC_Channel = ADC_Channel_BackFSR;
+  BackFSR.Init();
+  BackFSR.Enable();
+}
+
 void JointWithoutHallSensor::MotionExtensionStart(void)
 {
   WaitStop = false;
   MotionState = Extensioning;
   USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
+  VirtualHallHandler(EC90Motor::CW);
+  // Motor.setDirection(EC90Motor::CW);
+  Motor.setSpeed(15);
   Motor.Enable();
 }
 
@@ -338,6 +403,9 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
   MotionState = Flexioning;
   USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
+  VirtualHallHandler(EC90Motor::CCW);
+  // Motor.setDirection(EC90Motor::CCW);
+  Motor.setSpeed(15);
   Motor.Enable();
 }
 
@@ -348,6 +416,7 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
   Motor.Disable();
+  Motor.setSpeed(0);
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
@@ -357,6 +426,63 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
   Motor.Disable();
+  Motor.setSpeed(0);
+}
+
+void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction)
+{
+  switch (VirtualHallStep)
+  {
+  case 0:
+    VirtualHall1.setValue(HIGH);
+    VirtualHall2.setValue(LOW);
+    VirtualHall3.setValue(LOW);
+    break;
+  case 1:
+    VirtualHall1.setValue(HIGH);
+    VirtualHall2.setValue(HIGH);
+    VirtualHall3.setValue(LOW);
+    break;
+  case 2:
+    VirtualHall1.setValue(LOW);
+    VirtualHall2.setValue(HIGH);
+    VirtualHall3.setValue(LOW);
+    break;
+  case 3:
+    VirtualHall1.setValue(LOW);
+    VirtualHall2.setValue(HIGH);
+    VirtualHall3.setValue(HIGH);
+    break;
+  case 4:
+    VirtualHall1.setValue(LOW);
+    VirtualHall2.setValue(LOW);
+    VirtualHall3.setValue(HIGH);
+    break;
+  case 5:
+    VirtualHall1.setValue(HIGH);
+    VirtualHall2.setValue(LOW);
+    VirtualHall3.setValue(HIGH);
+    break;
+
+  default:
+    VirtualHallStep = 0;
+    break;
+  }
+
+  if (Direction == EC90Motor::CW)
+  {
+    if (VirtualHallStep >= 5)
+      VirtualHallStep = 0;
+    else
+      VirtualHallStep++;
+  }
+  else if (Direction == EC90Motor::CCW)
+  {
+    if (VirtualHallStep <= 0)
+      VirtualHallStep = 5;
+    else
+      VirtualHallStep--;
+  }
 }
 
 // void Joint_SetAbsoluteAngle(float TargetAngle)

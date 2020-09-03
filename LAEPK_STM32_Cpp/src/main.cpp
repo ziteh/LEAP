@@ -41,15 +41,17 @@ int main(void)
   /* Configures the priority grouping */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
-  /* Initialization Functions */
+  /* Initialization */
   NowJoint = &RightJoint;
-  Joint_Initialization(NowJoint);
+  Joint_Initialization(NowJoint, Right);
   NowJoint = &LeftJoint;
-  Joint_Initialization(NowJoint);
-  LimitSwitch_Initialization();
-  USART_Initialization();
-  Timer_Initialization();
-  Board_Initialization();
+  Joint_Initialization(NowJoint, Left);
+
+  RCC_Initialization;
+  LimitSwitch_Initialization;
+  USART_Initialization;
+  Timer_Initialization;
+  Board_Initialization;
 
   USART_Send(USART2, "[READY]\r\n");
 
@@ -125,7 +127,7 @@ void Delay_NonTimer(__IO uint32_t nTime)
   }
 }
 
-void Joint_Initialization(Joint *joint)
+void Joint_Initialization(Joint *joint, JointTypeDef jointType)
 {
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
@@ -139,7 +141,8 @@ void Joint_Initialization(Joint *joint)
   joint->Timer_SpeedPWM = TIM3;
   joint->Channel_SpeedPWM = CH2;
 
-  joint->PortPin_FunctionState = D10;
+  //  joint->PortPin_FunctionState = Joint_PortPin_FunctionState(jointType);
+  joint->PortPin_FunctionState = (jointType == Right) ? RightJoint_PortPin_FunctionState : LeftJoint_PortPin_FunctionState;
   joint->PortPin_Direction = D9;
   joint->PortPin_ReadyState = D8;
 
@@ -168,120 +171,6 @@ void Joint_Initialization(Joint *joint)
 
   joint->Init();
   joint->MotionStop();
-}
-
-void LimitSwitch_Initialization(void)
-{
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-  GPIO limitSwitch;
-  limitSwitch.PortPin = PA0;
-  limitSwitch.Mode = GPIO_Mode_IPD;
-  limitSwitch.Init();
-
-  NVIC_InitTypeDef NVIC_InitStructure;
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0);
-
-  EXTI_InitTypeDef EXTI_InitStructure;
-  EXTI_InitStructure.EXTI_Line = EXTI_Line0;
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-  EXTI_Init(&EXTI_InitStructure);
-}
-
-/**
- * @brief Initialize USART.
- */
-void USART_Initialization(void)
-{
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-  GPIO USART2_TX;
-  USART2_TX.PortPin = PA2;
-  USART2_TX.Mode = GPIO_Mode_AF_PP;
-  USART2_TX.Speed = GPIO_Speed_50MHz;
-  USART2_TX.Init();
-
-  GPIO USART2_RX;
-  USART2_RX.PortPin = PA3;
-  USART2_RX.Mode = GPIO_Mode_IN_FLOATING;
-  USART2_RX.Init();
-
-  NVIC_InitTypeDef NVIC_InitStructure;
-  NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-
-  USART_InitTypeDef USART_InitStructure;
-  USART_StructInit(&USART_InitStructure);
-  USART_InitStructure.USART_BaudRate = 9600;
-  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-  USART_InitStructure.USART_StopBits = USART_StopBits_1;
-  USART_InitStructure.USART_Parity = USART_Parity_No;
-  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-  USART_Init(USART2, &USART_InitStructure);
-
-  /* Enable "Receive data register not empty" interrupt */
-  USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
-
-  /* Enable USART */
-  USART_Cmd(USART2, ENABLE);
-
-  /* Clear "Transmission Complete" flag, 否則第1位數據會丟失 */
-  USART_ClearFlag(USART2, USART_FLAG_TC);
-}
-
-void Timer_Initialization(void)
-{
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-
-  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-  TIM_TimeBaseStructure.TIM_Period = 2000;
-  TIM_TimeBaseStructure.TIM_Prescaler = 7200 - 1;
-  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
-
-  TIM_ClearFlag(TIM2, TIM_FLAG_Update);
-  TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
-  TIM_Cmd(TIM2, ENABLE);
-
-  NVIC_InitTypeDef NVIC_InitStructure;
-  NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-}
-
-void Board_Initialization(void)
-{
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
-                             RCC_APB2Periph_GPIOC,
-                         ENABLE);
-
-  GPIO Button;
-  Button.PortPin = User_Button;
-  Button.Mode = GPIO_Mode_IN_FLOATING;
-  Button.Init();
-
-  GPIO LED;
-  LED.PortPin = User_LED;
-  LED.Mode = GPIO_Mode_Out_PP;
-  LED.Speed = GPIO_Speed_2MHz;
-  LED.Init();
-  LED.setValue(LOW);
 }
 
 extern "C"

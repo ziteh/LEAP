@@ -45,7 +45,7 @@ int main(void)
   USART_Initialization;
   Timer_Initialization;
   Board_Initialization;
-//  LimitSwitch_Initialization;
+  //  LimitSwitch_Initialization;
   Joint_Initialization(&RightJoint, Right);
   Joint_Initialization(&LeftJoint, Left);
 
@@ -123,6 +123,7 @@ void Delay_NonTimer(__IO uint32_t nTime)
   }
 }
 
+// TODO Clean it.
 void Joint_Initialization(Joint *joint, JointTypeDef jointType)
 {
   // Motor

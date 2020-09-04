@@ -66,7 +66,9 @@ public:
   void setValue(uint8_t NewValue);
   void toggleValue(void);
 
-  GPIO_ValueTypeDef getValue();
+  GPIO_ValueTypeDef getValue(void);
+  GPIO_ValueTypeDef getInputValue(void);
+  GPIO_ValueTypeDef getOutputValue(void);
 
 private:
   GPIO_TypeDef *getPort(void);

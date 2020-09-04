@@ -281,7 +281,7 @@ void GPIO::toggleValue(void)
 }
 
 // TODO Use register to replace function.
-GPIO_ValueTypeDef GPIO::getValue()
+GPIO_ValueTypeDef GPIO::getValue(void)
 {
   uint8_t value;
 
@@ -311,6 +311,38 @@ GPIO_ValueTypeDef GPIO::getValue()
     return ((GPIO_ValueTypeDef)HIGH);
 }
 
+GPIO_ValueTypeDef GPIO::getInputValue(void)
+{
+  GPIO_ValueTypeDef value;
+
+  if (((this->getPort())->IDR & (this->getPin())) != (uint32_t)Bit_RESET)
+  {
+    value = HIGH;
+  }
+  else
+  {
+    value = LOW;
+  }
+
+  return value;
+}
+
+GPIO_ValueTypeDef GPIO::getOutputValue(void)
+{
+  GPIO_ValueTypeDef value;
+
+  if (((this->getPort())->ODR & (this->getPin())) != (uint32_t)Bit_RESET)
+  {
+    value = HIGH;
+  }
+  else
+  {
+    value = LOW;
+  }
+
+  return value;
+}
+
 GPIO_TypeDef *GPIO::getPort(void)
 {
   if (((uint8_t)this->PortPin) <= ((uint8_t)PA15)) // Port-A:  0~15
@@ -327,20 +359,20 @@ GPIO_TypeDef *GPIO::getPort(void)
 
 uint16_t GPIO::getPin(void)
 {
-  uint8_t Offset = 0;
+  uint8_t offset = 0;
 
   if (((uint8_t)this->PortPin) <= ((uint8_t)PA15)) // Port-A:  0~15
-    Offset = ((uint8_t)PA0);
+    offset = ((uint8_t)PA0);
   else if (((uint8_t)this->PortPin) <= ((uint8_t)PB15)) // Port-B: 16~31
-    Offset = ((uint8_t)PB0);
+    offset = ((uint8_t)PB0);
   else if (((uint8_t)this->PortPin) <= ((uint8_t)PC15)) // Port-C: 32~47
-    Offset = ((uint8_t)PC0);
+    offset = ((uint8_t)PC0);
   else if (((uint8_t)this->PortPin) <= ((uint8_t)PD15)) // Port-D: 48~63
-    Offset = ((uint8_t)PD0);
+    offset = ((uint8_t)PD0);
   else if (((uint8_t)this->PortPin) <= ((uint8_t)PE15)) // Port-E: 64~79
-    Offset = ((uint8_t)PE0);
+    offset = ((uint8_t)PE0);
 
-  return ((uint16_t)(0x0001 << (((uint8_t)this->PortPin) - Offset)));
+  return ((uint16_t)(0x0001 << (((uint8_t)this->PortPin) - offset)));
 }
 
 /********************************END OF FILE***********************************/

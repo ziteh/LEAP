@@ -53,6 +53,10 @@ int main(void)
 
   while (1)
   {
+    // if (Button.getInputValue() == LOW)
+    // {
+    //   UpdateInfo();
+    // }
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
@@ -168,6 +172,75 @@ void Delay_NonTimer(__IO uint32_t nTime)
   for (; nTime != 0; nTime--)
   {
   }
+}
+
+void UpdateInfo(void)
+{
+  NowJoint = &RightJoint;
+  USART_Send(USART2, "[Right INFO]\n");
+
+  USART_Send(USART2, "  A-POT: ");
+  USART_Send(USART2, Convert::ToString(NowJoint->getAnglePOTValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  F-FSR: ");
+  USART_Send(USART2, Convert::ToString(NowJoint->getFrontFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  B-FSR: ");
+  USART_Send(USART2, Convert::ToString(NowJoint->getBackFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  Limit: ");
+  switch (NowJoint->getLimitState())
+  {
+  case Joint::FullExtension:
+    USART_Send(USART2, "Full-Ex");
+    break;
+
+  case Joint::FullFlexion:
+    USART_Send(USART2, "Full-Fl");
+    break;
+
+  case Joint::Unlimited:
+  default:
+    USART_Send(USART2, "Unlimited");
+    break;
+  }
+  USART_Send(USART2, "\n");
+
+  NowJoint = &LeftJoint;
+  USART_Send(USART2, "[Left INFO]\n");
+
+  USART_Send(USART2, "  A-POT: ");
+  USART_Send(USART2, Convert::ToString(NowJoint->getAnglePOTValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  F-FSR: ");
+  USART_Send(USART2, Convert::ToString(NowJoint->getFrontFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  B-FSR: ");
+  USART_Send(USART2, Convert::ToString(NowJoint->getBackFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  Limit: ");
+  switch (NowJoint->getLimitState())
+  {
+  case Joint::FullExtension:
+    USART_Send(USART2, "Full-Ex");
+    break;
+
+  case Joint::FullFlexion:
+    USART_Send(USART2, "Full-Fl");
+    break;
+
+  case Joint::Unlimited:
+  default:
+    USART_Send(USART2, "Unlimited");
+    break;
+  }
+  USART_Send(USART2, "\n");
 }
 
 // TODO Clean it.

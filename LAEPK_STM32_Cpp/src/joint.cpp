@@ -127,6 +127,21 @@ void Joint::MotionWaitStop(void)
   }
 }
 
+uint16_t Joint::getAnglePOTValue(void)
+{
+  return AnglePOT.getValue();
+}
+
+uint16_t Joint::getFrontFSRValue(void)
+{
+  return FrontFSR.getValue();
+}
+
+uint16_t Joint::getBackFSRValue(void)
+{
+  return BackFSR.getValue();
+}
+
 Joint::SoftwareLimitStateTypeDef Joint::MotionHandler(void)
 {
   SoftwareLimitStateTypeDef limitState = getLimitState();

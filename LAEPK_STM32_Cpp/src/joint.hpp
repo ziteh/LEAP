@@ -119,6 +119,11 @@ public:
   virtual SoftwareLimitStateTypeDef MotionExtensionStop(void);
   virtual SoftwareLimitStateTypeDef MotionFlexionStop(void);
 
+  uint16_t getAnglePOTValue(void);
+  uint16_t getFrontFSRValue(void);
+  uint16_t getBackFSRValue(void);
+  SoftwareLimitStateTypeDef getLimitState(void);
+
   void MotionWaitStop(void);
 
   SoftwareLimitStateTypeDef MotionHandler(void);
@@ -129,8 +134,6 @@ protected:
   ADC AnglePOT;
   ADC FrontFSR;
   ADC BackFSR;
-
-  SoftwareLimitStateTypeDef getLimitState(void);
 
   bool StartExtensionIsTriggered(void);
   bool StartFlexionIsTriggered(void);

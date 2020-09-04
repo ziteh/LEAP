@@ -147,6 +147,25 @@ void SysTick_Handler(void)
 }
 
 /**
+  * @brief  This function handles TIM2 global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void TIM2_IRQHandler(void)
+{
+  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+  {
+    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+
+    GPIO LED;
+    LED.PortPin = User_LED;
+    LED.toggleValue();
+
+    MotionHandler();
+  }
+}
+
+/**
  * @brief  This function handles USART2_IRQHandler Handler.
  * @param  None
  * @retval None
@@ -211,21 +230,17 @@ void EXTI0_IRQHandler(void)
 }
 
 /**
-  * @brief  This function handles TIM2 global interrupt request.
-  * @param  None
-  * @retval None
-  */
-void TIM2_IRQHandler(void)
+ * @brief  This function handles EXTI 15~10
+ * @param  None
+ * @retval None
+ */
+void EXTI15_10_IRQHandler(void)
 {
-  if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET)
+  if (EXTI_GetITStatus(EXTI_Line13) != RESET)
   {
-    TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
+    UpdateInfo();
 
-    GPIO LED;
-    LED.PortPin = User_LED;
-    LED.toggleValue();
-
-    MotionHandler();
+    EXTI_ClearITPendingBit(EXTI_Line13);
   }
 }
 

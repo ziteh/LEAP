@@ -113,6 +113,7 @@ extern "C"
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |     \
                                RCC_APB2Periph_GPIOB | \
                                RCC_APB2Periph_GPIOC | \
+                               RCC_APB2Periph_AFIO |  \
                                RCC_APB2Periph_ADC1,   \
                            ENABLE);                   \
   }
@@ -219,20 +220,34 @@ extern "C"
  * @brief Initializing board.
  * @remark RCC_APB2: GPIOA, GPIOC
  */
-#define Board_Initialization             \
-  {                                      \
-    GPIO Button;                         \
-    Button.PortPin = User_Button;        \
-    Button.Mode = GPIO_Mode_IN_FLOATING; \
-    Button.Init();                       \
-                                         \
-    GPIO LED;                            \
-    LED.PortPin = User_LED;              \
-    LED.Mode = GPIO_Mode_Out_PP;         \
-    LED.Speed = GPIO_Speed_2MHz;         \
-    LED.Init();                          \
-    LED.setValue(LOW);                   \
-  }
+#define Board_Initialization                                   \
+  GPIO LED;                                                    \
+  LED.PortPin = User_LED;                                      \
+  LED.Mode = GPIO_Mode_Out_PP;                                 \
+  LED.Speed = GPIO_Speed_2MHz;                                 \
+  LED.Init();                                                  \
+  LED.setValue(LOW);                                           \
+                                                               \
+  GPIO Button;                                                 \
+  Button.PortPin = User_Button;                                \
+  Button.Mode = GPIO_Mode_IPU;                                 \
+  Button.Init();                                               \
+                                                               \
+  NVIC_InitTypeDef NVIC_InitStructure;                         \
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;         \
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;    \
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;           \
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;              \
+  NVIC_Init(&NVIC_InitStructure);                              \
+                                                               \
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource13); \
+                                                               \
+  EXTI_InitTypeDef EXTI_InitStructure;                         \
+  EXTI_InitStructure.EXTI_Line = EXTI_Line13;                  \
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;          \
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;      \
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;                    \
+  EXTI_Init(&EXTI_InitStructure);
 
 typedef enum
 {
@@ -242,6 +257,7 @@ typedef enum
 
 void MotionHandler(void);
 void MotionEmergencyStop(void);
+void UpdateInfo(void);
 void CommunicationDecoder(uint8_t Command);
 void Delay_NonTimer(__IO uint32_t nTime);
 

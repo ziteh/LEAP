@@ -77,6 +77,7 @@ void MotionHandler(void)
       //      USART_Send(USART2, "R: Fl-Start\r\n");
     }
     break;
+
   case Joint::Extensioning:
     if (NowJoint->ExtensionStopTriggered())
     {
@@ -114,6 +115,7 @@ void MotionHandler(void)
       //      USART_Send(USART2, "R: Fl-Start\r\n");
     }
     break;
+
   case Joint::Extensioning:
     if (NowJoint->ExtensionStopTriggered())
     {

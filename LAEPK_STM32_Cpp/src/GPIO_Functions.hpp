@@ -60,6 +60,7 @@ public:
   GPIOSpeed_TypeDef Speed;
 
   GPIO(void);
+  GPIO(GPIO_PortPinTypeDef NewPortPin);
   void Init(void);
 
   void setValue(GPIO_ValueTypeDef NewValue);

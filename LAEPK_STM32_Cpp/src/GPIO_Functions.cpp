@@ -236,6 +236,13 @@ GPIO::GPIO(void)
   this->Speed = GPIO_Speed_2MHz;
 }
 
+GPIO::GPIO(GPIO_PortPinTypeDef NewPortPin)
+{
+  this->PortPin = NewPortPin;
+  this->Mode = GPIO_Mode_IN_FLOATING;
+  this->Speed = GPIO_Speed_2MHz;
+}
+
 void GPIO::Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;

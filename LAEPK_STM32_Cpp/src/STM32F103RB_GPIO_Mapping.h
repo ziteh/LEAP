@@ -43,7 +43,7 @@ extern "C"
      * Main function: PA0  
      * Alternate functions (Default): WKUP/USART2_CTS①/ADC12_IN0/TIM2_CH1_ETR(9)
      * Alternate functions (Remap): --
-     * I/O Level : 3.3t
+     * I/O Level : 3.3v
      */
     PA0 = 0,
 

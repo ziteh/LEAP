@@ -313,15 +313,15 @@ GPIO_ValueTypeDef GPIO::getValue()
 
 GPIO_TypeDef *GPIO::getPort(void)
 {
-  if (this->PortPin <= PA15) // Port-A:  0~15
+  if (((uint8_t)this->PortPin) <= ((uint8_t)PA15)) // Port-A:  0~15
     return GPIOA;
-  else if (this->PortPin <= PB15) // Port-B: 16~31
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PB15)) // Port-B: 16~31
     return GPIOB;
-  else if (this->PortPin <= PC15) // Port-C: 32~47
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PC15)) // Port-C: 32~47
     return GPIOC;
-  else if (this->PortPin <= PD15) // Port-D: 48~63
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PD15)) // Port-D: 48~63
     return GPIOD;
-  else if (this->PortPin <= PE15) // Port-E: 64~79
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PE15)) // Port-E: 64~79
     return GPIOE;
 }
 
@@ -329,18 +329,18 @@ uint16_t GPIO::getPin(void)
 {
   uint8_t Offset = 0;
 
-  if (this->PortPin <= PA15) // Port-A:  0~15
-    Offset = PA0;
-  else if (this->PortPin <= PB15) // Port-B: 16~31
-    Offset = PB0;
-  else if (this->PortPin <= PC15) // Port-C: 32~47
-    Offset = PC0;
-  else if (this->PortPin <= PD15) // Port-D: 48~63
-    Offset = PD0;
-  else if (this->PortPin <= PE15) // Port-E: 64~79
-    Offset = PE0;
+  if (((uint8_t)this->PortPin) <= ((uint8_t)PA15)) // Port-A:  0~15
+    Offset = ((uint8_t)PA0);
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PB15)) // Port-B: 16~31
+    Offset = ((uint8_t)PB0);
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PC15)) // Port-C: 32~47
+    Offset = ((uint8_t)PC0);
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PD15)) // Port-D: 48~63
+    Offset = ((uint8_t)PD0);
+  else if (((uint8_t)this->PortPin) <= ((uint8_t)PE15)) // Port-E: 64~79
+    Offset = ((uint8_t)PE0);
 
-  return ((uint16_t)(0x0001 << (this->PortPin - Offset)));
+  return ((uint16_t)(0x0001 << (((uint8_t)this->PortPin) - Offset)));
 }
 
 /********************************END OF FILE***********************************/

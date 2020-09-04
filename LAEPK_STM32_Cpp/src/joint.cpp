@@ -21,7 +21,6 @@
 Joint::Joint(void)
 {
   MotionState = NoInMotion;
-  WaitStop = false;
 }
 
 void Joint::Init(void)
@@ -81,11 +80,10 @@ void Joint::MotionExtensionStart(void)
 {
   // FIXME getValue() will into infinite loop and can't exit.
   // if (WaitStop == false ||
-  //     (WaitStop == true && (FrontFSR.getValue() < ExtensionFSRStartThreshold / 5.0)))
+  //     (WaitStop == true && (FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8))))
   {
-    WaitStop = false;
     MotionState = Extensioning;
-    // USART_Send(USART2, "Ex-Start\r\n");
+    USART_Send(USART2, "Ex-Start\r\n");
 
     Motor.setDirection(EC90Motor::CCW);
     Motor.setSpeed(15);
@@ -97,11 +95,10 @@ void Joint::MotionFlexionStart(void)
 {
   // FIXME getValue() will into infinite loop and can't exit.
   // if (WaitStop == false ||
-  //     (WaitStop == true && (BackFSR.getValue() < FlexionFSRStartThreshold / 5.0)))
+  //     (WaitStop == true && (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8))))
   {
-    WaitStop = false;
     MotionState = Flexioning;
-    // USART_Send(USART2, "Fl-Start\r\n");
+    USART_Send(USART2, "Fl-Start\r\n");
 
     Motor.setDirection(EC90Motor::CW);
     Motor.setSpeed(15);
@@ -114,9 +111,8 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
   Motor.Disable();
   Motor.setSpeed(0);
 
-  MotionState = NoInMotion;
-  WaitStop = true;
-  // USART_Send(USART2, "Ex-Stop\r\n");
+  MotionState = WaitStop;
+  USART_Send(USART2, "Ex-Stop\r\n");
 
   return getLimitState();
 }
@@ -126,11 +122,19 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
   Motor.Disable();
   Motor.setSpeed(0);
 
-  MotionState = NoInMotion;
-  WaitStop = true;
-  // USART_Send(USART2, "Fl-Stop\r\n");
+  MotionState = WaitStop;
+  USART_Send(USART2, "Fl-Stop\r\n");
 
   return getLimitState();
+}
+
+void Joint::MotionWaitStop(void)
+{
+  if ((FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8)) &&
+      (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8)))
+  {
+    MotionState = NoInMotion;
+  }
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionHandler(void)
@@ -335,7 +339,6 @@ JointWithoutHallSensor::JointWithoutHallSensor(void)
   VirtualHallStep = 0;
 
   MotionState = NoInMotion;
-  WaitStop = false;
 }
 
 void JointWithoutHallSensor::Init(void)
@@ -385,7 +388,6 @@ void JointWithoutHallSensor::Init(void)
 
 void JointWithoutHallSensor::MotionExtensionStart(void)
 {
-  WaitStop = false;
   MotionState = Extensioning;
   // USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
@@ -397,7 +399,6 @@ void JointWithoutHallSensor::MotionExtensionStart(void)
 
 void JointWithoutHallSensor::MotionFlexionStart(void)
 {
-  WaitStop = false;
   MotionState = Flexioning;
   // USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
@@ -409,7 +410,6 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
 {
-  WaitStop = true;
   MotionState = NoInMotion;
   // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
@@ -419,7 +419,6 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
 {
-  WaitStop = true;
   MotionState = NoInMotion;
   // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 

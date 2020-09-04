@@ -47,6 +47,7 @@ public:
 
   typedef enum
   {
+    WaitStop,
     NoInMotion,
     Extensioning,
     Flexioning
@@ -104,8 +105,6 @@ public:
   uint16_t ExtensionFSRStopThreshold;
   uint16_t FlexionFSRStopThreshold;
 
-  bool WaitStop;
-
   Joint(void);
   virtual void Init(void);
 
@@ -119,6 +118,8 @@ public:
 
   virtual SoftwareLimitStateTypeDef MotionExtensionStop(void);
   virtual SoftwareLimitStateTypeDef MotionFlexionStop(void);
+
+  void MotionWaitStop(void);
 
   SoftwareLimitStateTypeDef MotionHandler(void);
   virtual SoftwareLimitStateTypeDef MotionStop(void);

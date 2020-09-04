@@ -60,9 +60,10 @@ public:
   GPIOSpeed_TypeDef Speed;
 
   GPIO(void);
-
   void Init(void);
+
   void setValue(GPIO_ValueTypeDef NewValue);
+  void setValue(uint8_t NewValue);
   void toggleValue(void);
 
   GPIO_ValueTypeDef getValue();

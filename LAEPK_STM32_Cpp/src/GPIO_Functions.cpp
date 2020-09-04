@@ -249,12 +249,28 @@ void GPIO::setValue(GPIO_ValueTypeDef NewValue)
 {
   switch (NewValue)
   {
-  case HIGH:
-    (this->getPort())->BSRR |= (this->getPin()); // Set value HIGH
-    break;
-
   case LOW:
     (this->getPort())->BRR |= (this->getPin()); // Set value LOW
+    break;
+
+  case HIGH:
+  default:
+    (this->getPort())->BSRR |= (this->getPin()); // Set value HIGH
+    break;
+  }
+}
+
+void GPIO::setValue(uint8_t NewValue)
+{
+  switch (NewValue)
+  {
+  case 0:
+    (this->getPort())->BRR |= (this->getPin()); // Set value LOW
+    break;
+
+  case 1:
+  default:
+    (this->getPort())->BSRR |= (this->getPin()); // Set value HIGH
     break;
   }
 }

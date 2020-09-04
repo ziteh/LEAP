@@ -63,12 +63,9 @@ int main(void)
 void MotionHandler(void)
 {
   NowJoint = &RightJoint;
-  if (NowJoint->MotionState == Joint::WaitStop)
+  switch (NowJoint->MotionState)
   {
-    NowJoint->MotionWaitStop();
-  }
-  else if (NowJoint->MotionState == Joint::NoInMotion)
-  {
+  case Joint::NoInMotion:
     if (NowJoint->ExtensionStartTriggered())
     {
       NowJoint->MotionExtensionStart();
@@ -79,55 +76,72 @@ void MotionHandler(void)
       NowJoint->MotionFlexionStart();
       //      USART_Send(USART2, "R: Fl-Start\r\n");
     }
-  }
-  else
-  {
-    if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
+    break;
+  case Joint::Extensioning:
+    if (NowJoint->ExtensionStopTriggered())
     {
       NowJoint->MotionExtensionStop();
       //      USART_Send(USART2, "R: Ex-Stop\r\n");
     }
-    else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
+    break;
+
+  case Joint::Flexioning:
+    if (NowJoint->FlexionStopTriggered())
     {
       NowJoint->MotionFlexionStop();
       //      USART_Send(USART2, "R: Fl-Stop\r\n");
     }
+    break;
+
+  case Joint::WaitStop:
+  default:
+    NowJoint->MotionWaitStop();
+    break;
   }
 
   NowJoint = &LeftJoint;
-  if (NowJoint->MotionState == Joint::NoInMotion)
+  switch (NowJoint->MotionState)
   {
+  case Joint::NoInMotion:
     if (NowJoint->ExtensionStartTriggered())
     {
       NowJoint->MotionExtensionStart();
-      //      USART_Send(USART2, "L: Ex-Start\r\n");
+      //      USART_Send(USART2, "R: Ex-Start\r\n");
     }
     else if (NowJoint->FlexionStartTriggered())
     {
       NowJoint->MotionFlexionStart();
-      //      USART_Send(USART2, "L: Fl-Start\r\n");
+      //      USART_Send(USART2, "R: Fl-Start\r\n");
     }
-  }
-  else
-  {
-    if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
+    break;
+  case Joint::Extensioning:
+    if (NowJoint->ExtensionStopTriggered())
     {
       NowJoint->MotionExtensionStop();
-      //      USART_Send(USART2, "L: Ex-Stop\r\n");
+      //      USART_Send(USART2, "R: Ex-Stop\r\n");
     }
-    else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
-    {
-      NowJoint->MotionFlexionStop();
-      //      USART_Send(USART2, "L: Fl-Stop\r\n");
-    }
-    else if (NowJoint->MotionState == Joint::Extensioning)
+    else
     {
       NowJoint->MotionExtensionStart();
     }
-    else if (NowJoint->MotionState == Joint::Flexioning)
+    break;
+
+  case Joint::Flexioning:
+    if (NowJoint->FlexionStopTriggered())
+    {
+      NowJoint->MotionFlexionStop();
+      //      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    else
     {
       NowJoint->MotionFlexionStart();
     }
+    break;
+
+  case Joint::WaitStop:
+  default:
+    NowJoint->MotionWaitStop();
+    break;
   }
 }
 

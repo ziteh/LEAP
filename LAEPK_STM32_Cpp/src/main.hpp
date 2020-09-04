@@ -218,7 +218,7 @@ extern "C"
 
 /**
  * @brief Initializing board.
- * @remark RCC_APB2: GPIOA, GPIOC
+ * @remark RCC_APB2: GPIOA, GPIOC, AFIO
  */
 #define Board_Initialization                                   \
   GPIO LED;                                                    \

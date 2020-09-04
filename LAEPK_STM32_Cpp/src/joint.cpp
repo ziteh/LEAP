@@ -483,6 +483,17 @@ void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionType
   }
 }
 
+JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionStop(void)
+{
+  Motor.Disable();
+  Motor.setSpeed(0);
+
+  VirtualHall1.setValue(HIGH);
+  VirtualHall2.setValue(LOW);
+  VirtualHall3.setValue(LOW);
+  VirtualHallStep = 0;
+}
+
 // void Joint_SetAbsoluteAngle(float TargetAngle)
 // {
 //   float NowAngle = Joint_GetAbsoluteAngle();

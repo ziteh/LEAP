@@ -121,7 +121,7 @@ public:
   virtual SoftwareLimitStateTypeDef MotionFlexionStop(void);
 
   SoftwareLimitStateTypeDef MotionHandler(void);
-  SoftwareLimitStateTypeDef MotionStop(void);
+  virtual SoftwareLimitStateTypeDef MotionStop(void);
 
 protected:
   EC90Motor Motor;
@@ -155,6 +155,8 @@ public:
 
   SoftwareLimitStateTypeDef MotionExtensionStop(void);
   SoftwareLimitStateTypeDef MotionFlexionStop(void);
+
+  SoftwareLimitStateTypeDef MotionStop(void);
 
 private:
   uint8_t VirtualHallStep;

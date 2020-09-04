@@ -258,8 +258,6 @@ typedef enum
 void MotionHandler(void);
 void MotionEmergencyStop(void);
 void UpdateInfo(void);
-void CommunicationDecoder(uint8_t Command);
-void Delay_NonTimer(__IO uint32_t nTime);
 
 /**
  * @brief Initializing joint.
@@ -268,6 +266,9 @@ void Delay_NonTimer(__IO uint32_t nTime);
  */
 void Joint_Initialization(Joint *joint, JointTypeDef jointType);
 void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType);
+
+void CommunicationDecoder(uint8_t Command);
+void Delay_NonTimer(__IO uint32_t nTime);
 
 extern "C"
 {

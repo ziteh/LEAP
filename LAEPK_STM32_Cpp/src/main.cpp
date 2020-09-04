@@ -162,18 +162,7 @@ void MotionEmergencyStop(void)
   USART_Send(USART2, "[EMER STOP]\n");
 }
 
-void CommunicationDecoder(uint8_t Command)
-{
-  //  Joint_SetAbsoluteAngle(Command - 5);
-}
-
-void Delay_NonTimer(__IO uint32_t nTime)
-{
-  for (; nTime != 0; nTime--)
-  {
-  }
-}
-
+// FIXME Point error.will index other.
 void UpdateInfo(void)
 {
   NowJoint = &RightJoint;
@@ -326,6 +315,18 @@ void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType)
 
   joint->Init();
   joint->MotionStop();
+}
+
+void CommunicationDecoder(uint8_t Command)
+{
+  //  Joint_SetAbsoluteAngle(Command - 5);
+}
+
+void Delay_NonTimer(__IO uint32_t nTime)
+{
+  for (; nTime != 0; nTime--)
+  {
+  }
 }
 
 extern "C"

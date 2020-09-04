@@ -78,32 +78,22 @@ bool Joint::FlexionStopTriggered(void)
 
 void Joint::MotionExtensionStart(void)
 {
-  // FIXME getValue() will into infinite loop and can't exit.
-  // if (WaitStop == false ||
-  //     (WaitStop == true && (FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8))))
-  {
-    MotionState = Extensioning;
-    USART_Send(USART2, "Ex-Start\r\n");
+  MotionState = Extensioning;
+  // USART_Send(USART2, "Ex-Start\r\n");
 
-    Motor.setDirection(EC90Motor::CCW);
-    Motor.setSpeed(15);
-    Motor.Enable();
-  }
+  Motor.setDirection(EC90Motor::CCW);
+  Motor.setSpeed(15);
+  Motor.Enable();
 }
 
 void Joint::MotionFlexionStart(void)
 {
-  // FIXME getValue() will into infinite loop and can't exit.
-  // if (WaitStop == false ||
-  //     (WaitStop == true && (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8))))
-  {
-    MotionState = Flexioning;
-    USART_Send(USART2, "Fl-Start\r\n");
+  MotionState = Flexioning;
+  // USART_Send(USART2, "Fl-Start\r\n");
 
-    Motor.setDirection(EC90Motor::CW);
-    Motor.setSpeed(15);
-    Motor.Enable();
-  }
+  Motor.setDirection(EC90Motor::CW);
+  Motor.setSpeed(15);
+  Motor.Enable();
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
@@ -112,7 +102,7 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
   Motor.setSpeed(0);
 
   MotionState = WaitStop;
-  USART_Send(USART2, "Ex-Stop\r\n");
+  // USART_Send(USART2, "Ex-Stop\r\n");
 
   return getLimitState();
 }
@@ -123,7 +113,7 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
   Motor.setSpeed(0);
 
   MotionState = WaitStop;
-  USART_Send(USART2, "Fl-Stop\r\n");
+  // USART_Send(USART2, "Fl-Stop\r\n");
 
   return getLimitState();
 }

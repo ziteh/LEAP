@@ -200,9 +200,8 @@ void EXTI0_IRQHandler(void)
 {
   if (EXTI_GetITStatus(EXTI_Line0) != RESET)
   {
-    // GPIO_SetValue(RightMotor_FunctionStatePin, LOW); // Disable motor
-    // TIM_Cmd(TIM3, DISABLE);    // Disable PWM
-    USART_Send(USART2, "[EXTI STOP]\n");
+    MotionEmergencyStop();
+
     while (1)
     {
     }

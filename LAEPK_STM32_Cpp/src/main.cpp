@@ -37,7 +37,7 @@ int main(void)
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
 
-  /* Configures the priority grouping */
+  /* Configures the NVIC priority grouping */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
   /* Initialization */
@@ -125,6 +125,17 @@ void MotionHandler(void)
       NowJoint->MotionFlexionStart();
     }
   }
+}
+
+void MotionEmergencyStop(void)
+{
+  NowJoint = &RightJoint;
+  NowJoint->MotionStop();
+
+  NowJoint = &LeftJoint;
+  NowJoint->MotionStop();
+
+  USART_Send(USART2, "[EMER STOP]\n");
 }
 
 void CommunicationDecoder(uint8_t Command)

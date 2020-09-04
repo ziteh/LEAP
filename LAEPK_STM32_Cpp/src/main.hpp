@@ -198,7 +198,7 @@ extern "C"
   {                                                             \
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;              \
     TIM_TimeBaseStructure.TIM_Period = 2000;                    \
-    TIM_TimeBaseStructure.TIM_Prescaler = 720 - 1;             \
+    TIM_TimeBaseStructure.TIM_Prescaler = 720 - 1;              \
     TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;     \
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; \
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);             \
@@ -241,6 +241,7 @@ typedef enum
 } JointTypeDef;
 
 void MotionHandler(void);
+void MotionEmergencyStop(void);
 void CommunicationDecoder(uint8_t Command);
 void Delay_NonTimer(__IO uint32_t nTime);
 

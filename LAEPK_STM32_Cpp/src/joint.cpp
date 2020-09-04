@@ -410,7 +410,7 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
 {
-  MotionState = NoInMotion;
+  MotionState = WaitStop;
   // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
   Motor.Disable();
@@ -419,7 +419,7 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
 {
-  MotionState = NoInMotion;
+  MotionState = WaitStop;
   // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
   Motor.Disable();

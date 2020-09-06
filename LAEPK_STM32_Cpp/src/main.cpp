@@ -158,7 +158,6 @@ void MotionEmergencyStop(void)
   USART_Send(USART2, "[EMER STOP]\n");
 }
 
-// FIXME Point error.will index other.
 void UpdateInfo(void)
 {
   USART_Send(USART2, "[Right INFO]\n");

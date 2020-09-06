@@ -24,7 +24,7 @@
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
 
-Joint *NowJoint;
+Joint *NowJoint = NULL;
 Joint RightJoint;
 JointWithoutHallSensor LeftJoint;
 

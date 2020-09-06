@@ -220,34 +220,36 @@ extern "C"
  * @brief Initializing board.
  * @remark RCC_APB2: GPIOA, GPIOC, AFIO
  */
-#define Board_Initialization                                   \
-  GPIO LED;                                                    \
-  LED.PortPin = User_LED;                                      \
-  LED.Mode = GPIO_Mode_Out_PP;                                 \
-  LED.Speed = GPIO_Speed_2MHz;                                 \
-  LED.Init();                                                  \
-  LED.setValue(LOW);                                           \
-                                                               \
-  GPIO Button;                                                 \
-  Button.PortPin = User_Button;                                \
-  Button.Mode = GPIO_Mode_IPU;                                 \
-  Button.Init();                                               \
-                                                               \
-  NVIC_InitTypeDef NVIC_InitStructure;                         \
-  NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;         \
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;    \
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;           \
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;              \
-  NVIC_Init(&NVIC_InitStructure);                              \
-                                                               \
-  GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource13); \
-                                                               \
-  EXTI_InitTypeDef EXTI_InitStructure;                         \
-  EXTI_InitStructure.EXTI_Line = EXTI_Line13;                  \
-  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;          \
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;      \
-  EXTI_InitStructure.EXTI_LineCmd = ENABLE;                    \
-  EXTI_Init(&EXTI_InitStructure);
+#define Board_Initialization                                     \
+  {                                                              \
+    GPIO LED;                                                    \
+    LED.PortPin = User_LED;                                      \
+    LED.Mode = GPIO_Mode_Out_PP;                                 \
+    LED.Speed = GPIO_Speed_2MHz;                                 \
+    LED.Init();                                                  \
+    LED.setValue(LOW);                                           \
+                                                                 \
+    GPIO Button;                                                 \
+    Button.PortPin = User_Button;                                \
+    Button.Mode = GPIO_Mode_IPU;                                 \
+    Button.Init();                                               \
+                                                                 \
+    NVIC_InitTypeDef NVIC_InitStructure;                         \
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;         \
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;    \
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;           \
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;              \
+    NVIC_Init(&NVIC_InitStructure);                              \
+                                                                 \
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource13); \
+                                                                 \
+    EXTI_InitTypeDef EXTI_InitStructure;                         \
+    EXTI_InitStructure.EXTI_Line = EXTI_Line13;                  \
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;          \
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;      \
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;                    \
+    EXTI_Init(&EXTI_InitStructure);                              \
+  }
 
 typedef enum
 {

@@ -53,10 +53,6 @@ int main(void)
 
   while (1)
   {
-    // if (Button.getInputValue() == LOW)
-    // {
-    //   UpdateInfo();
-    // }
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */

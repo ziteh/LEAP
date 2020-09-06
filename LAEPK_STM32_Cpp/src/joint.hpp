@@ -23,6 +23,7 @@
 #include "EC90fl_Motor_Functions.hpp"
 #include "ADC_Functions.hpp"
 #include "USART_Functions.hpp"
+#include "convert.hpp"
 
 /**
  * @brief The class of joint.
@@ -128,6 +129,8 @@ public:
 
   SoftwareLimitStateTypeDef MotionHandler(void);
   virtual SoftwareLimitStateTypeDef MotionStop(void);
+
+  void SendInfo(void);
 
 protected:
   EC90Motor Motor;

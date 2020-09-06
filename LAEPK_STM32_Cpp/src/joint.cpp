@@ -223,6 +223,39 @@ Joint::SoftwareLimitStateTypeDef Joint::getLimitState(void)
     return Unlimited;
 }
 
+void Joint::SendInfo(void)
+{
+  USART_Send(USART2, "  A-POT: ");
+  USART_Send(USART2, Convert::ToString(getAnglePOTValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  F-FSR: ");
+  USART_Send(USART2, Convert::ToString(getFrontFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  B-FSR: ");
+  USART_Send(USART2, Convert::ToString(getBackFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  Limit: ");
+  switch (getLimitState())
+  {
+  case Joint::FullExtension:
+    USART_Send(USART2, "Full-Ex");
+    break;
+
+  case Joint::FullFlexion:
+    USART_Send(USART2, "Full-Fl");
+    break;
+
+  case Joint::Unlimited:
+  default:
+    USART_Send(USART2, "Unlimited");
+    break;
+  }
+  USART_Send(USART2, "\n");
+}
+
 bool Joint::StartExtensionIsTriggered(void)
 {
   /*

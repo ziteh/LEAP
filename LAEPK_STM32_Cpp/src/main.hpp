@@ -208,7 +208,7 @@ extern "C"
                                                                 \
     TIM_ClearFlag(TIM2, TIM_FLAG_Update);                       \
     TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);                  \
-    TIM_Cmd(TIM2, ENABLE);                                      \
+    TIM_Cmd(TIM2, DISABLE);                                     \
                                                                 \
     NVIC_InitTypeDef NVIC_InitStructure;                        \
     NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;             \

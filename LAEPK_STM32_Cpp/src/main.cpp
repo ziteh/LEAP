@@ -49,7 +49,18 @@ int main(void)
   LimitSwitch_Initialization;
   Timer_Initialization;
 
-  USART_Send(USART2, "[L.A.E.P.K. READY]\r\n");
+  GPIO limitSwitch(LimitSwitch_PortPin);
+  if (limitSwitch.getInputValue() == HIGH)
+  {
+    TIM_Cmd(TIM2, ENABLE); // Enable timer2(main program).
+    USART_Send(USART2, "[L.A.E.P.K. READY]\r\n");
+  }
+  else
+  {
+    TIM_Cmd(TIM2, DISABLE); // Disable timer2(main program).
+    MotionEmergencyStop();
+    USART_Send(USART2, "[Check Limit-Switch]\r\n");
+  }
 
   while (1)
   {

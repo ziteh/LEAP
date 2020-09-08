@@ -97,9 +97,9 @@ extern "C"
 #define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)500)
 #define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)500)
 
-#define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)PA6)
+#define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)PB8)
 #define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)PB9)
-#define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)PB8)
+#define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)PA6)
 
 /**
  * @brief Initializing RCC.

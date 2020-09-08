@@ -45,9 +45,9 @@ int main(void)
   Joint_Initialization(&RightJoint, Right);
   Joint_Initialization(&LeftJoint, Left);
   USART_Initialization;
-  Timer_Initialization;
   Board_Initialization;
   LimitSwitch_Initialization;
+  Timer_Initialization;
 
   USART_Send(USART2, "[L.A.E.P.K. READY]\r\n");
 

@@ -225,16 +225,16 @@ Joint::SoftwareLimitStateTypeDef Joint::getLimitState(void)
 
 void Joint::SendInfo(void)
 {
-  USART_Send(USART2, "  A-POT: ");
-  USART_Send(USART2, Convert::ToString(getAnglePOTValue()));
-  USART_Send(USART2, "\n");
-
   USART_Send(USART2, "  F-FSR: ");
   USART_Send(USART2, Convert::ToString(getFrontFSRValue()));
   USART_Send(USART2, "\n");
 
   USART_Send(USART2, "  B-FSR: ");
   USART_Send(USART2, Convert::ToString(getBackFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  A-POT: ");
+  USART_Send(USART2, Convert::ToString(getAnglePOTValue()));
   USART_Send(USART2, "\n");
 
   USART_Send(USART2, "  Limit: ");

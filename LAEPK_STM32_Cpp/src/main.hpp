@@ -42,8 +42,8 @@ extern "C"
 #define RightJoint_Timer_SpeedPWM (TIM3)
 #define RightJoint_Channel_SpeedPWM (CH2)
 
-#define RightJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PB6)
-#define RightJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PC7)
+#define RightJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PC7)
+#define RightJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PB6)
 #define RightJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)PA9)
 
 #define RightJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PA1)
@@ -73,7 +73,7 @@ extern "C"
 #define LeftJoint_Channel_SpeedPWM (CH1)
 
 #define LeftJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PA8)
-#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PC7)
+#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PB6)
 #define LeftJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)PA9)
 
 #define LeftJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PC3)

@@ -37,6 +37,8 @@ extern "C"
 #include "stm32f10x.h"
 }
 
+#define LimitSwitch_PortPin ((GPIO_PortPinTypeDef)PA0)
+
 /* Right leg define */
 #define RightJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
 #define RightJoint_Timer_SpeedPWM (TIM3)
@@ -125,7 +127,7 @@ extern "C"
 #define LimitSwitch_Initialization                              \
   {                                                             \
     GPIO limitSwitch;                                           \
-    limitSwitch.PortPin = PA0;                                  \
+    limitSwitch.PortPin = LimitSwitch_PortPin;                  \
     limitSwitch.Mode = GPIO_Mode_IPD;                           \
     limitSwitch.Init();                                         \
                                                                 \

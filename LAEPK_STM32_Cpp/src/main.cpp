@@ -18,6 +18,8 @@
 
 /* Uncomment it to run unit test program, comment it to run main program. */
 //  #define ENABLE_UNIT_TEST
+#define ENABLE_RIGHT_LEG
+//#define ENABLE_LEFT_LEG
 
 #include "main.hpp"
 
@@ -42,8 +44,12 @@ int main(void)
 
   /* Initialization */
   RCC_Initialization;
+#ifdef ENABLE_RIGHT_LEG
   Joint_Initialization(&RightJoint, Right);
+#endif
+#ifdef ENABLE_LEFT_LEG
   Joint_Initialization(&LeftJoint, Left);
+#endif
   USART_Initialization;
   Board_Initialization;
   LimitSwitch_Initialization;
@@ -73,6 +79,7 @@ int main(void)
 
 void MotionHandler(void)
 {
+#ifdef ENABLE_RIGHT_LEG
   NowJoint = &RightJoint;
   switch (NowJoint->MotionState)
   {
@@ -111,6 +118,9 @@ void MotionHandler(void)
     break;
   }
 
+#endif
+
+#ifdef ENABLE_LEFT_LEG
   NowJoint = &LeftJoint;
   switch (NowJoint->MotionState)
   {
@@ -156,28 +166,37 @@ void MotionHandler(void)
     NowJoint->MotionWaitStop();
     break;
   }
+#endif
 }
 
 void MotionEmergencyStop(void)
 {
+#ifdef ENABLE_RIGHT_LEG
   NowJoint = &RightJoint;
   NowJoint->MotionStop();
+#endif
 
+#ifdef ENABLE_LEFT_LEG
   NowJoint = &LeftJoint;
   NowJoint->MotionStop();
+#endif
 
   USART_Send(USART2, "[EMER STOP]\n");
 }
 
 void UpdateInfo(void)
 {
+#ifdef ENABLE_RIGHT_LEG
   USART_Send(USART2, "[Right INFO]\n");
   NowJoint = &RightJoint;
   NowJoint->SendInfo();
+#endif
 
+#ifdef ENABLE_LEFT_LEG
   USART_Send(USART2, "[Left INFO]\n");
   NowJoint = &LeftJoint;
   NowJoint->SendInfo();
+#endif
 }
 
 // TODO Clean it.

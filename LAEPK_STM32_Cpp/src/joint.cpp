@@ -120,8 +120,8 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
 
 void Joint::MotionWaitStop(void)
 {
-  if ((FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8)) &&
-      (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8)))
+//  if ((FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8)) &&
+//      (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8)))
   {
     MotionState = NoInMotion;
   }

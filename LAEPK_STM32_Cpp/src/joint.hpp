@@ -127,7 +127,7 @@ public:
 
   void MotionWaitStop(void);
 
-  void MotionHandler(void);
+  virtual void MotionHandler(void);
   virtual SoftwareLimitStateTypeDef MotionStop(void);
 
   void SendInfo(void);
@@ -163,6 +163,7 @@ public:
   SoftwareLimitStateTypeDef MotionExtensionStop(void);
   SoftwareLimitStateTypeDef MotionFlexionStop(void);
 
+  void MotionHandler(void);
   SoftwareLimitStateTypeDef MotionStop(void);
 
 private:

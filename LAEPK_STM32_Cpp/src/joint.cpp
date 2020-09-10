@@ -479,7 +479,13 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
 {
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
+  MotionState = NoInMotion;
+#elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
+#else
+  #error No joint-mode selected.
+#endif
   // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
   Motor.Disable();
@@ -488,7 +494,13 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
 {
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
+  MotionState = NoInMotion;
+#elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
+#else
+  #error No joint-mode selected.
+#endif
   // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
   Motor.Disable();
@@ -497,6 +509,21 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 
 void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction)
 {
+  if (Direction == EC90Motor::CW)
+  {
+    if (VirtualHallStep >= 5)
+      VirtualHallStep = 0;
+    else
+      VirtualHallStep++;
+  }
+  else if (Direction == EC90Motor::CCW)
+  {
+    if (VirtualHallStep <= 0)
+      VirtualHallStep = 5;
+    else
+      VirtualHallStep--;
+  }
+
   switch (VirtualHallStep)
   {
   case 0:
@@ -534,21 +561,99 @@ void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionType
     VirtualHallStep = 0;
     break;
   }
+}
 
-  if (Direction == EC90Motor::CW)
+void JointWithoutHallSensor::MotionHandler(void)
+{
+#if defined(MODE_FOLLOWING)
+  switch (this->MotionState)
   {
-    if (VirtualHallStep >= 5)
-      VirtualHallStep = 0;
-    else
-      VirtualHallStep++;
+    case Extensioning:
+      if (this->ExtensionStartTriggered() == false)
+      {
+       this->MotionExtensionStop();
+       USART_Send(USART2, "R: Ex-Stop\r\n");
+      }
+      else
+      {
+        this->MotionExtensionStart();
+      }
+      break;
+
+    case Flexioning:
+      if (this->FlexionStartTriggered() == false)
+      {
+       this->MotionFlexionStop();
+       USART_Send(USART2, "R: Fl-Stop\r\n");
+      }
+      else
+      {
+        this->MotionFlexionStart();
+      }
+      break;
+    
+    case NoInMotion:
+    default:
+      if (this->ExtensionStartTriggered())
+      {
+        this->MotionExtensionStart();
+        USART_Send(USART2, "R: Ex-Start\r\n");
+      }
+      else if (this->FlexionStartTriggered())
+      {
+        this->MotionFlexionStart();
+        USART_Send(USART2, "R: Fl-Start\r\n");
+      }
+      break;
   }
-  else if (Direction == EC90Motor::CCW)
+#elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
+  switch (this->MotionState)
   {
-    if (VirtualHallStep <= 0)
-      VirtualHallStep = 5;
+  case NoInMotion:
+    if (this->ExtensionStartTriggered())
+    {
+      this->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
+    }
+    else if (this->FlexionStartTriggered())
+    {
+      this->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
+    }
+    break;
+
+  case Extensioning:
+    if (this->ExtensionStopTriggered())
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
+    }
     else
-      VirtualHallStep--;
+    {
+      this->MotionExtensionStart();
+    }
+    break;
+
+  case Flexioning:
+    if (this->FlexionStopTriggered())
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    else
+    {
+      this->MotionFlexionStart();
+    }
+    break;
+
+  case WaitStop:
+  default:
+    this->MotionWaitStop();
+    break;
   }
+#else
+#error No joint-mode selected.
+#endif
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionStop(void)

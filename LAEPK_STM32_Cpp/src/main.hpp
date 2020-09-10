@@ -63,7 +63,7 @@ extern "C"
 #define RightJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
 #define RightJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
 
-#define RightJoint_DefaultValue_FSRStartExtension ((uint16_t)2410)
+#define RightJoint_DefaultValue_FSRStartExtension ((uint16_t)2100)
 #define RightJoint_DefaultValue_FSRStartFlexion ((uint16_t)2400)
 
 #define RightJoint_DefaultValue_FSRStopExtension ((uint16_t)RightJoint_DefaultValue_FSRStartFlexion - 200)

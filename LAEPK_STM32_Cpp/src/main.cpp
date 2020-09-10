@@ -22,7 +22,7 @@
 //  #define ENABLE_UNIT_TEST
 
 /* Uncomment/Comment the line below to enable/disable right or left leg. */
-//#define ENABLE_RIGHT_LEG
+#define ENABLE_RIGHT_LEG
 #define ENABLE_LEFT_LEG
 
 static __IO uint32_t TimingDelay;

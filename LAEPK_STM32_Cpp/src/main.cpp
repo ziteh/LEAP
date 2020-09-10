@@ -119,7 +119,6 @@ void MotionHandler(void)
     NowJoint->MotionWaitStop();
     break;
   }
-
 #endif
 
 #ifdef ENABLE_LEFT_LEG

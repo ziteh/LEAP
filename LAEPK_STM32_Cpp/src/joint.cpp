@@ -106,7 +106,13 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
   Motor.Disable();
   Motor.setSpeed(0);
 
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
+  MotionState = NoInMotion;
+#elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
+#else
+  #error No joint-mode selected.
+#endif
   // USART_Send(USART2, "Ex-Stop\r\n");
 
   return getLimitState();
@@ -117,7 +123,13 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
   Motor.Disable();
   Motor.setSpeed(0);
 
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
+  MotionState = NoInMotion;
+#elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
+#else
+  #error No joint-mode selected.
+#endif
   // USART_Send(USART2, "Fl-Stop\r\n");
 
   return getLimitState();
@@ -125,12 +137,8 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
 
 void Joint::MotionWaitStop(void)
 {
-#if defined(MODE_FOLLOWING) || defined(MODE_START_STOP_TRIGGER)
-#if !defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
   if ((FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8)) &&
       (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8)))
-#endif
-#endif
   {
     MotionState = NoInMotion;
   }
@@ -154,6 +162,38 @@ uint16_t Joint::getBackFSRValue(void)
 void Joint::MotionHandler(void)
 {
 #if defined(MODE_FOLLOWING)
+  switch (this->MotionState)
+  {
+    case Extensioning:
+      if (this->ExtensionStartTriggered() == false)
+      {
+       this->MotionExtensionStop();
+       USART_Send(USART2, "R: Ex-Stop\r\n");
+      }
+      break;
+
+    case Flexioning:
+      if (this->FlexionStartTriggered() == false)
+      {
+       this->MotionFlexionStop();
+       USART_Send(USART2, "R: Fl-Stop\r\n");
+      }
+      break;
+    
+    case NoInMotion:
+    default:
+      if (this->ExtensionStartTriggered())
+      {
+        this->MotionExtensionStart();
+        USART_Send(USART2, "R: Ex-Start\r\n");
+      }
+      else if (this->FlexionStartTriggered())
+      {
+        this->MotionFlexionStart();
+        USART_Send(USART2, "R: Fl-Start\r\n");
+      }
+      break;
+  }
 #elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
   switch (this->MotionState)
   {

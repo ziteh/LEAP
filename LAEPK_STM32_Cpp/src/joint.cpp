@@ -18,6 +18,11 @@
 
 #include "joint.hpp"
 
+/* Uncomment one of the line below to select mode. */
+#define MODE_FOLLOWING
+#define MODE_START_STOP_TRIGGER
+#define MODE_CONTINUOUS_START_STOP_TRIGGER
+
 Joint::Joint(void)
 {
   MotionState = NoInMotion;

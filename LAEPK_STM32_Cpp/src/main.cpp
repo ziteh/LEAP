@@ -21,7 +21,7 @@
 
 /* Uncomment/Comment the line below to enable/disable right or left leg. */
 #define ENABLE_RIGHT_LEG
-//#define ENABLE_LEFT_LEG
+#define ENABLE_LEFT_LEG
 
 #include "main.hpp"
 
@@ -83,90 +83,12 @@ void MotionHandler(void)
 {
 #ifdef ENABLE_RIGHT_LEG
   NowJoint = &RightJoint;
-  switch (NowJoint->MotionState)
-  {
-  case Joint::NoInMotion:
-    if (NowJoint->ExtensionStartTriggered())
-    {
-      NowJoint->MotionExtensionStart();
-      USART_Send(USART2, "R: Ex-Start\r\n");
-    }
-    else if (NowJoint->FlexionStartTriggered())
-    {
-      NowJoint->MotionFlexionStart();
-      USART_Send(USART2, "R: Fl-Start\r\n");
-    }
-    break;
-
-  case Joint::Extensioning:
-    if (NowJoint->ExtensionStopTriggered())
-    {
-      NowJoint->MotionExtensionStop();
-      USART_Send(USART2, "R: Ex-Stop\r\n");
-    }
-    break;
-
-  case Joint::Flexioning:
-    if (NowJoint->FlexionStopTriggered())
-    {
-      NowJoint->MotionFlexionStop();
-      USART_Send(USART2, "R: Fl-Stop\r\n");
-    }
-    break;
-
-  case Joint::WaitStop:
-  default:
-    NowJoint->MotionWaitStop();
-    break;
-  }
+  NowJoint->MotionHandler();
 #endif
 
 #ifdef ENABLE_LEFT_LEG
   NowJoint = &LeftJoint;
-  switch (NowJoint->MotionState)
-  {
-  case Joint::NoInMotion:
-    if (NowJoint->ExtensionStartTriggered())
-    {
-      NowJoint->MotionExtensionStart();
-      USART_Send(USART2, "L: Ex-Start\r\n");
-    }
-    else if (NowJoint->FlexionStartTriggered())
-    {
-      NowJoint->MotionFlexionStart();
-      USART_Send(USART2, "L: Fl-Start\r\n");
-    }
-    break;
-
-  case Joint::Extensioning:
-    if (NowJoint->ExtensionStopTriggered())
-    {
-      NowJoint->MotionExtensionStop();
-      USART_Send(USART2, "L: Ex-Stop\r\n");
-    }
-    else
-    {
-      NowJoint->MotionExtensionStart();
-    }
-    break;
-
-  case Joint::Flexioning:
-    if (NowJoint->FlexionStopTriggered())
-    {
-      NowJoint->MotionFlexionStop();
-      USART_Send(USART2, "L: Fl-Stop\r\n");
-    }
-    else
-    {
-      NowJoint->MotionFlexionStart();
-    }
-    break;
-
-  case Joint::WaitStop:
-  default:
-    NowJoint->MotionWaitStop();
-    break;
-  }
+  NowJoint->MotionHandler();
 #endif
 }
 

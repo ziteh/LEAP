@@ -23,6 +23,7 @@
 #include "EC90fl_Motor_Functions.hpp"
 #include "ADC_Functions.hpp"
 #include "USART_Functions.hpp"
+#include "convert.hpp"
 
 /**
  * @brief The class of joint.
@@ -47,6 +48,7 @@ public:
 
   typedef enum
   {
+    WaitStop,
     NoInMotion,
     Extensioning,
     Flexioning
@@ -104,8 +106,6 @@ public:
   uint16_t ExtensionFSRStopThreshold;
   uint16_t FlexionFSRStopThreshold;
 
-  bool WaitStop;
-
   Joint(void);
   virtual void Init(void);
 
@@ -120,16 +120,23 @@ public:
   virtual SoftwareLimitStateTypeDef MotionExtensionStop(void);
   virtual SoftwareLimitStateTypeDef MotionFlexionStop(void);
 
-  SoftwareLimitStateTypeDef MotionHandler(void);
-  SoftwareLimitStateTypeDef MotionStop(void);
+  uint16_t getAnglePOTValue(void);
+  uint16_t getFrontFSRValue(void);
+  uint16_t getBackFSRValue(void);
+  SoftwareLimitStateTypeDef getLimitState(void);
+
+  void MotionWaitStop(void);
+
+  virtual void MotionHandler(void);
+  virtual SoftwareLimitStateTypeDef MotionStop(void);
+
+  void SendInfo(void);
 
 protected:
   EC90Motor Motor;
   ADC AnglePOT;
   ADC FrontFSR;
   ADC BackFSR;
-
-  SoftwareLimitStateTypeDef getLimitState(void);
 
   bool StartExtensionIsTriggered(void);
   bool StartFlexionIsTriggered(void);
@@ -155,6 +162,9 @@ public:
 
   SoftwareLimitStateTypeDef MotionExtensionStop(void);
   SoftwareLimitStateTypeDef MotionFlexionStop(void);
+
+  void MotionHandler(void);
+  SoftwareLimitStateTypeDef MotionStop(void);
 
 private:
   uint8_t VirtualHallStep;

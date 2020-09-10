@@ -18,10 +18,18 @@
 
 #include "joint.hpp"
 
+/* Uncomment one of the line below to select mode. */
+#define MODE_FOLLOWING
+// #define MODE_START_STOP_TRIGGER
+// #define MODE_CONTINUOUS_START_STOP_TRIGGER
+
+#if !defined(MODE_FOLLOWING) && !defined(MODE_START_STOP_TRIGGER) && !defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
+  #error No joint-mode selected.
+#endif
+
 Joint::Joint(void)
 {
   MotionState = NoInMotion;
-  WaitStop = false;
 }
 
 void Joint::Init(void)
@@ -79,34 +87,22 @@ bool Joint::FlexionStopTriggered(void)
 
 void Joint::MotionExtensionStart(void)
 {
-  // FIXME getValue() will into infinite loop and can't exit.
-  // if (WaitStop == false ||
-  //     (WaitStop == true && (FrontFSR.getValue() < ExtensionFSRStartThreshold / 5.0)))
-  {
-    WaitStop = false;
-    MotionState = Extensioning;
-    // USART_Send(USART2, "Ex-Start\r\n");
+  MotionState = Extensioning;
+  // USART_Send(USART2, "Ex-Start\r\n");
 
-    Motor.setDirection(EC90Motor::CCW);
-    Motor.setSpeed(15);
-    Motor.Enable();
-  }
+  Motor.setDirection(EC90Motor::CCW);
+  Motor.setSpeed(15);
+  Motor.Enable();
 }
 
 void Joint::MotionFlexionStart(void)
 {
-  // FIXME getValue() will into infinite loop and can't exit.
-  // if (WaitStop == false ||
-  //     (WaitStop == true && (BackFSR.getValue() < FlexionFSRStartThreshold / 5.0)))
-  {
-    WaitStop = false;
-    MotionState = Flexioning;
-    // USART_Send(USART2, "Fl-Start\r\n");
+  MotionState = Flexioning;
+  // USART_Send(USART2, "Fl-Start\r\n");
 
-    Motor.setDirection(EC90Motor::CW);
-    Motor.setSpeed(15);
-    Motor.Enable();
-  }
+  Motor.setDirection(EC90Motor::CW);
+  Motor.setSpeed(15);
+  Motor.Enable();
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
@@ -114,8 +110,11 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
   Motor.Disable();
   Motor.setSpeed(0);
 
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
   MotionState = NoInMotion;
-  WaitStop = true;
+#elif defined(MODE_START_STOP_TRIGGER)
+  MotionState = WaitStop;
+#endif
   // USART_Send(USART2, "Ex-Stop\r\n");
 
   return getLimitState();
@@ -126,74 +125,113 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
   Motor.Disable();
   Motor.setSpeed(0);
 
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
   MotionState = NoInMotion;
-  WaitStop = true;
+#elif defined(MODE_START_STOP_TRIGGER)
+  MotionState = WaitStop;
+#endif
   // USART_Send(USART2, "Fl-Stop\r\n");
 
   return getLimitState();
 }
 
-Joint::SoftwareLimitStateTypeDef Joint::MotionHandler(void)
+void Joint::MotionWaitStop(void)
 {
-  SoftwareLimitStateTypeDef limitState = getLimitState();
-
-  /*
-   * Extenstion
-   * 
-   * If FSR-Start-Extension is triggered,
-   * and knee joint didn't exceed the Full-Extension angle limit,
-   * then start extension.
-   */
-  if (StartExtensionIsTriggered() && (limitState != FullExtension))
+  if ((FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8)) &&
+      (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8)))
   {
-    USART_Send(USART2, "Ex\r\n");
-    Motor.setDirection(EC90Motor::CCW);
-    Motor.setSpeed(15);
-    Motor.Enable();
-
-    /*
-     * Wait until FSR-Stop-Extension is triggered
-     * or knee joint exceed the Full-Extension angle limit
-     */
-    while (!(StopExtensionIsTriggered() || (limitState == FullExtension)))
-    {
-      limitState = getLimitState();
-    }
-
-    USART_Send(USART2, "STOP\r\n");
-    Motor.Disable();
-    Motor.setSpeed(0);
+    MotionState = NoInMotion;
   }
+}
 
-  /*
-   * Flexion
-   * 
-   * If FSR-Start-Flexion is triggered,
-   * and knee joint didn't exceed the Full-Flexion angle limit,
-   * then start flexion.
-   */
-  else if (StartFlexionIsTriggered() && (limitState != FullFlexion))
+uint16_t Joint::getAnglePOTValue(void)
+{
+  return AnglePOT.getValue();
+}
+
+uint16_t Joint::getFrontFSRValue(void)
+{
+  return FrontFSR.getValue();
+}
+
+uint16_t Joint::getBackFSRValue(void)
+{
+  return BackFSR.getValue();
+}
+
+void Joint::MotionHandler(void)
+{
+#if defined(MODE_FOLLOWING)
+  switch (this->MotionState)
   {
-    USART_Send(USART2, "Fl\r\n");
-    Motor.setDirection(EC90Motor::CW);
-    Motor.setSpeed(15);
-    Motor.Enable();
+    case Extensioning:
+      if (this->ExtensionStartTriggered() == false)
+      {
+       this->MotionExtensionStop();
+       USART_Send(USART2, "R: Ex-Stop\r\n");
+      }
+      break;
 
-    /*
-     * Wait until FSR-Stop-Flexion is triggered
-     * or knee joint exceed the Full-Flexion angle limit
-     */
-    while (!(StopFlexionIsTriggered() || (limitState == FullFlexion)))
-    {
-      limitState = getLimitState();
-    }
-
-    USART_Send(USART2, "STOP\r\n");
-    Motor.Disable();
-    Motor.setSpeed(0);
+    case Flexioning:
+      if (this->FlexionStartTriggered() == false)
+      {
+       this->MotionFlexionStop();
+       USART_Send(USART2, "R: Fl-Stop\r\n");
+      }
+      break;
+    
+    case NoInMotion:
+    default:
+      if (this->ExtensionStartTriggered())
+      {
+        this->MotionExtensionStart();
+        USART_Send(USART2, "R: Ex-Start\r\n");
+      }
+      else if (this->FlexionStartTriggered())
+      {
+        this->MotionFlexionStart();
+        USART_Send(USART2, "R: Fl-Start\r\n");
+      }
+      break;
   }
+#elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
+  switch (this->MotionState)
+  {
+  case NoInMotion:
+    if (this->ExtensionStartTriggered())
+    {
+      this->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
+    }
+    else if (this->FlexionStartTriggered())
+    {
+      this->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
+    }
+    break;
 
-  return getLimitState();
+  case Extensioning:
+    if (this->ExtensionStopTriggered())
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
+    }
+    break;
+
+  case Flexioning:
+    if (this->FlexionStopTriggered())
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    break;
+
+  case WaitStop:
+  default:
+    this->MotionWaitStop();
+    break;
+  }
+#endif
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionStop(void)
@@ -212,6 +250,39 @@ Joint::SoftwareLimitStateTypeDef Joint::getLimitState(void)
     return FullFlexion;
   else
     return Unlimited;
+}
+
+void Joint::SendInfo(void)
+{
+  USART_Send(USART2, "  F-FSR: ");
+  USART_Send(USART2, Convert::ToString(getFrontFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  B-FSR: ");
+  USART_Send(USART2, Convert::ToString(getBackFSRValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  A-POT: ");
+  USART_Send(USART2, Convert::ToString(getAnglePOTValue()));
+  USART_Send(USART2, "\n");
+
+  USART_Send(USART2, "  Limit: ");
+  switch (getLimitState())
+  {
+  case Joint::FullExtension:
+    USART_Send(USART2, "Full-Ex");
+    break;
+
+  case Joint::FullFlexion:
+    USART_Send(USART2, "Full-Fl");
+    break;
+
+  case Joint::Unlimited:
+  default:
+    USART_Send(USART2, "Unlimited");
+    break;
+  }
+  USART_Send(USART2, "\n");
 }
 
 bool Joint::StartExtensionIsTriggered(void)
@@ -335,7 +406,6 @@ JointWithoutHallSensor::JointWithoutHallSensor(void)
   VirtualHallStep = 0;
 
   MotionState = NoInMotion;
-  WaitStop = false;
 }
 
 void JointWithoutHallSensor::Init(void)
@@ -385,7 +455,6 @@ void JointWithoutHallSensor::Init(void)
 
 void JointWithoutHallSensor::MotionExtensionStart(void)
 {
-  WaitStop = false;
   MotionState = Extensioning;
   // USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
@@ -397,7 +466,6 @@ void JointWithoutHallSensor::MotionExtensionStart(void)
 
 void JointWithoutHallSensor::MotionFlexionStart(void)
 {
-  WaitStop = false;
   MotionState = Flexioning;
   // USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
@@ -409,8 +477,11 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
 {
-  WaitStop = true;
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
   MotionState = NoInMotion;
+#elif defined(MODE_START_STOP_TRIGGER)
+  MotionState = WaitStop;
+#endif
   // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
   Motor.Disable();
@@ -419,8 +490,11 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
 {
-  WaitStop = true;
+#if defined(MODE_FOLLOWING) || defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
   MotionState = NoInMotion;
+#elif defined(MODE_START_STOP_TRIGGER)
+  MotionState = WaitStop;
+#endif
   // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
   Motor.Disable();
@@ -429,6 +503,21 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 
 void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction)
 {
+  if (Direction == EC90Motor::CW)
+  {
+    if (VirtualHallStep >= 5)
+      VirtualHallStep = 0;
+    else
+      VirtualHallStep++;
+  }
+  else if (Direction == EC90Motor::CCW)
+  {
+    if (VirtualHallStep <= 0)
+      VirtualHallStep = 5;
+    else
+      VirtualHallStep--;
+  }
+
   switch (VirtualHallStep)
   {
   case 0:
@@ -466,21 +555,108 @@ void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionType
     VirtualHallStep = 0;
     break;
   }
+}
 
-  if (Direction == EC90Motor::CW)
+void JointWithoutHallSensor::MotionHandler(void)
+{
+#if defined(MODE_FOLLOWING)
+  switch (this->MotionState)
   {
-    if (VirtualHallStep >= 5)
-      VirtualHallStep = 0;
-    else
-      VirtualHallStep++;
+    case Extensioning:
+      if (this->ExtensionStartTriggered() == false)
+      {
+       this->MotionExtensionStop();
+       USART_Send(USART2, "R: Ex-Stop\r\n");
+      }
+      else
+      {
+        this->MotionExtensionStart();
+      }
+      break;
+
+    case Flexioning:
+      if (this->FlexionStartTriggered() == false)
+      {
+       this->MotionFlexionStop();
+       USART_Send(USART2, "R: Fl-Stop\r\n");
+      }
+      else
+      {
+        this->MotionFlexionStart();
+      }
+      break;
+    
+    case NoInMotion:
+    default:
+      if (this->ExtensionStartTriggered())
+      {
+        this->MotionExtensionStart();
+        USART_Send(USART2, "R: Ex-Start\r\n");
+      }
+      else if (this->FlexionStartTriggered())
+      {
+        this->MotionFlexionStart();
+        USART_Send(USART2, "R: Fl-Start\r\n");
+      }
+      break;
   }
-  else if (Direction == EC90Motor::CCW)
+#elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
+  switch (this->MotionState)
   {
-    if (VirtualHallStep <= 0)
-      VirtualHallStep = 5;
+  case NoInMotion:
+    if (this->ExtensionStartTriggered())
+    {
+      this->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
+    }
+    else if (this->FlexionStartTriggered())
+    {
+      this->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
+    }
+    break;
+
+  case Extensioning:
+    if (this->ExtensionStopTriggered())
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
+    }
     else
-      VirtualHallStep--;
+    {
+      this->MotionExtensionStart();
+    }
+    break;
+
+  case Flexioning:
+    if (this->FlexionStopTriggered())
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    else
+    {
+      this->MotionFlexionStart();
+    }
+    break;
+
+  case WaitStop:
+  default:
+    this->MotionWaitStop();
+    break;
   }
+#endif
+}
+
+JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionStop(void)
+{
+  Motor.Disable();
+  Motor.setSpeed(0);
+
+  VirtualHall1.setValue(HIGH);
+  VirtualHall2.setValue(LOW);
+  VirtualHall3.setValue(LOW);
+  VirtualHallStep = 0;
 }
 
 // void Joint_SetAbsoluteAngle(float TargetAngle)

@@ -43,7 +43,7 @@ extern "C"
      * Main function: PA0  
      * Alternate functions (Default): WKUP/USART2_CTS①/ADC12_IN0/TIM2_CH1_ETR(9)
      * Alternate functions (Remap): --
-     * I/O Level : 3.3t
+     * I/O Level : 3.3v
      */
     PA0 = 0,
 
@@ -181,21 +181,149 @@ extern "C"
      * I/O Level : 5v tolerant
      */
     PA15,
+
+    /**
+     * Arduino Pin: A3
+     * Main function: PB0
+     * Alternate functions (Default): ADC12_IN8/TIM3_CH3(9)
+     * Alternate functions (Remap): TIM1_CH2N
+     * I/O Level : 3.3v
+     */
     PB0,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB1
+     * Alternate functions (Default): ADC12_IN9/TIM3_CH4(9)
+     * Alternate functions (Remap): TIM1_CH4N
+     * I/O Level : 3.3v
+     */
     PB1,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB1/BOOT1
+     * Alternate functions (Default): --
+     * Alternate functions (Remap): --
+     * I/O Level : 5v tolerant
+     */
     PB2,
+
+    /**
+     * Arduino Pin: D3
+     * Main function: JTDO
+     * Alternate functions (Default): --
+     * Alternate functions (Remap): TIM2_CH2/PB3/TRACESWO/SPI1_SCK
+     * I/O Level : 5v tolerant
+     */
     PB3,
+
+    /**
+     * Arduino Pin: D5
+     * Main function: JNTRST
+     * Alternate functions (Default): --
+     * Alternate functions (Remap): TIM3_CH1/PB4/SPI1_MISO
+     * I/O Level : 5v tolerant
+     */
     PB4,
+
+    /**
+     * Arduino Pin: D4
+     * Main function: PB5
+     * Alternate functions (Default): I2C1_SMBAl
+     * Alternate functions (Remap): TIM3_CH2/SPI1_MOSI
+     * I/O Level : 3.3v(?)
+     */
     PB5,
+
+    /**
+     * Arduino Pin: D10
+     * Main function: PB6
+     * Alternate functions (Default): I2C1_SCL(9)/TIM4_CH1(9)
+     * Alternate functions (Remap): USART1_TX
+     * I/O Level : 5v tolerant
+     */
     PB6,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB7
+     * Alternate functions (Default): I2C1_SDA(9)/TIM4_CH2(9)
+     * Alternate functions (Remap): USART1_RX
+     * I/O Level : 5v tolerant
+     */
     PB7,
+
+    /**
+     * Arduino Pin: D15
+     * Main function: PB8
+     * Alternate functions (Default): TIM4_CH3(9)
+     * Alternate functions (Remap): I2C1_SCL/CANRX
+     * I/O Level : 5v tolerant
+     */
     PB8,
+
+    /**
+     * Arduino Pin: D14
+     * Main function: PB9
+     * Alternate functions (Default): TIM4_CH4(9)
+     * Alternate functions (Remap): I2C1_SDA/CANTX
+     * I/O Level : 5v tolerant
+     */
     PB9,
+
+    /**
+     * Arduino Pin: D6
+     * Main function: PB10
+     * Alternate functions (Default): I2C2_SCL/USART3_TX(9)
+     * Alternate functions (Remap): TIM2_CH3
+     * I/O Level : 5v tolerant
+     */
     PB10,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB11
+     * Alternate functions (Default): I2C2_SDA/USART3_RX(9)
+     * Alternate functions (Remap): TIM2_CH4
+     * I/O Level : 5v tolerant
+     */
     PB11,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB12
+     * Alternate functions (Default): SPI2_NSS/I2C2_SMBAl/USART3_CK(9)/TIM1_BKIN(9)
+     * Alternate functions (Remap): --
+     * I/O Level : 5v tolerant
+     */
     PB12,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB13
+     * Alternate functions (Default): SPI2_SCK/USART3_CTS(9)/TIM1_CH1N(9)
+     * Alternate functions (Remap): --
+     * I/O Level : 5v tolerant
+     */
     PB13,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB14
+     * Alternate functions (Default): SPI2_MISO/USART3_RTS(9)/TIM1_CH2N(9)
+     * Alternate functions (Remap): --
+     * I/O Level : 5v tolerant
+     */
     PB14,
+
+    /**
+     * Arduino Pin: --
+     * Main function: PB15
+     * Alternate functions (Default): SPI2_MOSI/TIM1_CH3N(9)
+     * Alternate functions (Remap): --
+     * I/O Level : 5v tolerant
+     */
     PB15,
     PC0,
     PC1,
@@ -247,7 +375,6 @@ extern "C"
     PE15,
 
     /* Arduino Pin */
-
 
     // Analog(CN8)
     A0 = PA0,

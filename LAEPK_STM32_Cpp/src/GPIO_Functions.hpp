@@ -60,12 +60,16 @@ public:
   GPIOSpeed_TypeDef Speed;
 
   GPIO(void);
-
+  GPIO(GPIO_PortPinTypeDef NewPortPin);
   void Init(void);
+
   void setValue(GPIO_ValueTypeDef NewValue);
+  void setValue(uint8_t NewValue);
   void toggleValue(void);
 
-  GPIO_ValueTypeDef getValue();
+  GPIO_ValueTypeDef getValue(void);
+  GPIO_ValueTypeDef getInputValue(void);
+  GPIO_ValueTypeDef getOutputValue(void);
 
 private:
   GPIO_TypeDef *getPort(void);

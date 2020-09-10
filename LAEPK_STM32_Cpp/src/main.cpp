@@ -16,15 +16,19 @@
  ******************************************************************************
  */
 
+#include "main.hpp"
+
 /* Uncomment it to run unit test program, comment it to run main program. */
 //  #define ENABLE_UNIT_TEST
 
-#include "main.hpp"
+/* Uncomment/Comment the line below to enable/disable right or left leg. */
+#define ENABLE_RIGHT_LEG
+#define ENABLE_LEFT_LEG
 
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
 
-Joint *NowJoint;
+Joint *NowJoint = NULL;
 Joint RightJoint;
 JointWithoutHallSensor LeftJoint;
 
@@ -37,19 +41,34 @@ int main(void)
   RCC_GetClocksFreq(&RCC_Clocks);
   SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
 
-  /* Configures the priority grouping */
+  /* Configures the NVIC priority grouping */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
 
   /* Initialization */
   RCC_Initialization;
+#ifdef ENABLE_RIGHT_LEG
   Joint_Initialization(&RightJoint, Right);
+#endif
+#ifdef ENABLE_LEFT_LEG
   Joint_Initialization(&LeftJoint, Left);
+#endif
   USART_Initialization;
-  Timer_Initialization;
   Board_Initialization;
   LimitSwitch_Initialization;
+  Timer_Initialization;
 
-  USART_Send(USART2, "[L.A.E.P.K. READY]\r\n");
+  GPIO limitSwitch(LimitSwitch_PortPin);
+  if (limitSwitch.getInputValue() == HIGH)
+  {
+    TIM_Cmd(TIM2, ENABLE); // Enable timer2(main program).
+    USART_Send(USART2, "[L.A.E.P.K. READY]\r\n");
+  }
+  else
+  {
+    TIM_Cmd(TIM2, DISABLE); // Disable timer2(main program).
+    MotionEmergencyStop();
+    USART_Send(USART2, "[Check Limit-Switch]\r\n");
+  }
 
   while (1)
   {
@@ -62,81 +81,45 @@ int main(void)
 
 void MotionHandler(void)
 {
+#ifdef ENABLE_RIGHT_LEG
   NowJoint = &RightJoint;
-  if (NowJoint->MotionState == Joint::NoInMotion)
-  {
-    if (NowJoint->ExtensionStartTriggered())
-    {
-      NowJoint->MotionExtensionStart();
-      USART_Send(USART2, "R: Ex-Start\r\n");
-    }
-    else if (NowJoint->FlexionStartTriggered())
-    {
-      NowJoint->MotionFlexionStart();
-      USART_Send(USART2, "R: Fl-Start\r\n");
-    }
-  }
-  else
-  {
-    if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
-    {
-      NowJoint->MotionExtensionStop();
-      USART_Send(USART2, "R: Ex-Stop\r\n");
-    }
-    else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
-    {
-      NowJoint->MotionFlexionStop();
-      USART_Send(USART2, "R: Fl-Stop\r\n");
-    }
-  }
+  NowJoint->MotionHandler();
+#endif
 
+#ifdef ENABLE_LEFT_LEG
   NowJoint = &LeftJoint;
-  if (NowJoint->MotionState == Joint::NoInMotion)
-  {
-    if (NowJoint->ExtensionStartTriggered())
-    {
-      NowJoint->MotionExtensionStart();
-      USART_Send(USART2, "L: Ex-Start\r\n");
-    }
-    else if (NowJoint->FlexionStartTriggered())
-    {
-      NowJoint->MotionFlexionStart();
-      USART_Send(USART2, "L: Fl-Start\r\n");
-    }
-  }
-  else
-  {
-    if ((NowJoint->MotionState == Joint::Extensioning) && NowJoint->ExtensionStopTriggered())
-    {
-      NowJoint->MotionExtensionStop();
-      USART_Send(USART2, "L: Ex-Stop\r\n");
-    }
-    else if ((NowJoint->MotionState == Joint::Flexioning) && NowJoint->FlexionStopTriggered())
-    {
-      NowJoint->MotionFlexionStop();
-      USART_Send(USART2, "L: Fl-Stop\r\n");
-    }
-    else if (NowJoint->MotionState == Joint::Extensioning)
-    {
-      NowJoint->MotionExtensionStart();
-    }
-    else if (NowJoint->MotionState == Joint::Flexioning)
-    {
-      NowJoint->MotionFlexionStart();
-    }
-  }
+  NowJoint->MotionHandler();
+#endif
 }
 
-void CommunicationDecoder(uint8_t Command)
+void MotionEmergencyStop(void)
 {
-  //  Joint_SetAbsoluteAngle(Command - 5);
+#ifdef ENABLE_RIGHT_LEG
+  NowJoint = &RightJoint;
+  NowJoint->MotionStop();
+#endif
+
+#ifdef ENABLE_LEFT_LEG
+  NowJoint = &LeftJoint;
+  NowJoint->MotionStop();
+#endif
+
+  USART_Send(USART2, "[EMER STOP]\n");
 }
 
-void Delay_NonTimer(__IO uint32_t nTime)
+void UpdateInfo(void)
 {
-  for (; nTime != 0; nTime--)
-  {
-  }
+#ifdef ENABLE_RIGHT_LEG
+  USART_Send(USART2, "[Right INFO]\n");
+  NowJoint = &RightJoint;
+  NowJoint->SendInfo();
+#endif
+
+#ifdef ENABLE_LEFT_LEG
+  USART_Send(USART2, "[Left INFO]\n");
+  NowJoint = &LeftJoint;
+  NowJoint->SendInfo();
+#endif
 }
 
 // TODO Clean it.
@@ -222,6 +205,18 @@ void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType)
 
   joint->Init();
   joint->MotionStop();
+}
+
+void CommunicationDecoder(uint8_t Command)
+{
+  //  Joint_SetAbsoluteAngle(Command - 5);
+}
+
+void Delay_NonTimer(__IO uint32_t nTime)
+{
+  for (; nTime != 0; nTime--)
+  {
+  }
 }
 
 extern "C"

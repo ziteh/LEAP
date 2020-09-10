@@ -37,13 +37,15 @@ extern "C"
 #include "stm32f10x.h"
 }
 
+#define LimitSwitch_PortPin ((GPIO_PortPinTypeDef)PA0)
+
 /* Right leg define */
 #define RightJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
 #define RightJoint_Timer_SpeedPWM (TIM3)
 #define RightJoint_Channel_SpeedPWM (CH2)
 
-#define RightJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PB6)
-#define RightJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PC7)
+#define RightJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PC7)
+#define RightJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PB6)
 #define RightJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)PA9)
 
 #define RightJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PA1)
@@ -61,11 +63,11 @@ extern "C"
 #define RightJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
 #define RightJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
 
-#define RightJoint_DefaultValue_FSRStartExtension ((uint16_t)215)
-#define RightJoint_DefaultValue_FSRStartFlexion ((uint16_t)180)
+#define RightJoint_DefaultValue_FSRStartExtension ((uint16_t)2100)
+#define RightJoint_DefaultValue_FSRStartFlexion ((uint16_t)2400)
 
-#define RightJoint_DefaultValue_FSRStopExtension ((uint16_t)500)
-#define RightJoint_DefaultValue_FSRStopFlexion ((uint16_t)500)
+#define RightJoint_DefaultValue_FSRStopExtension ((uint16_t)RightJoint_DefaultValue_FSRStartFlexion - 200)
+#define RightJoint_DefaultValue_FSRStopFlexion ((uint16_t)RightJoint_DefaultValue_FSRStartExtension - 200)
 
 /* Left leg define */
 #define LeftJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
@@ -73,7 +75,7 @@ extern "C"
 #define LeftJoint_Channel_SpeedPWM (CH1)
 
 #define LeftJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PA8)
-#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PC7)
+#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PB6)
 #define LeftJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)PA9)
 
 #define LeftJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PC3)
@@ -91,15 +93,15 @@ extern "C"
 #define LeftJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
 #define LeftJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
 
-#define LeftJoint_DefaultValue_FSRStartExtension ((uint16_t)215)
-#define LeftJoint_DefaultValue_FSRStartFlexion ((uint16_t)180)
+#define LeftJoint_DefaultValue_FSRStartExtension ((uint16_t)1400)
+#define LeftJoint_DefaultValue_FSRStartFlexion ((uint16_t)1600)
 
-#define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)500)
-#define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)500)
+#define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)LeftJoint_DefaultValue_FSRStartFlexion - 250)
+#define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)LeftJoint_DefaultValue_FSRStartExtension - 250)
 
-#define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)PA6)
+#define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)PB8)
 #define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)PB9)
-#define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)PB8)
+#define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)PA6)
 
 /**
  * @brief Initializing RCC.
@@ -113,6 +115,7 @@ extern "C"
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |     \
                                RCC_APB2Periph_GPIOB | \
                                RCC_APB2Periph_GPIOC | \
+                               RCC_APB2Periph_AFIO |  \
                                RCC_APB2Periph_ADC1,   \
                            ENABLE);                   \
   }
@@ -124,7 +127,7 @@ extern "C"
 #define LimitSwitch_Initialization                              \
   {                                                             \
     GPIO limitSwitch;                                           \
-    limitSwitch.PortPin = PA0;                                  \
+    limitSwitch.PortPin = LimitSwitch_PortPin;                  \
     limitSwitch.Mode = GPIO_Mode_IPD;                           \
     limitSwitch.Init();                                         \
                                                                 \
@@ -198,14 +201,14 @@ extern "C"
   {                                                             \
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;              \
     TIM_TimeBaseStructure.TIM_Period = 2000;                    \
-    TIM_TimeBaseStructure.TIM_Prescaler = 720 - 1;             \
+    TIM_TimeBaseStructure.TIM_Prescaler = 720 - 1;              \
     TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;     \
     TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; \
     TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);             \
                                                                 \
     TIM_ClearFlag(TIM2, TIM_FLAG_Update);                       \
     TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);                  \
-    TIM_Cmd(TIM2, ENABLE);                                      \
+    TIM_Cmd(TIM2, DISABLE);                                     \
                                                                 \
     NVIC_InitTypeDef NVIC_InitStructure;                        \
     NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;             \
@@ -217,21 +220,37 @@ extern "C"
 
 /**
  * @brief Initializing board.
- * @remark RCC_APB2: GPIOA, GPIOC
+ * @remark RCC_APB2: GPIOA, GPIOC, AFIO
  */
-#define Board_Initialization             \
-  {                                      \
-    GPIO Button;                         \
-    Button.PortPin = User_Button;        \
-    Button.Mode = GPIO_Mode_IN_FLOATING; \
-    Button.Init();                       \
-                                         \
-    GPIO LED;                            \
-    LED.PortPin = User_LED;              \
-    LED.Mode = GPIO_Mode_Out_PP;         \
-    LED.Speed = GPIO_Speed_2MHz;         \
-    LED.Init();                          \
-    LED.setValue(LOW);                   \
+#define Board_Initialization                                     \
+  {                                                              \
+    GPIO LED;                                                    \
+    LED.PortPin = User_LED;                                      \
+    LED.Mode = GPIO_Mode_Out_PP;                                 \
+    LED.Speed = GPIO_Speed_2MHz;                                 \
+    LED.Init();                                                  \
+    LED.setValue(LOW);                                           \
+                                                                 \
+    GPIO Button;                                                 \
+    Button.PortPin = User_Button;                                \
+    Button.Mode = GPIO_Mode_IPU;                                 \
+    Button.Init();                                               \
+                                                                 \
+    NVIC_InitTypeDef NVIC_InitStructure;                         \
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;         \
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;    \
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;           \
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;              \
+    NVIC_Init(&NVIC_InitStructure);                              \
+                                                                 \
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource13); \
+                                                                 \
+    EXTI_InitTypeDef EXTI_InitStructure;                         \
+    EXTI_InitStructure.EXTI_Line = EXTI_Line13;                  \
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;          \
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;      \
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;                    \
+    EXTI_Init(&EXTI_InitStructure);                              \
   }
 
 typedef enum
@@ -241,8 +260,8 @@ typedef enum
 } JointTypeDef;
 
 void MotionHandler(void);
-void CommunicationDecoder(uint8_t Command);
-void Delay_NonTimer(__IO uint32_t nTime);
+void MotionEmergencyStop(void);
+void UpdateInfo(void);
 
 /**
  * @brief Initializing joint.
@@ -251,6 +270,9 @@ void Delay_NonTimer(__IO uint32_t nTime);
  */
 void Joint_Initialization(Joint *joint, JointTypeDef jointType);
 void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType);
+
+void CommunicationDecoder(uint8_t Command);
+void Delay_NonTimer(__IO uint32_t nTime);
 
 extern "C"
 {

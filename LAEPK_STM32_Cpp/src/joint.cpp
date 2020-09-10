@@ -21,6 +21,10 @@
 // #define MODE_START_STOP_TRIGGER
 // #define MODE_CONTINUOUS_START_STOP_TRIGGER
 
+#if !defined(MODE_FOLLOWING) && !defined(MODE_START_STOP_TRIGGER) && !defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
+  #error No joint-mode selected.
+#endif
+
 #include "joint.hpp"
 
 Joint::Joint(void)
@@ -110,8 +114,6 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
   MotionState = NoInMotion;
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
-#else
-  #error No joint-mode selected.
 #endif
   // USART_Send(USART2, "Ex-Stop\r\n");
 
@@ -127,8 +129,6 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
   MotionState = NoInMotion;
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
-#else
-  #error No joint-mode selected.
 #endif
   // USART_Send(USART2, "Fl-Stop\r\n");
 
@@ -231,8 +231,6 @@ void Joint::MotionHandler(void)
     this->MotionWaitStop();
     break;
   }
-#else
-#error No joint-mode selected.
 #endif
 }
 
@@ -483,8 +481,6 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   MotionState = NoInMotion;
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
-#else
-  #error No joint-mode selected.
 #endif
   // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
@@ -498,8 +494,6 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   MotionState = NoInMotion;
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
-#else
-  #error No joint-mode selected.
 #endif
   // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
@@ -651,8 +645,6 @@ void JointWithoutHallSensor::MotionHandler(void)
     this->MotionWaitStop();
     break;
   }
-#else
-#error No joint-mode selected.
 #endif
 }
 

@@ -66,8 +66,8 @@ extern "C"
 #define RightJoint_DefaultValue_FSRStartExtension ((uint16_t)2410)
 #define RightJoint_DefaultValue_FSRStartFlexion ((uint16_t)2400)
 
-#define RightJoint_DefaultValue_FSRStopExtension ((uint16_t)RightJoint_DefaultValue_FSRStartFlexion -200)
-#define RightJoint_DefaultValue_FSRStopFlexion ((uint16_t)RightJoint_DefaultValue_FSRStartExtension-200)
+#define RightJoint_DefaultValue_FSRStopExtension ((uint16_t)RightJoint_DefaultValue_FSRStartFlexion - 200)
+#define RightJoint_DefaultValue_FSRStopFlexion ((uint16_t)RightJoint_DefaultValue_FSRStartExtension - 200)
 
 /* Left leg define */
 #define LeftJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
@@ -96,8 +96,8 @@ extern "C"
 #define LeftJoint_DefaultValue_FSRStartExtension ((uint16_t)1400)
 #define LeftJoint_DefaultValue_FSRStartFlexion ((uint16_t)1600)
 
-#define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)LeftJoint_DefaultValue_FSRStartFlexion -250)
-#define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)LeftJoint_DefaultValue_FSRStartExtension -250)
+#define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)LeftJoint_DefaultValue_FSRStartFlexion - 250)
+#define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)LeftJoint_DefaultValue_FSRStartExtension - 250)
 
 #define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)PB8)
 #define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)PB9)

@@ -154,7 +154,7 @@ uint16_t Joint::getBackFSRValue(void)
 void Joint::MotionHandler(void)
 {
 #if defined(MODE_FOLLOWING)
-  #elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
+#elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
   switch (this->MotionState)
   {
   case NoInMotion:
@@ -191,9 +191,9 @@ void Joint::MotionHandler(void)
     this->MotionWaitStop();
     break;
   }
-  #else
-  #error No joint-mode selected.
-  #endif
+#else
+#error No joint-mode selected.
+#endif
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionStop(void)

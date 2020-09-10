@@ -20,8 +20,8 @@
 
 /* Uncomment one of the line below to select mode. */
 #define MODE_FOLLOWING
-#define MODE_START_STOP_TRIGGER
-#define MODE_CONTINUOUS_START_STOP_TRIGGER
+// #define MODE_START_STOP_TRIGGER
+// #define MODE_CONTINUOUS_START_STOP_TRIGGER
 
 Joint::Joint(void)
 {
@@ -125,8 +125,12 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
 
 void Joint::MotionWaitStop(void)
 {
-//  if ((FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8)) &&
-//      (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8)))
+#if defined(MODE_FOLLOWING) || defined(MODE_START_STOP_TRIGGER)
+#if !defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
+  if ((FrontFSR.getValue() < (ExtensionFSRStartThreshold * 0.8)) &&
+      (BackFSR.getValue() < (FlexionFSRStartThreshold * 0.8)))
+#endif
+#endif
   {
     MotionState = NoInMotion;
   }
@@ -149,6 +153,8 @@ uint16_t Joint::getBackFSRValue(void)
 
 void Joint::MotionHandler(void)
 {
+#if defined(MODE_FOLLOWING)
+  #elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
   switch (this->MotionState)
   {
   case NoInMotion:
@@ -185,6 +191,9 @@ void Joint::MotionHandler(void)
     this->MotionWaitStop();
     break;
   }
+  #else
+  #error No joint-mode selected.
+  #endif
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionStop(void)

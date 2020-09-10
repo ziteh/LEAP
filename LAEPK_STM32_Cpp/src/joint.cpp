@@ -142,67 +142,44 @@ uint16_t Joint::getBackFSRValue(void)
   return BackFSR.getValue();
 }
 
-Joint::SoftwareLimitStateTypeDef Joint::MotionHandler(void)
+void Joint::MotionHandler(void)
 {
-  SoftwareLimitStateTypeDef limitState = getLimitState();
-
-  /*
-   * Extenstion
-   * 
-   * If FSR-Start-Extension is triggered,
-   * and knee joint didn't exceed the Full-Extension angle limit,
-   * then start extension.
-   */
-  if (StartExtensionIsTriggered() && (limitState != FullExtension))
+  switch (this->MotionState)
   {
-    USART_Send(USART2, "Ex\r\n");
-    Motor.setDirection(EC90Motor::CCW);
-    Motor.setSpeed(15);
-    Motor.Enable();
-
-    /*
-     * Wait until FSR-Stop-Extension is triggered
-     * or knee joint exceed the Full-Extension angle limit
-     */
-    while (!(StopExtensionIsTriggered() || (limitState == FullExtension)))
+  case NoInMotion:
+    if (this->ExtensionStartTriggered())
     {
-      limitState = getLimitState();
+      this->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
     }
-
-    USART_Send(USART2, "STOP\r\n");
-    Motor.Disable();
-    Motor.setSpeed(0);
-  }
-
-  /*
-   * Flexion
-   * 
-   * If FSR-Start-Flexion is triggered,
-   * and knee joint didn't exceed the Full-Flexion angle limit,
-   * then start flexion.
-   */
-  else if (StartFlexionIsTriggered() && (limitState != FullFlexion))
-  {
-    USART_Send(USART2, "Fl\r\n");
-    Motor.setDirection(EC90Motor::CW);
-    Motor.setSpeed(15);
-    Motor.Enable();
-
-    /*
-     * Wait until FSR-Stop-Flexion is triggered
-     * or knee joint exceed the Full-Flexion angle limit
-     */
-    while (!(StopFlexionIsTriggered() || (limitState == FullFlexion)))
+    else if (this->FlexionStartTriggered())
     {
-      limitState = getLimitState();
+      this->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
     }
+    break;
 
-    USART_Send(USART2, "STOP\r\n");
-    Motor.Disable();
-    Motor.setSpeed(0);
+  case Extensioning:
+    if (this->ExtensionStopTriggered())
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
+    }
+    break;
+
+  case Flexioning:
+    if (this->FlexionStopTriggered())
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    break;
+
+  case WaitStop:
+  default:
+    this->MotionWaitStop();
+    break;
   }
-
-  return getLimitState();
 }
 
 Joint::SoftwareLimitStateTypeDef Joint::MotionStop(void)

@@ -16,6 +16,8 @@
  ******************************************************************************
  */
 
+#include "joint.hpp"
+
 /* Uncomment one of the line below to select mode. */
 #define MODE_FOLLOWING
 // #define MODE_START_STOP_TRIGGER
@@ -24,8 +26,6 @@
 #if !defined(MODE_FOLLOWING) && !defined(MODE_START_STOP_TRIGGER) && !defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
   #error No joint-mode selected.
 #endif
-
-#include "joint.hpp"
 
 Joint::Joint(void)
 {

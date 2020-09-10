@@ -16,14 +16,14 @@
  ******************************************************************************
  */
 
+#include "main.hpp"
+
 /* Uncomment it to run unit test program, comment it to run main program. */
 //  #define ENABLE_UNIT_TEST
 
 /* Uncomment/Comment the line below to enable/disable right or left leg. */
 //#define ENABLE_RIGHT_LEG
 #define ENABLE_LEFT_LEG
-
-#include "main.hpp"
 
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;

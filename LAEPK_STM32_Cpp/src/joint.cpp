@@ -459,8 +459,6 @@ void JointWithoutHallSensor::MotionExtensionStart(void)
   // USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
   VirtualHallHandler(EC90Motor::CW);
-  // Motor.setDirection(EC90Motor::CW);
-  Motor.setSpeed(15);
   Motor.Enable();
 }
 
@@ -470,8 +468,6 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
   // USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
   VirtualHallHandler(EC90Motor::CCW);
-  // Motor.setDirection(EC90Motor::CCW);
-  Motor.setSpeed(15);
   Motor.Enable();
 }
 

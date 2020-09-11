@@ -24,7 +24,7 @@
 // #define MODE_CONTINUOUS_START_STOP_TRIGGER
 
 #if !defined(MODE_FOLLOWING) && !defined(MODE_START_STOP_TRIGGER) && !defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
-  #error No joint-mode selected.
+#error No joint-mode selected.
 #endif
 
 Joint::Joint(void)
@@ -164,35 +164,35 @@ void Joint::MotionHandler(void)
 #if defined(MODE_FOLLOWING)
   switch (this->MotionState)
   {
-    case Extensioning:
-      if (this->ExtensionStartTriggered() == false)
-      {
-       this->MotionExtensionStop();
-       USART_Send(USART2, "R: Ex-Stop\r\n");
-      }
-      break;
+  case Extensioning:
+    if (this->ExtensionStartTriggered() == false)
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
+    }
+    break;
 
-    case Flexioning:
-      if (this->FlexionStartTriggered() == false)
-      {
-       this->MotionFlexionStop();
-       USART_Send(USART2, "R: Fl-Stop\r\n");
-      }
-      break;
-    
-    case NoInMotion:
-    default:
-      if (this->ExtensionStartTriggered())
-      {
-        this->MotionExtensionStart();
-        USART_Send(USART2, "R: Ex-Start\r\n");
-      }
-      else if (this->FlexionStartTriggered())
-      {
-        this->MotionFlexionStart();
-        USART_Send(USART2, "R: Fl-Start\r\n");
-      }
-      break;
+  case Flexioning:
+    if (this->FlexionStartTriggered() == false)
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    break;
+
+  case NoInMotion:
+  default:
+    if (this->ExtensionStartTriggered())
+    {
+      this->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
+    }
+    else if (this->FlexionStartTriggered())
+    {
+      this->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
+    }
+    break;
   }
 #elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
   switch (this->MotionState)
@@ -562,43 +562,43 @@ void JointWithoutHallSensor::MotionHandler(void)
 #if defined(MODE_FOLLOWING)
   switch (this->MotionState)
   {
-    case Extensioning:
-      if (this->ExtensionStartTriggered() == false)
-      {
-       this->MotionExtensionStop();
-       USART_Send(USART2, "R: Ex-Stop\r\n");
-      }
-      else
-      {
-        this->MotionExtensionStart();
-      }
-      break;
+  case Extensioning:
+    if (this->ExtensionStartTriggered() == false)
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
+    }
+    else
+    {
+      this->MotionExtensionStart();
+    }
+    break;
 
-    case Flexioning:
-      if (this->FlexionStartTriggered() == false)
-      {
-       this->MotionFlexionStop();
-       USART_Send(USART2, "R: Fl-Stop\r\n");
-      }
-      else
-      {
-        this->MotionFlexionStart();
-      }
-      break;
-    
-    case NoInMotion:
-    default:
-      if (this->ExtensionStartTriggered())
-      {
-        this->MotionExtensionStart();
-        USART_Send(USART2, "R: Ex-Start\r\n");
-      }
-      else if (this->FlexionStartTriggered())
-      {
-        this->MotionFlexionStart();
-        USART_Send(USART2, "R: Fl-Start\r\n");
-      }
-      break;
+  case Flexioning:
+    if (this->FlexionStartTriggered() == false)
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    else
+    {
+      this->MotionFlexionStart();
+    }
+    break;
+
+  case NoInMotion:
+  default:
+    if (this->ExtensionStartTriggered())
+    {
+      this->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
+    }
+    else if (this->FlexionStartTriggered())
+    {
+      this->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
+    }
+    break;
   }
 #elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
   switch (this->MotionState)

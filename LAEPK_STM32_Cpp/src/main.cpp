@@ -221,7 +221,6 @@ void Delay_NonTimer(__IO uint32_t nTime)
 
 extern "C"
 {
-
   void Delay_ms(__IO uint32_t nTime)
   {
     TimingDelay = (nTime * 0.125);
@@ -243,7 +242,6 @@ extern "C"
       TimingDelay--;
     }
   }
-
 } /* extern "C" { */
 
 #ifdef USE_FULL_ASSERT
@@ -265,6 +263,7 @@ void assert_failed(uint8_t *file, uint32_t line)
   {
   }
 }
+
 #endif
 
 /*********************************END OF FILE**********************************/

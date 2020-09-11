@@ -430,7 +430,7 @@ void JointWithoutHallSensor::Init(void)
   Motor.PortPin_ReadyState = PortPin_ReadyState;
   Motor.PortPin_RPM = PortPin_RPM;
   Motor.Init();
-  Motor.setSpeed(15);
+  Motor.setSpeed(0);
   Motor.setDirection(EC90Motor::CW);
   Motor.Disable();
 
@@ -481,7 +481,6 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
   Motor.Disable();
-  Motor.setSpeed(0);
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
@@ -494,7 +493,6 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
   // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
   Motor.Disable();
-  Motor.setSpeed(0);
 }
 
 void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction)

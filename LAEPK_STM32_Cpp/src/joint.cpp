@@ -88,7 +88,6 @@ bool Joint::FlexionStopTriggered(void)
 void Joint::MotionExtensionStart(void)
 {
   MotionState = Extensioning;
-  // USART_Send(USART2, "Ex-Start\r\n");
 
   Motor.setDirection(EC90Motor::CCW);
   Motor.setSpeed(30);
@@ -98,7 +97,6 @@ void Joint::MotionExtensionStart(void)
 void Joint::MotionFlexionStart(void)
 {
   MotionState = Flexioning;
-  // USART_Send(USART2, "Fl-Start\r\n");
 
   Motor.setDirection(EC90Motor::CW);
   Motor.setSpeed(30);
@@ -115,7 +113,6 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "Ex-Stop\r\n");
 
   return getLimitState();
 }
@@ -130,7 +127,6 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "Fl-Stop\r\n");
 
   return getLimitState();
 }
@@ -476,7 +472,6 @@ void JointWithoutHallSensor::Init(void)
 void JointWithoutHallSensor::MotionExtensionStart(void)
 {
   MotionState = Extensioning;
-  // USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
   Direction = Joint::Extension;
   Motor.Enable();
@@ -486,7 +481,6 @@ void JointWithoutHallSensor::MotionExtensionStart(void)
 void JointWithoutHallSensor::MotionFlexionStart(void)
 {
   MotionState = Flexioning;
-  // USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
   Direction = Joint::Flexion;
   Motor.Enable();
@@ -500,10 +494,9 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
-  TIM_Cmd(Timer_SpeedPWM, DISABLE);
   Motor.Disable();
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
@@ -513,10 +506,9 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
-  TIM_Cmd(Timer_SpeedPWM, DISABLE);
   Motor.Disable();
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
 }
 
 void JointWithoutHallSensor::VirtualHallHandler(void)
@@ -586,10 +578,6 @@ void JointWithoutHallSensor::MotionHandler(void)
       this->MotionExtensionStop();
       USART_Send(USART2, "R: Ex-Stop\r\n");
     }
-//    else
-//    {
-//      this->MotionExtensionStart();
-//    }
     break;
 
   case Flexioning:
@@ -598,10 +586,6 @@ void JointWithoutHallSensor::MotionHandler(void)
       this->MotionFlexionStop();
       USART_Send(USART2, "R: Fl-Stop\r\n");
     }
-//    else
-//    {
-//      this->MotionFlexionStart();
-//    }
     break;
 
   case NoInMotion:

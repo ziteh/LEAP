@@ -158,11 +158,9 @@ void TIM2_IRQHandler(void)
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 
     GPIO LED(User_LED);
-    LED.setValue(HIGH);
+    LED.toggleValue();
 
     MotionHandler();
-
-    LED.setValue(LOW);
   }
 }
 

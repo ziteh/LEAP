@@ -23,12 +23,14 @@ void PWM_SetFrequency(TIM_TypeDef *TIMx, uint16_t NewFrequency)
   /**
    *  TIM_Period = ((System_Core_Frequency / TIM_Prescaler) / PWM_Frequency) - 1
    *
-   *  System_Core_Frequency = 72MHz (STM32F103RB)
+   *  The Maximum of System_Core_Frequency = 72MHz (STM32F103RB)
    */
+
+  extern RCC_ClocksTypeDef RCC_Clocks;
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
   TIM_TimeBaseStructure.TIM_Prescaler = 10;
-  TIM_TimeBaseStructure.TIM_Period = ((SystemCoreClock / (TIM_TimeBaseStructure.TIM_Prescaler * 10)) / NewFrequency) - 1;
+  TIM_TimeBaseStructure.TIM_Period = ((RCC_Clocks.SYSCLK_Frequency / (TIM_TimeBaseStructure.TIM_Prescaler * 10)) / NewFrequency) - 1;
 
   TIM_TimeBaseInit(TIMx, &TIM_TimeBaseStructure);
 }
@@ -187,11 +189,13 @@ void PWM::setFrequency(uint16_t NewFrequency)
   /**
    *  TIM_Period = ((System_Frequency / TIM_Prescaler) / PWM_Frequency) - 1
    *
-   *  System_Frequency = 72MHz (STM32F103RB)
+   *  The Maximum of System_Frequency = 72MHz (STM32F103RB)
    */
 
+  extern RCC_ClocksTypeDef RCC_Clocks;
+
   TIM_TimeBaseStructure.TIM_Prescaler = 10; // !! or 100
-  TIM_TimeBaseStructure.TIM_Period = ((7200000.0 / TIM_TimeBaseStructure.TIM_Prescaler) / NewFrequency) - 1;
+  TIM_TimeBaseStructure.TIM_Period = ((RCC_Clocks.SYSCLK_Frequency / TIM_TimeBaseStructure.TIM_Prescaler) / NewFrequency) - 1;
 
   this->setup();
 }
@@ -209,10 +213,12 @@ uint16_t PWM::getFrequency(void)
   /**
    * PWM_Frequency = (System_Frequency / TIM_Prescaler) / (TIM_Period + 1)
    *
-   * System_Frequency = 72MHz (STM32F103RB)
+   * The Maximum of System_Frequency = 72MHz (STM32F103RB)
    */
 
-  return (72000000.0 / TIM_TimeBaseStructure.TIM_Prescaler) / (TIM_TimeBaseStructure.TIM_Period + 1);
+  extern RCC_ClocksTypeDef RCC_Clocks;
+
+  return (RCC_Clocks.SYSCLK_Frequency / TIM_TimeBaseStructure.TIM_Prescaler) / (TIM_TimeBaseStructure.TIM_Period + 1);
 }
 
 uint16_t PWM::getDutyCycle(void)

@@ -404,8 +404,8 @@ JointWithoutHallSensor::JointWithoutHallSensor(void)
   VirtualHall3.Speed = GPIO_Speed_50MHz;
 
   VirtualHallStep = 0;
-
   MotionState = NoInMotion;
+  Direction = Joint::Flexion;
 }
 
 void JointWithoutHallSensor::Init(void)
@@ -422,8 +422,28 @@ void JointWithoutHallSensor::Init(void)
   VirtualHall3.Init();
   VirtualHall3.setValue(LOW);
 
+  extern RCC_ClocksTypeDef RCC_Clocks;
+
+  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+  TIM_TimeBaseStructure.TIM_Period = 5;
+  TIM_TimeBaseStructure.TIM_Prescaler = (RCC_Clocks.SYSCLK_Frequency / 1000) - 1;
+  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+  TIM_TimeBaseInit(Timer_SpeedPWM, &TIM_TimeBaseStructure);
+
+  TIM_ClearFlag(Timer_SpeedPWM, TIM_FLAG_Update);
+  TIM_ITConfig(Timer_SpeedPWM, TIM_IT_Update, ENABLE);
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
+
+  NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn; // XXX Manual.
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
   Motor.PortPin_SpeedPWM = PortPin_SpeedPWM;
-  Motor.Timer_SpeedPWM = Timer_SpeedPWM;
+  //  Motor.Timer_SpeedPWM = Timer_SpeedPWM;
   Motor.Channel_SpeedPWM = Channel_SpeedPWM;
   Motor.PortPin_FunctionState = PortPin_FunctionState;
   Motor.PortPin_Direction = PortPin_Direction;
@@ -458,8 +478,9 @@ void JointWithoutHallSensor::MotionExtensionStart(void)
   MotionState = Extensioning;
   // USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
-  VirtualHallHandler(EC90Motor::CW);
+  Direction = Joint::Extension;
   Motor.Enable();
+  TIM_Cmd(Timer_SpeedPWM, ENABLE);
 }
 
 void JointWithoutHallSensor::MotionFlexionStart(void)
@@ -467,8 +488,9 @@ void JointWithoutHallSensor::MotionFlexionStart(void)
   MotionState = Flexioning;
   // USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
-  VirtualHallHandler(EC90Motor::CCW);
+  Direction = Joint::Flexion;
   Motor.Enable();
+  TIM_Cmd(Timer_SpeedPWM, ENABLE);
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
@@ -480,6 +502,7 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 #endif
   // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
   Motor.Disable();
 }
 
@@ -492,19 +515,20 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 #endif
   // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
   Motor.Disable();
 }
 
-void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction)
+void JointWithoutHallSensor::VirtualHallHandler(void)
 {
-  if (Direction == EC90Motor::CW)
+  if (Direction == Joint::Extension)
   {
     if (VirtualHallStep >= 5)
       VirtualHallStep = 0;
     else
       VirtualHallStep++;
   }
-  else if (Direction == EC90Motor::CCW)
+  else if (Direction == Joint::Flexion)
   {
     if (VirtualHallStep <= 0)
       VirtualHallStep = 5;
@@ -562,10 +586,10 @@ void JointWithoutHallSensor::MotionHandler(void)
       this->MotionExtensionStop();
       USART_Send(USART2, "R: Ex-Stop\r\n");
     }
-    else
-    {
-      this->MotionExtensionStart();
-    }
+//    else
+//    {
+//      this->MotionExtensionStart();
+//    }
     break;
 
   case Flexioning:
@@ -574,10 +598,10 @@ void JointWithoutHallSensor::MotionHandler(void)
       this->MotionFlexionStop();
       USART_Send(USART2, "R: Fl-Stop\r\n");
     }
-    else
-    {
-      this->MotionFlexionStart();
-    }
+//    else
+//    {
+//      this->MotionFlexionStart();
+//    }
     break;
 
   case NoInMotion:

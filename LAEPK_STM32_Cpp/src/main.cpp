@@ -23,7 +23,7 @@
 
 /* Uncomment/Comment the line below to enable/disable right or left leg. */
 #define ENABLE_RIGHT_LEG
-//#define ENABLE_LEFT_LEG
+#define ENABLE_LEFT_LEG
 
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
@@ -156,7 +156,8 @@ void RCC_Initialization(void)
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2 |
                              RCC_APB1Periph_TIM2 |
-                             RCC_APB1Periph_TIM3,
+                             RCC_APB1Periph_TIM3 |
+							 RCC_APB1Periph_TIM4,
                          ENABLE);
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |
@@ -206,8 +207,8 @@ void USART_Initialization(void)
 
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 

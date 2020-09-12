@@ -124,7 +124,7 @@ void UpdateInfo(void)
 #endif
 }
 
-// FIXME Manual RCC 
+// FIXME Manual RCC init.
 void RCC_Initialization(void)
 {
   // RCC_DeInit();

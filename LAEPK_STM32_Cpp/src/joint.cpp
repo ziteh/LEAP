@@ -576,7 +576,7 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->ExtensionStartTriggered() == false)
     {
       this->MotionExtensionStop();
-      USART_Send(USART2, "R: Ex-Stop\r\n");
+      USART_Send(USART2, "L: Ex-Stop\r\n");
     }
     break;
 
@@ -584,7 +584,7 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->FlexionStartTriggered() == false)
     {
       this->MotionFlexionStop();
-      USART_Send(USART2, "R: Fl-Stop\r\n");
+      USART_Send(USART2, "L: Fl-Stop\r\n");
     }
     break;
 
@@ -593,12 +593,12 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->ExtensionStartTriggered())
     {
       this->MotionExtensionStart();
-      USART_Send(USART2, "R: Ex-Start\r\n");
+      USART_Send(USART2, "L: Ex-Start\r\n");
     }
     else if (this->FlexionStartTriggered())
     {
       this->MotionFlexionStart();
-      USART_Send(USART2, "R: Fl-Start\r\n");
+      USART_Send(USART2, "L: Fl-Start\r\n");
     }
     break;
   }
@@ -609,12 +609,12 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->ExtensionStartTriggered())
     {
       this->MotionExtensionStart();
-      USART_Send(USART2, "R: Ex-Start\r\n");
+      USART_Send(USART2, "L: Ex-Start\r\n");
     }
     else if (this->FlexionStartTriggered())
     {
       this->MotionFlexionStart();
-      USART_Send(USART2, "R: Fl-Start\r\n");
+      USART_Send(USART2, "L: Fl-Start\r\n");
     }
     break;
 
@@ -622,7 +622,7 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->ExtensionStopTriggered())
     {
       this->MotionExtensionStop();
-      USART_Send(USART2, "R: Ex-Stop\r\n");
+      USART_Send(USART2, "L: Ex-Stop\r\n");
     }
     else
     {
@@ -634,7 +634,7 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->FlexionStopTriggered())
     {
       this->MotionFlexionStop();
-      USART_Send(USART2, "R: Fl-Stop\r\n");
+      USART_Send(USART2, "L: Fl-Stop\r\n");
     }
     else
     {

@@ -23,7 +23,7 @@
 
 /* Uncomment/Comment the line below to enable/disable right or left leg. */
 #define ENABLE_RIGHT_LEG
-#define ENABLE_LEFT_LEG
+//#define ENABLE_LEFT_LEG
 
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
@@ -36,10 +36,6 @@ int main(void)
 {
 #ifndef ENABLE_UNIT_TEST
   /* Region of Main Code */
-
-  /* SysTick end of count event each 1ms */
-  RCC_GetClocksFreq(&RCC_Clocks);
-  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
 
   /* Configures the NVIC priority grouping */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -69,6 +65,12 @@ int main(void)
     MotionEmergencyStop();
     USART_Send(USART2, "[Check Limit-Switch]\r\n");
   }
+
+  /* SysTick end of count event each 1ms */
+  SysTick_Config(RCC_Clocks.HCLK_Frequency / 1000);
+  USART_Send(USART2, "SysFre: ");
+  USART_Send(USART2, Convert::ToString(RCC_Clocks.SYSCLK_Frequency));
+  USART_Send(USART2, "\r\n");
 
   while (1)
   {

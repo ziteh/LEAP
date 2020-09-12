@@ -91,7 +91,7 @@ void Joint::MotionExtensionStart(void)
   // USART_Send(USART2, "Ex-Start\r\n");
 
   Motor.setDirection(EC90Motor::CCW);
-  Motor.setSpeed(15);
+  Motor.setSpeed(30);
   Motor.Enable();
 }
 
@@ -101,7 +101,7 @@ void Joint::MotionFlexionStart(void)
   // USART_Send(USART2, "Fl-Start\r\n");
 
   Motor.setDirection(EC90Motor::CW);
-  Motor.setSpeed(15);
+  Motor.setSpeed(30);
   Motor.Enable();
 }
 

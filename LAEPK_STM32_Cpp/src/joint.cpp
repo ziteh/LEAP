@@ -24,7 +24,7 @@
 // #define MODE_CONTINUOUS_START_STOP_TRIGGER
 
 #if !defined(MODE_FOLLOWING) && !defined(MODE_START_STOP_TRIGGER) && !defined(MODE_CONTINUOUS_START_STOP_TRIGGER)
-  #error No joint-mode selected.
+#error No joint-mode selected.
 #endif
 
 Joint::Joint(void)
@@ -88,20 +88,18 @@ bool Joint::FlexionStopTriggered(void)
 void Joint::MotionExtensionStart(void)
 {
   MotionState = Extensioning;
-  // USART_Send(USART2, "Ex-Start\r\n");
 
   Motor.setDirection(EC90Motor::CCW);
-  Motor.setSpeed(15);
+  Motor.setSpeed(30);
   Motor.Enable();
 }
 
 void Joint::MotionFlexionStart(void)
 {
   MotionState = Flexioning;
-  // USART_Send(USART2, "Fl-Start\r\n");
 
   Motor.setDirection(EC90Motor::CW);
-  Motor.setSpeed(15);
+  Motor.setSpeed(30);
   Motor.Enable();
 }
 
@@ -115,7 +113,6 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionExtensionStop(void)
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "Ex-Stop\r\n");
 
   return getLimitState();
 }
@@ -130,7 +127,6 @@ Joint::SoftwareLimitStateTypeDef Joint::MotionFlexionStop(void)
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "Fl-Stop\r\n");
 
   return getLimitState();
 }
@@ -164,35 +160,35 @@ void Joint::MotionHandler(void)
 #if defined(MODE_FOLLOWING)
   switch (this->MotionState)
   {
-    case Extensioning:
-      if (this->ExtensionStartTriggered() == false)
-      {
-       this->MotionExtensionStop();
-       USART_Send(USART2, "R: Ex-Stop\r\n");
-      }
-      break;
+  case Extensioning:
+    if (this->ExtensionStartTriggered() == false)
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "R: Ex-Stop\r\n");
+    }
+    break;
 
-    case Flexioning:
-      if (this->FlexionStartTriggered() == false)
-      {
-       this->MotionFlexionStop();
-       USART_Send(USART2, "R: Fl-Stop\r\n");
-      }
-      break;
-    
-    case NoInMotion:
-    default:
-      if (this->ExtensionStartTriggered())
-      {
-        this->MotionExtensionStart();
-        USART_Send(USART2, "R: Ex-Start\r\n");
-      }
-      else if (this->FlexionStartTriggered())
-      {
-        this->MotionFlexionStart();
-        USART_Send(USART2, "R: Fl-Start\r\n");
-      }
-      break;
+  case Flexioning:
+    if (this->FlexionStartTriggered() == false)
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "R: Fl-Stop\r\n");
+    }
+    break;
+
+  case NoInMotion:
+  default:
+    if (this->ExtensionStartTriggered())
+    {
+      this->MotionExtensionStart();
+      USART_Send(USART2, "R: Ex-Start\r\n");
+    }
+    else if (this->FlexionStartTriggered())
+    {
+      this->MotionFlexionStart();
+      USART_Send(USART2, "R: Fl-Start\r\n");
+    }
+    break;
   }
 #elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
   switch (this->MotionState)
@@ -404,8 +400,8 @@ JointWithoutHallSensor::JointWithoutHallSensor(void)
   VirtualHall3.Speed = GPIO_Speed_50MHz;
 
   VirtualHallStep = 0;
-
   MotionState = NoInMotion;
+  Direction = Joint::Flexion;
 }
 
 void JointWithoutHallSensor::Init(void)
@@ -422,15 +418,35 @@ void JointWithoutHallSensor::Init(void)
   VirtualHall3.Init();
   VirtualHall3.setValue(LOW);
 
+  extern RCC_ClocksTypeDef RCC_Clocks;
+
+  TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+  TIM_TimeBaseStructure.TIM_Period = 5;
+  TIM_TimeBaseStructure.TIM_Prescaler = (RCC_Clocks.SYSCLK_Frequency / 1000) - 1;
+  TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+  TIM_TimeBaseInit(Timer_SpeedPWM, &TIM_TimeBaseStructure);
+
+  TIM_ClearFlag(Timer_SpeedPWM, TIM_FLAG_Update);
+  TIM_ITConfig(Timer_SpeedPWM, TIM_IT_Update, ENABLE);
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
+
+  NVIC_InitTypeDef NVIC_InitStructure;
+  NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn; // XXX Manual.
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
   Motor.PortPin_SpeedPWM = PortPin_SpeedPWM;
-  Motor.Timer_SpeedPWM = Timer_SpeedPWM;
+  //  Motor.Timer_SpeedPWM = Timer_SpeedPWM;
   Motor.Channel_SpeedPWM = Channel_SpeedPWM;
   Motor.PortPin_FunctionState = PortPin_FunctionState;
   Motor.PortPin_Direction = PortPin_Direction;
   Motor.PortPin_ReadyState = PortPin_ReadyState;
   Motor.PortPin_RPM = PortPin_RPM;
   Motor.Init();
-  Motor.setSpeed(15);
+  Motor.setSpeed(0);
   Motor.setDirection(EC90Motor::CW);
   Motor.Disable();
 
@@ -456,23 +472,19 @@ void JointWithoutHallSensor::Init(void)
 void JointWithoutHallSensor::MotionExtensionStart(void)
 {
   MotionState = Extensioning;
-  // USART_Send(USART2, "JWHS: Ex-Start\r\n");
 
-  VirtualHallHandler(EC90Motor::CW);
-  // Motor.setDirection(EC90Motor::CW);
-  Motor.setSpeed(15);
+  Direction = Joint::Extension;
   Motor.Enable();
+  TIM_Cmd(Timer_SpeedPWM, ENABLE);
 }
 
 void JointWithoutHallSensor::MotionFlexionStart(void)
 {
   MotionState = Flexioning;
-  // USART_Send(USART2, "JWHS: Fl-Start\r\n");
 
-  VirtualHallHandler(EC90Motor::CCW);
-  // Motor.setDirection(EC90Motor::CCW);
-  Motor.setSpeed(15);
+  Direction = Joint::Flexion;
   Motor.Enable();
+  TIM_Cmd(Timer_SpeedPWM, ENABLE);
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionExtensionStop(void)
@@ -482,10 +494,9 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "JWHS: Ex-Stop\r\n");
 
   Motor.Disable();
-  Motor.setSpeed(0);
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
 }
 
 JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::MotionFlexionStop(void)
@@ -495,22 +506,21 @@ JointWithoutHallSensor::SoftwareLimitStateTypeDef JointWithoutHallSensor::Motion
 #elif defined(MODE_START_STOP_TRIGGER)
   MotionState = WaitStop;
 #endif
-  // USART_Send(USART2, "JWHS: Fl-Stop\r\n");
 
   Motor.Disable();
-  Motor.setSpeed(0);
+  TIM_Cmd(Timer_SpeedPWM, DISABLE);
 }
 
-void JointWithoutHallSensor::VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction)
+void JointWithoutHallSensor::VirtualHallHandler(void)
 {
-  if (Direction == EC90Motor::CW)
+  if (Direction == Joint::Extension)
   {
     if (VirtualHallStep >= 5)
       VirtualHallStep = 0;
     else
       VirtualHallStep++;
   }
-  else if (Direction == EC90Motor::CCW)
+  else if (Direction == Joint::Flexion)
   {
     if (VirtualHallStep <= 0)
       VirtualHallStep = 5;
@@ -562,43 +572,35 @@ void JointWithoutHallSensor::MotionHandler(void)
 #if defined(MODE_FOLLOWING)
   switch (this->MotionState)
   {
-    case Extensioning:
-      if (this->ExtensionStartTriggered() == false)
-      {
-       this->MotionExtensionStop();
-       USART_Send(USART2, "R: Ex-Stop\r\n");
-      }
-      else
-      {
-        this->MotionExtensionStart();
-      }
-      break;
+  case Extensioning:
+    if (this->ExtensionStartTriggered() == false)
+    {
+      this->MotionExtensionStop();
+      USART_Send(USART2, "L: Ex-Stop\r\n");
+    }
+    break;
 
-    case Flexioning:
-      if (this->FlexionStartTriggered() == false)
-      {
-       this->MotionFlexionStop();
-       USART_Send(USART2, "R: Fl-Stop\r\n");
-      }
-      else
-      {
-        this->MotionFlexionStart();
-      }
-      break;
-    
-    case NoInMotion:
-    default:
-      if (this->ExtensionStartTriggered())
-      {
-        this->MotionExtensionStart();
-        USART_Send(USART2, "R: Ex-Start\r\n");
-      }
-      else if (this->FlexionStartTriggered())
-      {
-        this->MotionFlexionStart();
-        USART_Send(USART2, "R: Fl-Start\r\n");
-      }
-      break;
+  case Flexioning:
+    if (this->FlexionStartTriggered() == false)
+    {
+      this->MotionFlexionStop();
+      USART_Send(USART2, "L: Fl-Stop\r\n");
+    }
+    break;
+
+  case NoInMotion:
+  default:
+    if (this->ExtensionStartTriggered())
+    {
+      this->MotionExtensionStart();
+      USART_Send(USART2, "L: Ex-Start\r\n");
+    }
+    else if (this->FlexionStartTriggered())
+    {
+      this->MotionFlexionStart();
+      USART_Send(USART2, "L: Fl-Start\r\n");
+    }
+    break;
   }
 #elif defined(MODE_CONTINUOUS_START_STOP_TRIGGER) || defined(MODE_START_STOP_TRIGGER)
   switch (this->MotionState)
@@ -607,12 +609,12 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->ExtensionStartTriggered())
     {
       this->MotionExtensionStart();
-      USART_Send(USART2, "R: Ex-Start\r\n");
+      USART_Send(USART2, "L: Ex-Start\r\n");
     }
     else if (this->FlexionStartTriggered())
     {
       this->MotionFlexionStart();
-      USART_Send(USART2, "R: Fl-Start\r\n");
+      USART_Send(USART2, "L: Fl-Start\r\n");
     }
     break;
 
@@ -620,7 +622,7 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->ExtensionStopTriggered())
     {
       this->MotionExtensionStop();
-      USART_Send(USART2, "R: Ex-Stop\r\n");
+      USART_Send(USART2, "L: Ex-Stop\r\n");
     }
     else
     {
@@ -632,7 +634,7 @@ void JointWithoutHallSensor::MotionHandler(void)
     if (this->FlexionStopTriggered())
     {
       this->MotionFlexionStop();
-      USART_Send(USART2, "R: Fl-Stop\r\n");
+      USART_Send(USART2, "L: Fl-Stop\r\n");
     }
     else
     {

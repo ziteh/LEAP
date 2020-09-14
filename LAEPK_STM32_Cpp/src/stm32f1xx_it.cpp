@@ -157,11 +157,31 @@ void TIM2_IRQHandler(void)
   {
     TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 
-    GPIO LED;
-    LED.PortPin = User_LED;
+    GPIO LED(User_LED);
     LED.toggleValue();
 
     MotionHandler();
+  }
+}
+
+/**
+  * @brief  This function handles TIM4 global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void TIM4_IRQHandler(void)
+{
+  if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET)
+  {
+    TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+
+//    USART_Send(USART2, "*");
+
+    JointWithoutHallSensor *nowJoint;
+    extern JointWithoutHallSensor LeftJoint;
+
+    nowJoint = &LeftJoint;
+    nowJoint->VirtualHallHandler();
   }
 }
 

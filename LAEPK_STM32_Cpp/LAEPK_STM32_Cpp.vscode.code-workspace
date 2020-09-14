@@ -1,9 +1,10 @@
 {
 	"folders": [
 		{
+			"name": "LAEPK_STM32_Cpp",
 			"path": "."
 		}
-  ],
+	],
   "settings": {
     "C_Cpp.default.includePath": [
       "${workspaceFolder}/src",
@@ -26,6 +27,6 @@
       "USE_STDPERIPH_DRIVER"
     ],
     "cortex-debug.openocdPath": "C:/STM32Toolchain/openocd/bin/openocd.exe",
-    "cortex-debug.armToolchainPath": "C:/STM32Toolchain/gcc-arm/bin/",
+    "cortex-debug.armToolchainPath": "C:/STM32Toolchain/gcc-arm/bin/"
   }
 }

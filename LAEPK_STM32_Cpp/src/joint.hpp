@@ -166,14 +166,15 @@ public:
   void MotionHandler(void);
   SoftwareLimitStateTypeDef MotionStop(void);
 
+  void VirtualHallHandler(void);
+
 private:
   uint8_t VirtualHallStep;
+  MotionDirectionTypeDef Direction;
 
   GPIO VirtualHall1;
   GPIO VirtualHall2;
   GPIO VirtualHall3;
-
-  void VirtualHallHandler(EC90Motor::RotationDirectionTypeDef Direction);
 };
 
 /**

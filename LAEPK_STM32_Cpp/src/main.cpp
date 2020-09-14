@@ -157,7 +157,7 @@ void RCC_Initialization(void)
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2 |
                              RCC_APB1Periph_TIM2 |
                              RCC_APB1Periph_TIM3 |
-							 RCC_APB1Periph_TIM4,
+                             RCC_APB1Periph_TIM4,
                          ENABLE);
 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA |

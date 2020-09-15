@@ -34,24 +34,24 @@ public:
   /* The dircetion type of joint. */
   typedef enum
   {
-    Extension,
-    Flexion
+    Extension = 1,
+    Flexion = 2
   } MotionDirectionTypeDef;
 
   typedef enum
   {
-    WaitStop,
-    NoInMotion,
-    Extensioning,
-    Flexioning
+    NoInMotion = 0,
+    Extensioning = 1,
+    Flexioning = 2,
+    WaitStop = 3
   } MotionStateTypeDef;
 
   /* The software limit state type of joint. */
   typedef enum
   {
-    Unlimited,
-    FullExtension,
-    FullFlexion
+    Unlimited = 0,
+    FullExtension = 1,
+    FullFlexion = 2
   } SoftwareLimitStateTypeDef;
 
   /* The state struct of joint. */

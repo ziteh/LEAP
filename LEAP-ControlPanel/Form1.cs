@@ -47,9 +47,6 @@ namespace LEAP_ControlPanel
             Parity serialPortParity;
             switch (comboBox_SerialPort_Parity.Text)
             {
-                case "None":
-                    serialPortParity = Parity.None;
-                    break;
                 case "Even":
                     serialPortParity = Parity.Even;
                     break;
@@ -62,6 +59,7 @@ namespace LEAP_ControlPanel
                 case "Space":
                     serialPortParity = Parity.Space;
                     break;
+                case "None":
                 default:
                     serialPortParity = Parity.None;
                     break;

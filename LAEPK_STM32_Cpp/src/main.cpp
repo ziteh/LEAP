@@ -369,7 +369,11 @@ void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType)
   joint->MotionStop();
 }
 
-void CommunicationDecoder(uint8_t Command)
+void StateTransporter(void)
+{
+}
+
+void CommunicationDecoder(uint8_t command)
 {
   //  Joint_SetAbsoluteAngle(Command - 5);
 }

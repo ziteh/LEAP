@@ -151,7 +151,9 @@ void Board_Initialization(void);
 void Joint_Initialization(Joint *joint, JointTypeDef jointType);
 void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType);
 
-void CommunicationDecoder(uint8_t Command);
+void StateTransporter(void);
+void CommunicationDecoder(uint8_t command);
+
 void Delay_NonTimer(__IO uint32_t nTime);
 
 extern "C"

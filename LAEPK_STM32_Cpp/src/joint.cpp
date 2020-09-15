@@ -281,6 +281,29 @@ void Joint::SendInfo(void)
   USART_Send(USART2, "\n");
 }
 
+void Joint::getState(Joint::StateTypeDef *state)
+{
+  state->Direction = this->MotionDirection;
+  state->Motion = this->MotionState;
+
+  state->AnglePOTValue = this->AnglePOT.getValue();
+  state->FrontFSRValue = this->FrontFSR.getValue();
+  state->BackFSRValue = this->BackFSR.getValue();
+
+  GPIO readyPin(this->PortPin_ReadyState);
+  if (readyPin.getInputValue() == HIGH)
+    state->Ready = true;
+  else
+    state->Ready = false;
+
+  if (state->AnglePOTValue < this->FullExtensionPOTValue)
+    state->SoftwareLimit = this->FullExtension;
+  else if (state->AnglePOTValue > this->FullFlexionPOTValue)
+    state->SoftwareLimit = this->FullFlexion;
+  else
+    state->SoftwareLimit = this->Unlimited;
+}
+
 bool Joint::StartExtensionIsTriggered(void)
 {
   /*

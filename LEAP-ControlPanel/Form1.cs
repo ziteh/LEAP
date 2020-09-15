@@ -22,9 +22,16 @@ namespace LEAP_ControlPanel
         private void SerialPortInit()
         {
             // Get all COM Port name.
-            string[] allPortName = SerialPort.GetPortNames();
-            comboBox_SerialPort_COMPort.DataSource = allPortName;
-            comboBox_SerialPort_COMPort.Text = allPortName[0];
+            try
+            {
+                string[] allPortName = SerialPort.GetPortNames();
+                comboBox_SerialPort_COMPort.DataSource = allPortName;
+                comboBox_SerialPort_COMPort.Text = allPortName[0];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                comboBox_SerialPort_COMPort.Text = "Can't find any device";
+            }
 
             comboBox_SerialPort_BaudRate.Text = "9600";
             comboBox_SerialPort_DataBits.Text = "8";

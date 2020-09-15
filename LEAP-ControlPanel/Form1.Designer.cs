@@ -61,6 +61,7 @@
             this.comboBox_SerialPort_Parity = new System.Windows.Forms.ComboBox();
             this.comboBox_SerialPort_Handshaking = new System.Windows.Forms.ComboBox();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
+            this.button_SerialPort_Connect = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -367,6 +368,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.tabControl1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.button_SerialPort_Connect, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -444,6 +446,16 @@
             this.comboBox_SerialPort_Handshaking.Size = new System.Drawing.Size(89, 20);
             this.comboBox_SerialPort_Handshaking.TabIndex = 1;
             // 
+            // button_SerialPort_Connect
+            // 
+            this.button_SerialPort_Connect.Location = new System.Drawing.Point(3, 3);
+            this.button_SerialPort_Connect.Name = "button_SerialPort_Connect";
+            this.button_SerialPort_Connect.Size = new System.Drawing.Size(75, 23);
+            this.button_SerialPort_Connect.TabIndex = 1;
+            this.button_SerialPort_Connect.Text = "Connect";
+            this.button_SerialPort_Connect.UseVisualStyleBackColor = true;
+            this.button_SerialPort_Connect.Click += new System.EventHandler(this.button_SerialPort_Connect_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -499,6 +511,7 @@
         private System.Windows.Forms.ComboBox comboBox_SerialPort_Parity;
         private System.Windows.Forms.ComboBox comboBox_SerialPort_Handshaking;
         private System.IO.Ports.SerialPort serialPort1;
+        private System.Windows.Forms.Button button_SerialPort_Connect;
     }
 }
 

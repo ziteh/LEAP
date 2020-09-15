@@ -385,6 +385,10 @@
             "14400",
             "19200"});
             this.comboBox_SerialPort_BaudRate.FormattingEnabled = true;
+            this.comboBox_SerialPort_BaudRate.Items.AddRange(new object[] {
+            "9600",
+            "14400",
+            "19200"});
             this.comboBox_SerialPort_BaudRate.Location = new System.Drawing.Point(97, 48);
             this.comboBox_SerialPort_BaudRate.Name = "comboBox_SerialPort_BaudRate";
             this.comboBox_SerialPort_BaudRate.Size = new System.Drawing.Size(89, 20);

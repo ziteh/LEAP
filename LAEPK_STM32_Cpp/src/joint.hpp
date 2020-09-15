@@ -57,7 +57,7 @@ public:
   /* The state struct of joint. */
   typedef struct
   {
-    MotionDirectionTypeDef Direction;
+    // MotionDirectionTypeDef Direction;
     MotionStateTypeDef Motion;
     SoftwareLimitStateTypeDef SoftwareLimit;
     bool Ready;
@@ -143,7 +143,7 @@ protected:
   ADC FrontFSR;
   ADC BackFSR;
   MotionStateTypeDef MotionState;
-  MotionDirectionTypeDef MotionDirection;
+  // MotionDirectionTypeDef MotionDirection;
 
   bool StartExtensionIsTriggered(void);
   bool StartFlexionIsTriggered(void);

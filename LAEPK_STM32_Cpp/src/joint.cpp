@@ -283,7 +283,7 @@ void Joint::SendInfo(void)
 
 void Joint::getState(Joint::StateTypeDef *state)
 {
-  state->Direction = this->MotionDirection;
+  // state->Direction = this->MotionDirection;
   state->Motion = this->MotionState;
 
   state->AnglePOTValue = this->AnglePOT.getValue();

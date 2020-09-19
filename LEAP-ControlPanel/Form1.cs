@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
@@ -154,9 +155,52 @@ namespace LEAP_ControlPanel
             }
             else
             {
-                this.textBox_R_State_Ready.Text = text[1].Trim();
-                this.textBox_R_State_Limit.Text = text[2].Trim();
-                this.textBox_R_State_Dircetion.Text = text[3].Trim();
+                switch (text[1].Trim())
+                {
+                    case "1":
+                        this.textBox_R_State_Ready.Text = "Ready";
+                        break;
+
+                    case "0":
+                    default:
+                        this.textBox_R_State_Ready.Text = "Fault";
+                        break;
+                }
+
+                switch (text[2].Trim())
+                {
+                    case "0":
+                        this.textBox_R_State_Limit.Text = "Unlimited";
+                        break;
+
+                    case "1":
+                        this.textBox_R_State_Limit.Text = "Full Extension";
+                        break;
+
+                    case "2":
+                        this.textBox_R_State_Limit.Text = "Full Flexion";
+                        break;
+
+                    default:
+                        this.textBox_R_State_Limit.Text = "?";
+                        break;
+                }
+
+                switch (text[3].Trim())
+                {
+                    case "1":
+                        this.textBox_R_State_Dircetion.Text = "Extensioning";
+                        break;
+
+                    case "2":
+                        this.textBox_R_State_Dircetion.Text = "Flexioning";
+                        break;
+
+                    default:
+                        this.textBox_R_State_Dircetion.Text = "Not in motion";
+                        break;
+                }
+
                 this.textBox_R_State_AnglePOT.Text = text[4].Trim();
                 this.textBox_R_State_FrontFSR.Text = text[5].Trim();
                 this.textBox_R_State_BackFSR.Text = text[6].Trim();

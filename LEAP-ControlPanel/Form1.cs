@@ -42,7 +42,7 @@ namespace LEAP_ControlPanel
             comboBox_SerialPort_Handshaking.Text = "None";
         }
 
-        private void button_SerialPort_Connect_Click(object sender, EventArgs e)
+        private void SerialPortSetup()
         {
             Parity serialPortParity;
             switch (comboBox_SerialPort_Parity.Text)
@@ -89,6 +89,11 @@ namespace LEAP_ControlPanel
                                         Convert.ToInt32(comboBox_SerialPort_DataBits.Text),
                                         serialPortStopBits);
             serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialPort_DataReceived);
+        }
+
+        private void button_SerialPort_Connect_Click(object sender, EventArgs e)
+        {
+            SerialPortSetup();
 
             if (!serialPort1.IsOpen)
             {
@@ -119,31 +124,8 @@ namespace LEAP_ControlPanel
 
         private void SerialPort_DataReceived(Object sender, SerialDataReceivedEventArgs e)
         {
-            Byte[] buffer = new Byte[1024];
-            Int32 length = (sender as SerialPort).Read(buffer, 0, buffer.Length);
-            Array.Resize(ref buffer, length);
-            Display d = new Display(DisplayText);
-            this.Invoke(d, new Object[] { buffer });
-        }
-
-        private void DisplayText(Byte[] data)
-        {
-            TB_RxMessage.Text += RxEncodeSelect(CB_RxEncode.Text, Data, CH_RxCRLF.Checked);
-            TB_RxMessageSub.Text += RxEncodeSelect(CB_RxEncodeSub.Text, Data, CH_RxCRLF.Checked);
-
-            // automatically scroll to the end.
-            if (CH_RxAutoScroll.Checked)
-            {
-                TB_RxMessage.SelectionStart = TB_RxMessage.Text.Length;
-                TB_RxMessage.ScrollToCaret();
-
-                TB_RxMessageSub.SelectionStart = TB_RxMessageSub.Text.Length;
-                TB_RxMessageSub.ScrollToCaret();
-            }
-
-            // Count Rx-Data Bytes
-            RxtotalLength += Data.Length;
-            LAB_RxNum.Text = "Rx:  " + RxtotalLength.ToString() + " Bytes";
+            string data = serialPort1.ReadLine();
+            //MessageBox.Show(data);
         }
     }
 }

@@ -148,13 +148,20 @@ namespace LEAP_ControlPanel
                 this.textBox_R_State_Dircetion.InvokeRequired &&
                 this.textBox_R_State_AnglePOT.InvokeRequired &&
                 this.textBox_R_State_FrontFSR.InvokeRequired &&
-                this.textBox_R_State_BackFSR.InvokeRequired)
+                this.textBox_R_State_BackFSR.InvokeRequired &&
+                this.textBox_L_State_Ready.InvokeRequired &&
+                this.textBox_L_State_Limit.InvokeRequired &&
+                this.textBox_L_State_Dircetion.InvokeRequired &&
+                this.textBox_L_State_AnglePOT.InvokeRequired &&
+                this.textBox_L_State_FrontFSR.InvokeRequired &&
+                this.textBox_L_State_BackFSR.InvokeRequired)
             {
                 SetTextCallback d = new SetTextCallback(SetText);
                 this.Invoke(d, new object[] { text });
             }
             else
             {
+                // Right
                 switch (text[1].Trim())
                 {
                     case "1":
@@ -204,6 +211,57 @@ namespace LEAP_ControlPanel
                 this.textBox_R_State_AnglePOT.Text = text[4].Trim();
                 this.textBox_R_State_FrontFSR.Text = text[5].Trim();
                 this.textBox_R_State_BackFSR.Text = text[6].Trim();
+
+                // Left
+                switch (text[8].Trim())
+                {
+                    case "1":
+                        this.textBox_L_State_Ready.Text = "Ready";
+                        break;
+
+                    case "0":
+                    default:
+                        this.textBox_L_State_Ready.Text = "Fault";
+                        break;
+                }
+
+                switch (text[9].Trim())
+                {
+                    case "0":
+                        this.textBox_L_State_Limit.Text = "Unlimited";
+                        break;
+
+                    case "1":
+                        this.textBox_L_State_Limit.Text = "Full Extension";
+                        break;
+
+                    case "2":
+                        this.textBox_L_State_Limit.Text = "Full Flexion";
+                        break;
+
+                    default:
+                        this.textBox_L_State_Limit.Text = "?";
+                        break;
+                }
+
+                switch (text[10].Trim())
+                {
+                    case "1":
+                        this.textBox_L_State_Dircetion.Text = "Extensioning";
+                        break;
+
+                    case "2":
+                        this.textBox_L_State_Dircetion.Text = "Flexioning";
+                        break;
+
+                    default:
+                        this.textBox_L_State_Dircetion.Text = "Not in motion";
+                        break;
+                }
+
+                this.textBox_L_State_AnglePOT.Text = text[11].Trim();
+                this.textBox_L_State_FrontFSR.Text = text[12].Trim();
+                this.textBox_L_State_BackFSR.Text = text[13].Trim();
             }
         }
     }

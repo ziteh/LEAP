@@ -18,12 +18,11 @@
 
 #include "main.hpp"
 
-/* Uncomment it to run unit test program, comment it to run main program. */
-//  #define ENABLE_UNIT_TEST
-
-/* Uncomment/Comment the line below to enable/disable right or left leg. */
+/* Uncomment/Comment the line below to enable/disable speciflc features */
 #define ENABLE_RIGHT_LEG
 #define ENABLE_LEFT_LEG
+// #define ENABLE_UNIT_TEST // Uncomment it to run unit test program, comment it to run main program.
+#define ENABLE_AUTO_SEND_INFO
 
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
@@ -74,6 +73,10 @@ int main(void)
 
   while (1)
   {
+#ifdef ENABLE_AUTO_SEND_INFO
+    StateTransporter();
+    Delay_ms(10);
+#endif
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
@@ -371,6 +374,63 @@ void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType)
 
 void StateTransporter(void)
 {
+  Joint::StateTypeDef state;
+  std::string stateText;
+
+  stateText += "R,";
+#ifdef ENABLE_RIGHT_LEG
+  NowJoint = &RightJoint;
+  NowJoint->getState(&state);
+
+  stateText += Convert::ToString((int)state.Ready);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.SoftwareLimit);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.Motion);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.AnglePOTValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.FrontFSRValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.BackFSRValue);
+  stateText += ",";
+#else
+  stateText += "X,";
+#endif
+
+  stateText += "L,";
+#ifdef ENABLE_LEFT_LEG
+  NowJoint = &LeftJoint;
+  NowJoint->getState(&state);
+
+  stateText += Convert::ToString((int)state.Ready);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.SoftwareLimit);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.Motion);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.AnglePOTValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.FrontFSRValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.BackFSRValue);
+  stateText += ",";
+#else
+  stateText += "X,";
+#endif
+  stateText += "#\r\n";
+
+  USART_Send(USART2, stateText);
 }
 
 void CommunicationDecoder(uint8_t command)

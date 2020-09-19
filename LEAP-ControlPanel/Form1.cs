@@ -13,7 +13,7 @@ namespace LEAP_ControlPanel
 {
     public partial class Form1 : Form
     {
-        private delegate void Display(Byte[] buffer);
+        delegate void SetTextCallback(string[] text);
 
         public Form1()
         {
@@ -124,8 +124,38 @@ namespace LEAP_ControlPanel
 
         private void SerialPort_DataReceived(Object sender, SerialDataReceivedEventArgs e)
         {
-            string data = serialPort1.ReadLine();
-            //MessageBox.Show(data);
+            string[] data = serialPort1.ReadLine().Trim().Split(',');
+            if (data.Length == 15)
+            {
+                try
+                {
+                    SetText(data);
+                }
+                catch (Exception)
+                {
+                }
+            }
+        }
+
+        private void SetText(string[] text)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.textBox_R_State_Ready.InvokeRequired)
+            {
+                SetTextCallback d = new SetTextCallback(SetText);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                this.textBox_R_State_Ready.Text = text[1].Trim();
+                this.textBox_R_State_Limit.Text = text[2].Trim();
+                this.textBox_R_State_Dircetion.Text = text[3].Trim();
+                this.textBox_R_State_AnglePOT.Text = text[4].Trim();
+                this.textBox_R_State_FrontFSR.Text = text[5].Trim();
+                this.textBox_R_State_BackFSR.Text = text[6].Trim();
+            }
         }
     }
 }

@@ -142,7 +142,12 @@ namespace LEAP_ControlPanel
             // InvokeRequired required compares the thread ID of the
             // calling thread to the thread ID of the creating thread.
             // If these threads are different, it returns true.
-            if (this.textBox_R_State_Ready.InvokeRequired)
+            if (this.textBox_R_State_Ready.InvokeRequired &&
+                this.textBox_R_State_Limit.InvokeRequired &&
+                this.textBox_R_State_Dircetion.InvokeRequired &&
+                this.textBox_R_State_AnglePOT.InvokeRequired &&
+                this.textBox_R_State_FrontFSR.InvokeRequired &&
+                this.textBox_R_State_BackFSR.InvokeRequired)
             {
                 SetTextCallback d = new SetTextCallback(SetText);
                 this.Invoke(d, new object[] { text });

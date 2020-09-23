@@ -160,6 +160,7 @@ void TIM2_IRQHandler(void)
     GPIO LED(User_LED);
     LED.toggleValue();
 
+    StateTransporter();
     MotionHandler();
   }
 }
@@ -227,6 +228,51 @@ void USART2_IRQHandler(void)
 
     /* NO need to clears the USARTx's interrupt pending bits */
     /* USART_ClearITPendingBit(USART2,USART_IT_RXNE); */
+  }
+}
+
+/**
+ * @brief  This function handles USART3_IRQHandler Handler.
+ * @param  None
+ * @retval None
+ */
+void USART3_IRQHandler(void)
+{
+  if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
+  {
+    uint16_t USART_ReceivData = 0xF0; // 0xF0 : Null instruction
+    USART_ReceivData = USART_ReceiveData(USART3);
+
+    /* System stop */
+    if (USART_ReceivData == 0x53)
+    {
+      USART_Send(USART2, "[System]Stop.\n");
+      while (1)
+      {
+      }
+    }
+    /* System reset */
+    else if (USART_ReceivData == ((uint16_t)'R'))
+    {
+      USART_Send(USART2, "[System]Reset.\n");
+      NVIC_SystemReset();
+    }
+    else if ((USART_ReceivData >= 0x00) && (USART_ReceivData <= 0x87))
+    {
+      CommunicationDecoder(USART_ReceivData);
+    }
+    /* Null instruction */
+    else if (USART_ReceivData == 0xF0)
+    {
+    }
+    /* Unknown instruction */
+    else
+    {
+      USART_Send(USART2, "[Error]Unknown instruction.\n");
+    }
+
+    /* NO need to clears the USARTx's interrupt pending bits */
+    /* USART_ClearITPendingBit(USART3,USART_IT_RXNE); */
   }
 }
 

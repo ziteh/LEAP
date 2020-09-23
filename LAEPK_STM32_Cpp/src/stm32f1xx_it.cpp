@@ -244,7 +244,7 @@ void USART3_IRQHandler(void)
     USART_ReceivData = USART_ReceiveData(USART3);
 
     /* System stop */
-    if (USART_ReceivData == 0x53)
+    if (USART_ReceivData == ((uint16_t)'S'))
     {
       USART_Send(USART2, "[System]Stop.\n");
       while (1)

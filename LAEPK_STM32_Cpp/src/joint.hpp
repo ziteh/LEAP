@@ -24,7 +24,6 @@
 #include "ADC_Functions.hpp"
 #include "USART_Functions.hpp"
 #include "convert.hpp"
-#include "main.hpp"
 
 /**
  * @brief The class of joint.

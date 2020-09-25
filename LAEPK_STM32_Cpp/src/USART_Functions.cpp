@@ -57,6 +57,7 @@ void USART_Send(USART_TypeDef* USARTx, uint8_t *Data)
     }
   }
 }
+
 void USART_Send(USART_TypeDef* USARTx, string Data)
 {
   for (int i = 0; Data[i] != '\0'; i++)

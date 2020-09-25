@@ -34,35 +34,38 @@ public:
   /* The dircetion type of joint. */
   typedef enum
   {
-    Extension,
-    Flexion
+    Extension = 1,
+    Flexion = 2
   } MotionDirectionTypeDef;
+
+  typedef enum
+  {
+    NoInMotion = 0,
+    Extensioning = 1,
+    Flexioning = 2,
+    WaitStop = 3
+  } MotionStateTypeDef;
 
   /* The software limit state type of joint. */
   typedef enum
   {
-    Unlimited,
-    FullExtension,
-    FullFlexion
+    Unlimited = 0,
+    FullExtension = 1,
+    FullFlexion = 2
   } SoftwareLimitStateTypeDef;
-
-  typedef enum
-  {
-    WaitStop,
-    NoInMotion,
-    Extensioning,
-    Flexioning
-  } MotionStateTypeDef;
-
-  MotionStateTypeDef MotionState;
 
   /* The state struct of joint. */
   typedef struct
   {
-    MotionDirectionTypeDef Direction;
-    SoftwareLimitStateTypeDef LimitState;
-    uint16_t Angle;
-  } State;
+    // MotionDirectionTypeDef Direction;
+    MotionStateTypeDef Motion;
+    SoftwareLimitStateTypeDef SoftwareLimit;
+    bool Ready;
+
+    uint16_t AnglePOTValue;
+    uint16_t FrontFSRValue;
+    uint16_t BackFSRValue;
+  } StateTypeDef;
 
   /* PWM timer used for motor speed control. */
   TIM_TypeDef *Timer_SpeedPWM;
@@ -132,11 +135,15 @@ public:
 
   void SendInfo(void);
 
+  void getState(StateTypeDef *state);
+
 protected:
   EC90Motor Motor;
   ADC AnglePOT;
   ADC FrontFSR;
   ADC BackFSR;
+  MotionStateTypeDef MotionState;
+  // MotionDirectionTypeDef MotionDirection;
 
   bool StartExtensionIsTriggered(void);
   bool StartFlexionIsTriggered(void);

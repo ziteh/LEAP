@@ -103,6 +103,30 @@ extern "C"
 #define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)PB9)
 #define LeftJoint_PortPin_VirtualHall3 ((GPIO_PortPinTypeDef)PA6)
 
+/* Limit switch */
+#define NVIC_PreemptionPriority_EXTI0 (0)
+#define NVIC_SubPriority_EXTI0 (0)
+
+/* User button */
+#define NVIC_PreemptionPriority_EXTI15_10 (3)
+#define NVIC_SubPriority_EXTI15_10 (3)
+
+/* Main timer */
+#define NVIC_PreemptionPriority_TIM2 (2)
+#define NVIC_SubPriority_TIM2 (0)
+
+/* Virtual hall sensor timer */
+#define NVIC_PreemptionPriority_TIM4 (2)
+#define NVIC_SubPriority_TIM4 (1)
+
+/* USB */
+#define NVIC_PreemptionPriority_USART2 (1)
+#define NVIC_SubPriority_USART2 (0)
+
+/* Bluetooth */
+#define NVIC_PreemptionPriority_USART3 (1)
+#define NVIC_SubPriority_USART3 (1)
+
 typedef enum
 {
   Right,
@@ -151,7 +175,9 @@ void Board_Initialization(void);
 void Joint_Initialization(Joint *joint, JointTypeDef jointType);
 void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType);
 
-void CommunicationDecoder(uint8_t Command);
+void StateTransporter(void);
+void CommunicationDecoder(uint8_t command);
+
 void Delay_NonTimer(__IO uint32_t nTime);
 
 extern "C"

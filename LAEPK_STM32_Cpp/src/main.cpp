@@ -14,16 +14,20 @@
  * None
  *
  ******************************************************************************
+ * @remark
+ *
+ * English is not my native language, please excuse typing errors.
+ *
+ ******************************************************************************
  */
 
 #include "main.hpp"
 
-/* Uncomment it to run unit test program, comment it to run main program. */
-//  #define ENABLE_UNIT_TEST
-
-/* Uncomment/Comment the line below to enable/disable right or left leg. */
+/* Uncomment/Comment the line below to enable/disable speciflc features */
 #define ENABLE_RIGHT_LEG
 #define ENABLE_LEFT_LEG
+// #define ENABLE_UNIT_TEST /* Uncomment it to run unit test program, comment it to run main program. */
+#define ENABLE_AUTO_SEND_INFO
 
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
@@ -74,6 +78,11 @@ int main(void)
 
   while (1)
   {
+#ifdef ENABLE_AUTO_SEND_INFO
+    // FIXME Can't send data.
+    // StateTransporter();
+    // Delay_ms(10);
+#endif
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
@@ -155,6 +164,7 @@ void RCC_Initialization(void)
   RCC_GetClocksFreq(&RCC_Clocks);
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2 |
+      RCC_APB1Periph_USART3 |
                              RCC_APB1Periph_TIM2 |
                              RCC_APB1Periph_TIM3 |
                              RCC_APB1Periph_TIM4,
@@ -177,8 +187,8 @@ void LimitSwitch_Initialization(void)
 
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_PreemptionPriority_EXTI0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = NVIC_SubPriority_EXTI0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
@@ -207,8 +217,8 @@ void USART_Initialization(void)
 
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_PreemptionPriority_USART2;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = NVIC_SubPriority_USART2;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
@@ -230,6 +240,43 @@ void USART_Initialization(void)
 
   /* Clear "Transmission Complete" flag, else the first bit of data will lose. */
   USART_ClearFlag(USART2, USART_FLAG_TC);
+
+  GPIO USART3_TX;
+  USART2_TX.PortPin = PC10;
+  USART2_TX.Mode = GPIO_Mode_AF_PP;
+  USART2_TX.Speed = GPIO_Speed_50MHz;
+  USART2_TX.Init();
+
+  GPIO USART3_RX;
+  USART2_RX.PortPin = PC11;
+  USART2_RX.Mode = GPIO_Mode_IN_FLOATING;
+  USART2_RX.Init();
+
+  GPIO_PinRemapConfig(GPIO_PartialRemap_USART3, ENABLE);
+
+  NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_PreemptionPriority_USART3;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = NVIC_SubPriority_USART3;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  USART_StructInit(&USART_InitStructure);
+  USART_InitStructure.USART_BaudRate = 9600;
+  USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+  USART_InitStructure.USART_StopBits = USART_StopBits_1;
+  USART_InitStructure.USART_Parity = USART_Parity_No;
+  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+  USART_Init(USART3, &USART_InitStructure);
+
+  /* Enable "Receive data register not empty" interrupt */
+  USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+
+  /* Enable USART */
+  USART_Cmd(USART3, ENABLE);
+
+  /* Clear "Transmission Complete" flag, else the first bit of data will lose. */
+  USART_ClearFlag(USART3, USART_FLAG_TC);
 }
 
 void Timer_Initialization(void)
@@ -247,8 +294,8 @@ void Timer_Initialization(void)
 
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_PreemptionPriority_TIM2;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = NVIC_SubPriority_TIM2;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 }
@@ -269,8 +316,8 @@ void Board_Initialization(void)
 
   NVIC_InitTypeDef NVIC_InitStructure;
   NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = NVIC_PreemptionPriority_EXTI15_10;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = NVIC_SubPriority_EXTI15_10;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
 
@@ -369,7 +416,69 @@ void Joint_Initialization(JointWithoutHallSensor *joint, JointTypeDef jointType)
   joint->MotionStop();
 }
 
-void CommunicationDecoder(uint8_t Command)
+void StateTransporter(void)
+{
+  Joint::StateTypeDef state;
+  std::string stateText;
+
+  stateText += "R,";
+#ifdef ENABLE_RIGHT_LEG
+  NowJoint = &RightJoint;
+  NowJoint->getState(&state);
+
+  stateText += Convert::ToString((int)state.Ready);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.SoftwareLimit);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.Motion);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.AnglePOTValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.FrontFSRValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.BackFSRValue);
+  stateText += ",";
+#else
+  stateText += "X,";
+#endif
+
+  stateText += "L,";
+#ifdef ENABLE_LEFT_LEG
+  NowJoint = &LeftJoint;
+  NowJoint->getState(&state);
+
+  stateText += Convert::ToString((int)state.Ready);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.SoftwareLimit);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.Motion);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.AnglePOTValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.FrontFSRValue);
+  stateText += ",";
+
+  stateText += Convert::ToString((int)state.BackFSRValue);
+  stateText += ",";
+#else
+  stateText += "X,";
+#endif
+  stateText += "#\r\n";
+
+  USART_Send(USART2, stateText);
+  USART_Send(USART3, stateText);
+}
+
+void CommunicationDecoder(uint8_t command)
 {
   //  Joint_SetAbsoluteAngle(Command - 5);
 }

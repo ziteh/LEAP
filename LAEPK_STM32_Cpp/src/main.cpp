@@ -11,7 +11,7 @@
  ******************************************************************************
  * @attention
  *
- * None
+ * English is not my native language, please excuse typing errors.
  *
  ******************************************************************************
  */
@@ -21,7 +21,7 @@
 /* Uncomment/Comment the line below to enable/disable speciflc features */
 #define ENABLE_RIGHT_LEG
 #define ENABLE_LEFT_LEG
-// #define ENABLE_UNIT_TEST // Uncomment it to run unit test program, comment it to run main program.
+// #define ENABLE_UNIT_TEST /* Uncomment it to run unit test program, comment it to run main program. */
 #define ENABLE_AUTO_SEND_INFO
 
 static __IO uint32_t TimingDelay;

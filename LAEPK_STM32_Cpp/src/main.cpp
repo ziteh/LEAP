@@ -7,7 +7,7 @@
  *          Intelligent Robot System Laboratory
  * @version V0.1
  * @date    25-October-2019
- * @brief   Main program body of L.A.E.P.K.
+ * @brief   Main program body of L.E.A.P
  ******************************************************************************
  * @attention
  *

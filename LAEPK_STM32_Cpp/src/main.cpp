@@ -22,7 +22,7 @@
 #define ENABLE_RIGHT_LEG
 #define ENABLE_LEFT_LEG
 // #define ENABLE_UNIT_TEST // Uncomment it to run unit test program, comment it to run main program.
-//#define ENABLE_AUTO_SEND_INFO
+#define ENABLE_AUTO_SEND_INFO
 
 static __IO uint32_t TimingDelay;
 RCC_ClocksTypeDef RCC_Clocks;
@@ -74,8 +74,9 @@ int main(void)
   while (1)
   {
 #ifdef ENABLE_AUTO_SEND_INFO
-    StateTransporter();
-    Delay_ms(10);
+    // FIXME Can't send data.
+    // StateTransporter();
+    // Delay_ms(10);
 #endif
   }
 #else  /* ENABLE_UNIT_TEST */

@@ -160,7 +160,7 @@ void TIM2_IRQHandler(void)
     GPIO LED(User_LED);
     LED.toggleValue();
 
-    StateTransporter();
+    StateTransporter(); // XXX Temporary.
     MotionHandler();
   }
 }
@@ -246,7 +246,7 @@ void USART3_IRQHandler(void)
     /* System stop */
     if (USART_ReceivData == ((uint16_t)'S'))
     {
-      USART_Send(USART2, "[System]Stop.\n");
+      USART_Send(USART3, "[System]Stop.\n");
       while (1)
       {
       }
@@ -254,7 +254,7 @@ void USART3_IRQHandler(void)
     /* System reset */
     else if (USART_ReceivData == ((uint16_t)'R'))
     {
-      USART_Send(USART2, "[System]Reset.\n");
+      USART_Send(USART3, "[System]Reset.\n");
       NVIC_SystemReset();
     }
     else if ((USART_ReceivData >= 0x00) && (USART_ReceivData <= 0x87))
@@ -268,7 +268,7 @@ void USART3_IRQHandler(void)
     /* Unknown instruction */
     else
     {
-      USART_Send(USART2, "[Error]Unknown instruction.\n");
+      USART_Send(USART3, "[Error]Unknown instruction.\n");
     }
 
     /* NO need to clears the USARTx's interrupt pending bits */

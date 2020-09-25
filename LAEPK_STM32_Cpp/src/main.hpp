@@ -5,7 +5,7 @@
  *          National Formosa University
  *          Department of Electronic Engineering
  *          Intelligent Robot System Laboratory
- * @version V1.0.0
+ * @version V0.1
  * @date    25-October-2019
  * @brief   Header for main.cpp module
  ******************************************************************************

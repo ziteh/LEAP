@@ -8,7 +8,7 @@ L.E.A.P (飛躍) 是我的大學畢業專題(Graduation independent study)
 
 # 說明
 
-本專案使用的 IDE 爲[ Atollic TrueSTUDIO](https://atollic.com/truestudio/)，這是由 ST 官方維護的、由開源的[ Eclipse ](https://www.eclipse.org/downloads/)發展而來。
+本專案使用的 IDE 爲[ Atollic TrueSTUDIO](https://atollic.com/truestudio/)，這是由 ST 官方維護的、由開源的[ Eclipse ](https://www.eclipse.org/downloads/)發展而來的 IDE。
 
 目前本專案可正常運作的專案在[ LEAP-stm32/LAEPK_STM32_Cpp ](https://github.com/ziteh/LEAP-stm32/tree/master/LAEPK_STM32_Cpp)，可以使用 TrueSTUDIO 直接開啓專案。
 

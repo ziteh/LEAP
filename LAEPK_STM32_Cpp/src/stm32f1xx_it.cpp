@@ -176,8 +176,6 @@ void TIM4_IRQHandler(void)
   {
     TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
 
-//    USART_Send(USART2, "*");
-
     JointWithoutHallSensor *nowJoint;
     extern JointWithoutHallSensor LeftJoint;
 

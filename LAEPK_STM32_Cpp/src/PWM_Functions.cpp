@@ -194,7 +194,7 @@ void PWM::setFrequency(uint16_t NewFrequency)
 
   extern RCC_ClocksTypeDef RCC_Clocks;
 
-  TIM_TimeBaseStructure.TIM_Prescaler = 10; // !! or 100
+  TIM_TimeBaseStructure.TIM_Prescaler = 20; // !! or 100
   TIM_TimeBaseStructure.TIM_Period = ((RCC_Clocks.SYSCLK_Frequency / TIM_TimeBaseStructure.TIM_Prescaler) / NewFrequency) - 1;
 
   this->setup();

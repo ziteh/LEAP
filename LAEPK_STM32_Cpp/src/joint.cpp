@@ -89,7 +89,11 @@ void Joint::MotionExtensionStart(void)
 {
   MotionState = Extensioning;
 
-  Motor.setDirection(EC90Motor::CCW);
+  if (!reverse)
+    Motor.setDirection(EC90Motor::CCW);
+  else
+    Motor.setDirection(EC90Motor::CW);
+
   Motor.setSpeed(30);
   Motor.Enable();
 }
@@ -98,7 +102,11 @@ void Joint::MotionFlexionStart(void)
 {
   MotionState = Flexioning;
 
-  Motor.setDirection(EC90Motor::CW);
+  if (!reverse)
+    Motor.setDirection(EC90Motor::CW);
+  else
+    Motor.setDirection(EC90Motor::CCW);
+
   Motor.setSpeed(30);
   Motor.Enable();
 }

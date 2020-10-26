@@ -109,6 +109,8 @@ public:
   uint16_t ExtensionFSRStopThreshold;
   uint16_t FlexionFSRStopThreshold;
 
+  bool  reverse;
+
   Joint(void);
   virtual void Init(void);
 

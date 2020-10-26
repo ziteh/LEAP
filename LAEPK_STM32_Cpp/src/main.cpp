@@ -26,7 +26,7 @@
 /* Uncomment/Comment the line below to enable/disable speciflc features */
 #define ENABLE_RIGHT_LEG
 #define ENABLE_LEFT_LEG
-// #define ENABLE_UNIT_TEST /* Uncomment it to run unit test program, comment it to run main program. */
+//#define ENABLE_UNIT_TEST /* Uncomment it to run unit test program, comment it to run main program. */
 #define ENABLE_AUTO_SEND_INFO
 
 static __IO uint32_t TimingDelay;
@@ -34,7 +34,7 @@ RCC_ClocksTypeDef RCC_Clocks;
 
 Joint *NowJoint = NULL;
 Joint RightJoint;
-JointWithoutHallSensor LeftJoint;
+Joint LeftJoint;
 
 int main(void)
 {
@@ -86,7 +86,8 @@ int main(void)
   }
 #else  /* ENABLE_UNIT_TEST */
   /* Region of Unit Test Code */
-  UnitTest::Timer_1sec();
+  RCC_GetClocksFreq(&RCC_Clocks);
+  UnitTest::PWM_Output_1kHz_50DutyCycle();
 #endif /* ENABLE_UNIT_TEST */
 }
 
@@ -365,6 +366,8 @@ void Joint_Initialization(Joint *joint, JointTypeDef jointType)
 
   joint->ExtensionFSRStopThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStopExtension : LeftJoint_DefaultValue_FSRStopExtension);
   joint->FlexionFSRStopThreshold = ((jointType == Right) ? RightJoint_DefaultValue_FSRStopFlexion : LeftJoint_DefaultValue_FSRStopFlexion);
+
+  joint->reverse = ((jointType == Right) ? RightJoint_Reverse : LeftJoint_Reverse);
 
   joint->Init();
   joint->MotionStop();

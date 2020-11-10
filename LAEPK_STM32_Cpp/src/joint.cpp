@@ -18,6 +18,8 @@
 
 #include "joint.hpp"
 
+//#define ENABLE_ANGLE_POT
+
 /* Uncomment one of the line below to select mode. */
 #define MODE_FOLLOWING
 // #define MODE_START_STOP_TRIGGER
@@ -67,12 +69,20 @@ void Joint::Init(void)
 
 bool Joint::ExtensionStartTriggered(void)
 {
+#ifdef ENABLE_ANGLE_POT
   return ((FrontFSR.getValue() > ExtensionFSRStartThreshold) && (getLimitState() != FullExtension));
+#else
+  return (FrontFSR.getValue() > ExtensionFSRStartThreshold);
+#endif
 }
 
 bool Joint::FlexionStartTriggered(void)
 {
+#ifdef ENABLE_ANGLE_POT
   return ((BackFSR.getValue() > FlexionFSRStartThreshold) && (getLimitState() != FullFlexion));
+#else
+  return (BackFSR.getValue() > FlexionFSRStartThreshold);
+#endif
 }
 
 bool Joint::ExtensionStopTriggered(void)

@@ -104,7 +104,7 @@ void Joint::MotionExtensionStart(void)
   else
     Motor.setDirection(EC90Motor::CW);
 
-  Motor.setSpeed(30);
+  Motor.setSpeed(Joint_Motor_Speed);
   Motor.Enable();
 }
 
@@ -117,7 +117,7 @@ void Joint::MotionFlexionStart(void)
   else
     Motor.setDirection(EC90Motor::CCW);
 
-  Motor.setSpeed(30);
+  Motor.setSpeed(Joint_Motor_Speed);
   Motor.Enable();
 }
 

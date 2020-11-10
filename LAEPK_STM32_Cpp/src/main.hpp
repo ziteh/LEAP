@@ -93,7 +93,7 @@ extern "C"
 #define LeftJoint_ADC_Channel_BackFSR (ADC_Channel_10)
 
 #define LeftJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
-#define LeftJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
+#define LeftJoint_DefaultValue_POTFullFlexion ((uint16_t)435)
 
 #define LeftJoint_DefaultValue_FSRStartExtension ((uint16_t)1400)
 #define LeftJoint_DefaultValue_FSRStartFlexion ((uint16_t)1600)

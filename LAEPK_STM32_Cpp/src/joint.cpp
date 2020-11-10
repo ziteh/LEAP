@@ -248,12 +248,24 @@ Joint::SoftwareLimitStateTypeDef Joint::getLimitState(void)
 {
   uint16_t value = AnglePOT.getValue();
 
-  if (value < FullExtensionPOTValue)
-    return FullExtension;
-  else if (value > FullFlexionPOTValue)
-    return FullFlexion;
+  if(reverse)
+  {
+    if (value > FullExtensionPOTValue)
+      return FullExtension;
+    else if (value < FullFlexionPOTValue)
+      return FullFlexion;
+    else
+      return Unlimited;
+  }
   else
-    return Unlimited;
+  {
+    if (value < FullExtensionPOTValue)
+      return FullExtension;
+    else if (value > FullFlexionPOTValue)
+      return FullFlexion;
+    else
+      return Unlimited;
+  }
 }
 
 void Joint::SendInfo(void)
@@ -304,12 +316,7 @@ void Joint::getState(Joint::StateTypeDef *state)
   else
     state->Ready = false;
 
-  if (state->AnglePOTValue < this->FullExtensionPOTValue)
-    state->SoftwareLimit = this->FullExtension;
-  else if (state->AnglePOTValue > this->FullFlexionPOTValue)
-    state->SoftwareLimit = this->FullFlexion;
-  else
-    state->SoftwareLimit = this->Unlimited;
+  state->SoftwareLimit =  getLimitState();
 }
 
 bool Joint::StartExtensionIsTriggered(void)

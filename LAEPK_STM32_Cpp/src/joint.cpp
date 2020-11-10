@@ -18,6 +18,8 @@
 
 #include "joint.hpp"
 
+//#define ENABLE_ANGLE_POT
+
 /* Uncomment one of the line below to select mode. */
 #define MODE_FOLLOWING
 // #define MODE_START_STOP_TRIGGER
@@ -67,12 +69,20 @@ void Joint::Init(void)
 
 bool Joint::ExtensionStartTriggered(void)
 {
+#ifdef ENABLE_ANGLE_POT
   return ((FrontFSR.getValue() > ExtensionFSRStartThreshold) && (getLimitState() != FullExtension));
+#else
+  return (FrontFSR.getValue() > ExtensionFSRStartThreshold);
+#endif
 }
 
 bool Joint::FlexionStartTriggered(void)
 {
+#ifdef ENABLE_ANGLE_POT
   return ((BackFSR.getValue() > FlexionFSRStartThreshold) && (getLimitState() != FullFlexion));
+#else
+  return (BackFSR.getValue() > FlexionFSRStartThreshold);
+#endif
 }
 
 bool Joint::ExtensionStopTriggered(void)
@@ -89,8 +99,12 @@ void Joint::MotionExtensionStart(void)
 {
   MotionState = Extensioning;
 
-  Motor.setDirection(EC90Motor::CCW);
-  Motor.setSpeed(30);
+  if (!reverse)
+    Motor.setDirection(EC90Motor::CCW);
+  else
+    Motor.setDirection(EC90Motor::CW);
+
+  Motor.setSpeed(Joint_Motor_Speed);
   Motor.Enable();
 }
 
@@ -98,8 +112,12 @@ void Joint::MotionFlexionStart(void)
 {
   MotionState = Flexioning;
 
-  Motor.setDirection(EC90Motor::CW);
-  Motor.setSpeed(30);
+  if (!reverse)
+    Motor.setDirection(EC90Motor::CW);
+  else
+    Motor.setDirection(EC90Motor::CCW);
+
+  Motor.setSpeed(Joint_Motor_Speed);
   Motor.Enable();
 }
 
@@ -240,12 +258,24 @@ Joint::SoftwareLimitStateTypeDef Joint::getLimitState(void)
 {
   uint16_t value = AnglePOT.getValue();
 
-  if (value < FullExtensionPOTValue)
-    return FullExtension;
-  else if (value > FullFlexionPOTValue)
-    return FullFlexion;
+  if(reverse)
+  {
+    if (value > FullExtensionPOTValue)
+      return FullExtension;
+    else if (value < FullFlexionPOTValue)
+      return FullFlexion;
+    else
+      return Unlimited;
+  }
   else
-    return Unlimited;
+  {
+    if (value < FullExtensionPOTValue)
+      return FullExtension;
+    else if (value > FullFlexionPOTValue)
+      return FullFlexion;
+    else
+      return Unlimited;
+  }
 }
 
 void Joint::SendInfo(void)
@@ -296,12 +326,7 @@ void Joint::getState(Joint::StateTypeDef *state)
   else
     state->Ready = false;
 
-  if (state->AnglePOTValue < this->FullExtensionPOTValue)
-    state->SoftwareLimit = this->FullExtension;
-  else if (state->AnglePOTValue > this->FullFlexionPOTValue)
-    state->SoftwareLimit = this->FullFlexion;
-  else
-    state->SoftwareLimit = this->Unlimited;
+  state->SoftwareLimit =  getLimitState();
 }
 
 bool Joint::StartExtensionIsTriggered(void)

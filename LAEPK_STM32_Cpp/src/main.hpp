@@ -69,13 +69,15 @@ extern "C"
 #define RightJoint_DefaultValue_FSRStopExtension ((uint16_t)RightJoint_DefaultValue_FSRStartFlexion - 200)
 #define RightJoint_DefaultValue_FSRStopFlexion ((uint16_t)RightJoint_DefaultValue_FSRStartExtension - 200)
 
+#define RightJoint_Reverse ((bool) false)
+
 /* Left leg define */
-#define LeftJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PA7)
+#define LeftJoint_PortPin_SpeedPWM ((GPIO_PortPinTypeDef)PB8)
 #define LeftJoint_Timer_SpeedPWM (TIM4)
-#define LeftJoint_Channel_SpeedPWM (CH1)
+#define LeftJoint_Channel_SpeedPWM (CH3)
 
 #define LeftJoint_PortPin_FunctionState ((GPIO_PortPinTypeDef)PA8)
-#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PB6)
+#define LeftJoint_PortPin_Direction ((GPIO_PortPinTypeDef)PC9)
 #define LeftJoint_PortPin_ReadyState ((GPIO_PortPinTypeDef)PA9)
 
 #define LeftJoint_PortPin_AnglePOT ((GPIO_PortPinTypeDef)PC3)
@@ -91,13 +93,15 @@ extern "C"
 #define LeftJoint_ADC_Channel_BackFSR (ADC_Channel_10)
 
 #define LeftJoint_DefaultValue_POTFullExtension ((uint16_t)1400)
-#define LeftJoint_DefaultValue_POTFullFlexion ((uint16_t)2450)
+#define LeftJoint_DefaultValue_POTFullFlexion ((uint16_t)435)
 
 #define LeftJoint_DefaultValue_FSRStartExtension ((uint16_t)1400)
 #define LeftJoint_DefaultValue_FSRStartFlexion ((uint16_t)1600)
 
 #define LeftJoint_DefaultValue_FSRStopExtension ((uint16_t)LeftJoint_DefaultValue_FSRStartFlexion - 250)
 #define LeftJoint_DefaultValue_FSRStopFlexion ((uint16_t)LeftJoint_DefaultValue_FSRStartExtension - 250)
+
+#define LeftJoint_Reverse ((bool) true)
 
 #define LeftJoint_PortPin_VirtualHall1 ((GPIO_PortPinTypeDef)PB8)
 #define LeftJoint_PortPin_VirtualHall2 ((GPIO_PortPinTypeDef)PB9)

@@ -188,6 +188,9 @@ namespace UnitTest
 
   void PWM_Output_1kHz_50DutyCycle(void)
   {
+//    extern RCC_ClocksTypeDef RCC_Clocks;
+//    RCC_GetClocksFreq(&RCC_Clocks);
+
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 

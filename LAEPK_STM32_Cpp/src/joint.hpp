@@ -25,7 +25,7 @@
 #include "USART_Functions.hpp"
 #include "convert.hpp"
 
-#define Joint_Motor_Speed (45)
+#define Joint_Motor_Speed (50)
 
 /**
  * @brief The class of joint.

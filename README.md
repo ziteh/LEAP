@@ -1,4 +1,4 @@
-"**Lightweight Exoskeleton with Assistive Power (L.E.A.P**)" is my university graduation independent study.
+"**Lightweight Exoskeleton with Assistive Power (L.E.A.P**)" is my graduation independent study.
 
 「**輔助性動力輕型外骨骼 (L.E.A.P, 飛躍)**」是我的大學畢業獨立研究(專題)。
 

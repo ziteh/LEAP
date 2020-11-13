@@ -1,0 +1,6 @@
+(sym_lib_table
+  (lib (name New_Library)(type Legacy)(uri ${KIPRJMOD}/New_Library.lib)(options "")(descr ""))
+  (lib (name LEAP_Library)(type Legacy)(uri ${KIPRJMOD}/LEAP_Library.lib)(options "")(descr ""))
+  (lib (name NUCLEO-F401RE)(type Legacy)(uri ${KIPRJMOD}/NUCLEO-F401RE/NUCLEO-F401RE.lib)(options "")(descr ""))
+  (lib (name STM_Morpho-cache)(type Legacy)(uri ${KIPRJMOD}/stm-morpho-template-master/template/STM_Morpho/STM_Morpho-cache.lib)(options "")(descr ""))
+)

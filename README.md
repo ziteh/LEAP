@@ -1,7 +1,6 @@
-# LEAP
+"**Lightweight Exoskeleton with Assistive Power (L.E.A.P**)" is my university graduation independent study.
 
-L.E.A.P (飛躍) 是我的大學畢業專題(Graduation independent study)  
-其全名為：輔助性動力輕型外骨骼(Lightweight Exoskeleton with Assistive Power)
+「**輔助性動力輕型外骨骼 (L.E.A.P, 飛躍)**」是我的大學畢業獨立研究(專題)。
 
 # 說明
 
@@ -11,15 +10,16 @@ L.E.A.P (飛躍) 是我的大學畢業專題(Graduation independent study)
 
 本專案使用的 IDE 爲[ Atollic TrueSTUDIO](https://atollic.com/truestudio/)，這是 ST 官方維護、由開源的[ Eclipse ](https://www.eclipse.org/downloads/)發展而來的 IDE。
 
-目前本專案可正常運作的專案在[ LEAP/LAEPK_STM32_Cpp ](https://github.com/ziteh/LEAP/tree/master/LAEPK_STM32_Cpp)，可以使用 TrueSTUDIO 直接開啓專案。
+目前本專案可正常運作的專案在[ LEAP/stm32/LAEPK_STM32_Cpp ](https://github.com/ziteh/LEAP/tree/master/stm32/LAEPK_STM32_Cpp)，可以使用 TrueSTUDIO 直接開啓專案。
 
 ## 電腦端程式
 
 電腦端程式可以查看外骨骼的相關數值與狀態，也可以控制其動作等。
 
-# 系列
+# 相關檔案
 
-L.E.A.P 是由一系列不同的專案組合而成的，以下列出所有與 L.E.A.P 相關 repo：
+* STM32 微控制器程式： [LEAP/stm32/](https://github.com/ziteh/LEAP/tree/master/stm32/)。
+* 電腦端程式：[LEAP/PC_control_panel](https://github.com/ziteh/LEAP/tree/master/PC_control_panel)。
+* 手機端程式：[LEAP-android-control-panel](https://github.com/ziteh/LEAP-android-control-panel)
+* 3D 模型：[LEAP/3D——models](https://github.com/ziteh/LEAP/tree/master/3D_models)。
 
-* [LEAP-stm32: The STM32 MCU part](https://github.com/ziteh/LEAP-stm32)
-* [LEAP-android-control-panel: The Android App part](https://github.com/ziteh/LEAP-android-control-panel)

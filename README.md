@@ -26,4 +26,4 @@
 * 電腦端程式：[LEAP/PC_control_panel/](https://github.com/ziteh/LEAP/tree/master/PC_control_panel)
 * 手機端程式：[LEAP-android-control-panel](https://github.com/ziteh/LEAP-android-control-panel)
 * 3D 模型：[LEAP/3D_models/](https://github.com/ziteh/LEAP/tree/master/3D_models)
-
+* PCB 電路：[LEAP/pcb/](https://github.com/ziteh/LEAP/tree/master/pcb)

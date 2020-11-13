@@ -2,6 +2,10 @@
 
 「**輔助性動力輕型外骨骼 (L.E.A.P, 飛躍)**」是我的大學畢業獨立研究(專題)。
 
+# 影片展示
+
+[![第二次步行測試](https://img.youtube.com/vi/bzW2kFukcrA/0.jpg)](https://www.youtube.com/watch?v=bzW2kFukcrA)
+
 # 說明
 
 ## MCU

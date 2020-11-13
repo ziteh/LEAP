@@ -1,0 +1,31 @@
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.exe.config
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.exe
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.pdb
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csprojAssemblyReference.cache
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.FROM_EPCUI.resources
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.Properties.Resources.resources
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csproj.GenerateResource.cache
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.exe
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.pdb
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.exe.config
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.exe
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.pdb
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csprojAssemblyReference.cache
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.FROM_EPCUI.resources
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.Properties.Resources.resources
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csproj.GenerateResource.cache
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csproj.CoreCompileInputs.cache
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.exe
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.pdb
+C:\Users\ZiTe\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.Form_SerialPort_Setting.resources
+C:\Users\wk415\Dropbox\1-Project\[NFU]Robot Lab\Independent Study\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.Form_SerialPort_Setting.resources
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.exe.config
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.exe
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\bin\Debug\EPCUI.pdb
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csprojAssemblyReference.cache
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.FROM_EPCUI.resources
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.Properties.Resources.resources
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csproj.GenerateResource.cache
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.csproj.CoreCompileInputs.cache
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.exe
+C:\Users\wk415\Dropbox\1-Project\[NFU] I.R.S. Lab\L.A.E.P.K. (Independent Study)\1-Projects\Visual studio\Exoskeleton Parameter Control User Interface(EPCUI)\EPCUI\obj\Debug\EPCUI.pdb

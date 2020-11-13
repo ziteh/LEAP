@@ -19,6 +19,4 @@ L.E.A.P (飛躍) 是我的大學畢業專題(Graduation independent study)
 L.E.A.P 是由一系列不同的專案組合而成的，以下列出所有與 L.E.A.P 相關 repo：
 
 * [LEAP-stm32: The STM32 MCU part](https://github.com/ziteh/LEAP-stm32)
-* [LEAP-3d-models: The 3D-models part](https://github.com/ziteh/LEAP-3d-models)
-* [LEAP-control-panel: The control panel part](https://github.com/ziteh/LEAP-control-panel)
 * [LEAP-android-control-panel: The Android App part](https://github.com/ziteh/LEAP-android-control-panel)

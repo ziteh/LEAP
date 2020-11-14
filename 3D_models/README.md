@@ -2,4 +2,4 @@
 
 這是 L.E.A.P 的 3D 模型部分。
 
-當前版本在[Solidworks](/Solidworks)
+當前版本在[Solidworks](Solidworks)

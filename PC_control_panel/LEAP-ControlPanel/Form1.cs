@@ -10,16 +10,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+// Bluetooth
+using InTheHand.Net;
+using InTheHand.Net.Bluetooth;
+using InTheHand.Net.Sockets;
+
+
 namespace LEAP_ControlPanel
 {
     public partial class Form1 : Form
     {
         delegate void SetTextCallback(string[] text);
+        Bluetooth bluetooth = new Bluetooth();
 
         public Form1()
         {
             InitializeComponent();
             SerialPortInit();
+            SerialPortSetup();
+
+            //bluetooth.Main(null);
         }
 
         private void SerialPortInit()
@@ -89,19 +99,19 @@ namespace LEAP_ControlPanel
                                         serialPortParity,
                                         Convert.ToInt32(comboBox_SerialPort_DataBits.Text),
                                         serialPortStopBits);
-            serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialPort_DataReceived);
         }
 
         private void button_SerialPort_Connect_Click(object sender, EventArgs e)
         {
-            SerialPortSetup();
+            //SerialPortSetup();
 
             if (!serialPort1.IsOpen)
             {
                 try
                 {
-                    //serialPort1.Close();
+                    serialPort1.Close();
                     serialPort1.Open();
+                    serialPort1.DataReceived += new SerialDataReceivedEventHandler(SerialPort_DataReceived);
                     while (!serialPort1.IsOpen)
                     {
                     }
@@ -116,6 +126,8 @@ namespace LEAP_ControlPanel
             }
             else
             {
+                // FIXME
+                //serialPort1.DataReceived -= new SerialDataReceivedEventHandler(SerialPort_DataReceived);
                 serialPort1.Close();
                 while (serialPort1.IsOpen)
                 {
@@ -125,15 +137,18 @@ namespace LEAP_ControlPanel
 
         private void SerialPort_DataReceived(Object sender, SerialDataReceivedEventArgs e)
         {
-            string[] data = serialPort1.ReadLine().Trim().Split(',');
-            if (data.Length == 15)
+            if (serialPort1.IsOpen)
             {
-                try
+                string[] data = serialPort1.ReadLine().Trim().Split(',');
+                if (data.Length == 15)
                 {
-                    SetText(data);
-                }
-                catch (Exception)
-                {
+                    try
+                    {
+                        SetText(data);
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
         }
@@ -262,6 +277,35 @@ namespace LEAP_ControlPanel
                 this.textBox_L_State_AnglePOT.Text = text[11].Trim();
                 this.textBox_L_State_FrontFSR.Text = text[12].Trim();
                 this.textBox_L_State_BackFSR.Text = text[13].Trim();
+            }
+        }
+
+        private void button_Reset_Click(object sender, EventArgs e)
+        {
+            SerialPortSendInstruction((byte)0xE1);
+        }
+
+        private void button_Stop_Click(object sender, EventArgs e)
+        {
+            SerialPortSendInstruction((byte)0xE0);
+        }
+
+        private void SerialPortSendInstruction(byte instruction)
+        {
+            if (serialPort1.IsOpen)
+            {
+                byte[] data = new byte[] { instruction };
+                try
+                {
+                    serialPort1.Write(data, 0, 1);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Can't send data.\r\n" + ex.Message,
+                                    "Error!",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+                }
             }
         }
     }

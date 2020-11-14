@@ -1,12 +1,9 @@
 /**
  ******************************************************************************
  * @file    joint.cpp
- * @author  Huang, Tzu-Fu
- *          National Formosa University
- *          Department of Electronic Engineering
- *          Intelligent Robot System Laboratory
- * @version V1.0.0
- * @date    31-August-2020
+ * @author  ZiTe (honmonoh@gmail.com)
+ * @version V1.0
+ * @date    14-November-2020
  * @brief   Program body of L.A.E.P.K. of joint.
  ******************************************************************************
  * @attention

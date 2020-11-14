@@ -1,12 +1,9 @@
 /**
  ******************************************************************************
  * @file    STM32F103RB_GPIO_Mapping.h
- * @author  Huang Tzu-Fu
- *          National Formosa University
- *          Department of Electronic Engineering
- *          Intelligent Robot System Laboratory
- * @version V1.0.0
- * @date    22-May-2020
+ * @author  ZiTe (honmonoh@gmail.com)
+ * @version V1.0
+ * @date    14-November-2020
  * @brief   Header for GPIO_Function.c module for STM32F103RB
  ******************************************************************************
  * @attention

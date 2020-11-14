@@ -1,12 +1,9 @@
 /**
  ******************************************************************************
  * @file    main.hpp
- * @author  Huang, Tzu-Fu
- *          National Formosa University
- *          Department of Electronic Engineering
- *          Intelligent Robot System Laboratory
- * @version V0.1
- * @date    25-October-2019
+ * @author  ZiTe (honmonoh@gmail.com)
+ * @version V1.0
+ * @date    14-November-2020
  * @brief   Header for main.cpp module
  ******************************************************************************
  * @attention

@@ -1,12 +1,9 @@
 /**
  ******************************************************************************
  * @file    USART_Functions.c
- * @author  Huang Tzu-Fu
- *          National Formosa University
- *          Department of Electronic Engineering
- *          Intelligent Robot System Laboratory
- * @version V1.0.0
- * @date    08-October-2019
+ * @author  ZiTe (honmonoh@gmail.com)
+ * @version V1.0
+ * @date    14-November-2020
  * @brief   USART functions program
  ******************************************************************************
  * @attention

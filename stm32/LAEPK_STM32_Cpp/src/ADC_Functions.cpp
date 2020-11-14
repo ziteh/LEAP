@@ -1,12 +1,9 @@
 /**
  ******************************************************************************
  * @file    ADC_Functions.c
- * @author  Huang Tzu-Fu
- *          National Formosa University
- *          Department of Electronic Engineering
- *          Intelligent Robot System Laboratory
- * @version V1.0.0
- * @date    26-March-2020
+ * @author  ZiTe (honmonoh@gmail.com)
+ * @version V1.0
+ * @date    14-November-2020
  * @brief   ADC functions program
  ******************************************************************************
  * @attention

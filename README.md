@@ -1,3 +1,7 @@
+:warning: This repo is no longer updated, I will continue to develop L.E.A.P in [ziteh/LEAP-upper-limb](https://github.com/ziteh/LEAP-upper-limb).
+
+---  
+
 "**Lightweight Exoskeleton with Assistive Power (L.E.A.P**)" is my graduation independent study.
 
 「**輔助性動力輕型外骨骼 (L.E.A.P, 飛躍)**」是我的大學畢業獨立研究(專題)。
